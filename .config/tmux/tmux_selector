@@ -1,0 +1,33 @@
+#!/usr/bin/env python
+"""
+Script to get all tmux sessions and to select the tmux session of interest.
+
+For iterm users:
+    to automatically start a tmux session when a new instance of the iterm
+    application is open, follow the following steps:
+        - open iterm SETTINGS
+        - navigate to the PROFILES tab
+        - in the desired profile, switch to the GENERAL subtab
+        - under COMMAND select LOGIN SHELL from the drop down menu
+        - under SEND TEXT AT START set to <PATH OF TMUX_SELECTOR>
+"""
+import os
+
+output = os.popen("tmux ls -F \\#{session_name}").read()
+sessions = output.strip().split("\n")
+
+print("Sessions:")
+for index in range(len(sessions)):
+    print(f"{index} - {sessions[index]}")
+input_value = input("Please select a session <Index or Name>(default):")
+if input_value.isdigit():
+    sess_name = sessions[int(input_value)]
+elif not input_value:
+    sess_name = "default"
+else:
+    sess_name = input_value
+if sess_name not in sessions:
+    answer = input(f"New a session `{sess_name}`?(Y/N)")
+    answer == "Y" and os.system(f"tmux new -s {sess_name}")  # pyright: ignore
+else:
+    os.system(f"tmux attach -t {sess_name}")
