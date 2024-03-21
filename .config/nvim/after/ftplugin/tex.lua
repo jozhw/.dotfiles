@@ -11,19 +11,19 @@ local keymap = vim.keymap -- for conciseness
 keymap.set(
     "n",
     "<localleader>tje",
-    "<cmd>read ~/latex-templates/journal-entry/JournalEntry.tex<CR>"
+    "<cmd>read ~/templates/latex/journal-entry/JournalEntry.tex<CR>"
 )
 
 keymap.set(
     "n",
     "<localleader>tmn",
-    "<cmd>read ~/latex-templates/message-notes/MessageNotes.tex<CR>"
+    "<cmd>read ~/templates/latex/message-notes/MessageNotes.tex<CR>"
 )
 
 keymap.set(
     "n",
     "<localleader>tba",
-    "<cmd>read ~/latex-templates/book-analysis/BookAnalysis.tex<CR>"
+    "<cmd>read ~/templates/latex/book-analysis/BookAnalysis.tex<CR>"
 )
 local config = require("nvim-surround.config")
 
