@@ -1,6 +1,7 @@
 \.git
 \.gitignore
 \.github
+\.gitattributes
 
 ^/.*\.org
 ^/README.*
