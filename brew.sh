@@ -35,6 +35,9 @@ fi;
 # Install `wget`.
 brew install wget 
 
+# Install GNU Stow for symbolic linking of dotfiles to $HOME dir
+brew install stow
+
 # Install GnuPG to enable PGP-signing commits.
 brew install gnupg
 
