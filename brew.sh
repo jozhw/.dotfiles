@@ -32,8 +32,6 @@ if ! fgrep -q "${BREW_PREFIX}/bin/bash" /etc/shells; then
   chsh -s "${BREW_PREFIX}/bin/bash";
 fi;
 
-# Install miniconda for python envs.
-brew install --cask miniconda
 
 # Install `wget`.
 brew install wget 
