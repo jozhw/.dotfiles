@@ -67,3 +67,6 @@ To find which shell you are using, simply enter the command =echo %SHELL=.
 
 To switch default shells, enter the command =chsh -s <PATH_TO_SHELL>=. The =<PATH_TO_SHELL>= typically is in the form of =/bin/bash= for =bash= and =/bin/zsh= for =zsh=.
    
+** macos
+
+The =.macos= file is used to configure macs. The template was taken from [[https://github.com/mathiasbynens/dotfiles/blob/main/.macos][@mathiasbynens]] and adjusted for my needs.
