@@ -16,6 +16,10 @@ To run the script:
 
 #+end_src
 
+** brew_cask.sh
+
+This script acts similarly to =brew.sh=, but was created to house all of the =brew install --cask= installations.
+
 * Configurations
 
 ** wget
