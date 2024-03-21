@@ -44,4 +44,12 @@ This =.wgetrc= file contains various configuration options for the wget command-
 
 11. =user_agent = Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)=: Sets the User-Agent string to disguise wget as Internet Explorer 9 on Windows 7. This can be useful for accessing websites that serve different content based on the user-agent.
 
+
+** .profile
+
+=.profile= serves as a generic shell configuration that will be applied in all shell sessions (bash or zsh).
+
+To find which shell you are using, simply enter the command =echo %SHELL=.
+
+To switch default shells, enter the command =chsh -s <PATH_TO_SHELL>=. The =<PATH_TO_SHELL>= typically is in the form of =/bin/bash= for =bash= and =/bin/zsh= for =zsh=.
    
