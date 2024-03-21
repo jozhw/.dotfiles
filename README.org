@@ -18,7 +18,7 @@ To run the script:
 
 * Configurations
 
-** weget
+** wget
 
 This =.wgetrc= file contains various configuration options for the wget command-line utility. Let's go through each setting to understand its purpose:
 
