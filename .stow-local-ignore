@@ -1,0 +1,12 @@
+\.git
+\.gitignore
+\.github
+
+^/.*\.org
+^/README.*
+^/LICENSE.*
+^/COPYING
+
+archive
+
+CHANGELOG.md
