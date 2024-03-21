@@ -1,0 +1,13 @@
+#+title: Latex Templates
+
+A repository where my latex templates are housed. 
+
+* Usage
+
+You can view a complied pdf file of the =.tex= file of interest in the directiory that specifies the name of that template.
+
+* Resources Used:
+
+- stackexchange: [[https://tex.stackexchange.com/questions/83729/template-of-old-research-document][Template of old research document]]
+  
+- stackexchange: [[https://tex.stackexchange.com/questions/1319/showcase-of-beautiful-typography-done-in-tex-friends?page=1&tab=votes#tab-top][Showcase of beautiful typography done in TeX & friends]]
