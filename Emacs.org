@@ -527,3 +527,42 @@ This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-con
 
 #+end_src
 
+** Managing Parent Pairs
+
+*** Evil Surround
+
+=evil-surround= emulates [[https://github.com/tpope/vim-surround][surround.vim]]. For usage instructions visit [[https://github.com/emacs-evil/evil-surround][evil-surround]]
+
+#+begin_src emacs-lisp
+
+  (use-package evil-surround
+    :ensure t
+    :config
+    (global-evil-surround-mode 1))
+
+#+end_src
+
+*** Eletric Pair Mode (native)
+
+=electric-pair-mode= will auto pair delimiters for you. One issue with the auto pairing is the =<= character in =org-mode=. The following hook to the enabling of =electric-pair-mode= aims to solve the issue when in =org-mode=.
+
+#+begin_src emacs-lisp
+
+  (electric-pair-mode t)
+
+  (add-hook 'org-mode-hook (lambda ()
+           (setq-local electric-pair-inhibit-predicate
+                   `(lambda (c)
+                  (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
+
+#+end_src
+
+*** Show Parent Mode (native)
+
+=show-paren-mode= allows one to see matching pairs of parentheses and other characters. When point is on the opening character of one of the paired characters, the other is highlighted. When the point is after the closing character of one of the paired characters, the other is highlighted. 
+
+#+begin_src emacs-lisp
+
+  (show-paren-mode 1)
+
+#+end_src
