@@ -1,0 +1,3 @@
+[submodule "atzlan"]
+	path = atzlan
+	url = https://github.com/jozhw/atzlan
