@@ -260,3 +260,17 @@
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
+
+(electric-pair-mode t)
+
+(add-hook 'org-mode-hook (lambda ()
+         (setq-local electric-pair-inhibit-predicate
+                 `(lambda (c)
+                (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
+
+(show-paren-mode 1)
