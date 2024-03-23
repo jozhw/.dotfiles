@@ -516,6 +516,57 @@ This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-con
 
 #+end_src
 
+*** Command List
+
+**** Global Commands
+
+- =C-x g= (=magit-status=): Open Magit status buffer.
+- =C-c M-g= (=magit-dispatch-popup=): Open Magit command popup.
+- =q= (=magit-mode-quit-window=): Close Magit buffer.
+- =C-c M-c= (=magit-commit=): Start commit process.
+- =C-c M-p= (=magit-push-popup=): Push changes.
+- =C-c M-f= (=magit-pull-popup=): Pull changes.
+- =C-c M-b= (=magit-branch-popup=): Manage branches.
+
+**** In Magit Status Buffer
+
+- =TAB=: Expand/collapse section.
+- =S= (=magit-stage-item=): Stage changes.
+- =U= (=magit-unstage-item=): Unstage changes.
+- =c= (=magit-commit-popup=): Commit changes.
+- =P= (=magit-push-popup=): Push changes.
+- =F= (=magit-pull-popup=): Pull changes.
+- =b= (=magit-branch-popup=): Manage branches.
+- =l l= (=magit-log=): View commit log.
+- =r= (=magit-refresh=): Refresh status buffer.
+- =d= (=magit-diff-popup=): Show changes.
+
+**** In Magit Diff Buffer
+
+- =n= (=magit-section-forward=): Move to the next hunk.
+- =p= (=magit-section-backward=): Move to the previous hunk.
+- =s= (=magit-stage=): Stage current hunk.
+- =u= (=magit-unstage=): Unstage current hunk.
+- =C-c C-a= (=magit-diff-show-or-scroll-up=): Scroll up in diff buffer.
+- =C-c C-e= (=magit-diff-show-or-scroll-down=): Scroll down in diff buffer.
+
+**** In Magit Log Buffer
+- =l l= (=magit-log=): Refresh log buffer.
+- =RET=: Show details of the commit at point.
+- =d= (=magit-diff-visit-file=): Show changes for the commit at point.
+- =TAB=: Toggle commit details.
+
+**** In Magit Commit Buffer
+- =C-c C-c= (=magit-commit=): Finish the commit.
+- =C-c C-a= (=magit-commit-ammend=): Amend the last commit.
+
+**** In Magit Branch Popup
+- =b c= (=magit-branch-create=): Create a new branch.
+- =b k= (=magit-branch-delete=): Delete a branch.
+- =b m= (=magit-branch-move=): Rename a branch.
+- =b r= (=magit-branch-rename=): Rename the current branch.
+- =b c= (=magit-branch-checkout=): Checkout a branch.
+  
 ** Rainbow Delimiters
 
 [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] is useful in programming modes because it colorizes nested parentheses and brackets according to their nesting depth.  This makes it a lot easier to visually match parentheses in Emacs Lisp code without having to count them yourself.
