@@ -41,12 +41,12 @@
 
 (use-package general
   :config
-  (general-create-definer rune/leader-keys
+  (general-create-definer jw/leader-key-def
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC")
 
-  (rune/leader-keys
+  (jw/leader-key-def
     "t"  '(:ignore t :which-key "toggles")
     "tt" '(counsel-load-theme :which-key "choose theme")))
 
@@ -185,7 +185,7 @@
   ("k" text-scale-decrease "out")
   ("f" nil "finished" :exit t))
 
-(rune/leader-keys
+(jw/leader-key-def
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 (defun efs/org-mode-setup ()
@@ -229,6 +229,44 @@
       (org-babel-tangle))))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
+
+(use-package lsp-mode
+ :init
+ ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+ (setq lsp-keymap-prefix "C-c l")
+ :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+        ;; if you want which-key integration
+        (lsp-mode . lsp-enable-which-key-integration))
+ :commands (lsp lsp-deferred)
+ ;; if not using company mode uncomment this
+ ;; :bind (:map lsp-mode-map
+ ;;      ("TAB" . completion-at-point))
+ :custom (lsp-headerline-breadcrumb-enable nil))
+
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode)
+  :config
+  (setq lsp-ui-sideline-enable t)
+  (setq lsp-ui-sideline-show-hover nil)
+  (setq lsp-ui-doc-position 'bottom)
+  (lsp-ui-doc-show))
+
+(use-package lsp-ivy
+   :hook (lsp-mode . lsp-ivy-mode))
+
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+         ("<tab>" . company-complete-selection))
+        (:map lsp-mode-map
+         ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
+
+(use-package company-box
+  :hook (company-mode . company-box-mode))
 
 (use-package projectile
   :diminish projectile-mode
