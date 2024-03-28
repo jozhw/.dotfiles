@@ -27,9 +27,9 @@ hit the =TAB= button. For example, the python snippit would be =<py TAB=.
 
 #+end_src
 
-** Org Organization
+** Emacs.org Organization
 
-Since the compilation is sequential, you have to be careful in that =jw/leader-key-def= was defined in the *Key Bindings* section and it is used in the *UI Configuration* section under *Text Scaling* where =hydra= was used. This means that *Key Bindings* must be before the *Text Scaling* otherwise there will be a void error.
+Since the compilation is sequential, you have to be careful in that =jw/leader-key-def= was defined in the *Keyboard Bindings* section and it is used in the *General Configuration* section under *Text Scaling* where =hydra= was used. This means that *Key Bindings* must be before the *Text Scaling* otherwise there will be a void error.
 
 * Startup Performance
 
@@ -56,8 +56,7 @@ Also, turn on =lexical-binding= for the init file!
 #+end_src
 
 * Package System 
-
-** Setup
+** Setup (use-package)
 
 Emacs has a built in package manager but it doesn't make it easy to automatically install packages on a new system the first time you pull down your configuration. [[https://github.com/jwiegley/use-package][use-package]] is a really helpful package used in this configuration to make it a lot easier to automate the installation and configuration of everything else we use.
  
@@ -84,9 +83,8 @@ Emacs has a built in package manager but it doesn't make it easy to automaticall
 
 #+end_src
 
-* Key Bindings
-
-** Quit Prompting Easier
+* Keyboard Bindings
+** ESC Cancels All
 
 Bind the quit prompting function to the =esc= key.
 
@@ -96,9 +94,10 @@ Bind the quit prompting function to the =esc= key.
 
 #+end_src
 
-** Evil Mode
+** Simplify Leader Bindings (general.el)
 
-This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil-mode]] for a Vi-like modal editing experience.  [[https://github.com/noctuid/general.el][general.el]] is used for easy keybinding configuration that integrates well with which-key.  [[https://github.com/emacs-evil/evil-collection][evil-collection]] is used to automatically configure various Emacs modes with Vi-like keybindings for evil-mode.
+[[https://github.com/noctuid/general.el][general.el]] is a fantastic library for defining prefixed keybindings, especially
+in conjunction with Evil modes.
 
 #+begin_src emacs-lisp
 
@@ -107,12 +106,26 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
     (general-create-definer jw/leader-key-def
       :keymaps '(normal insert visual emacs)
       :prefix "SPC"
-      :global-prefix "C-SPC")
+      :global-prefix "C-SPC"))
 
-    (jw/leader-key-def
-      "t"  '(:ignore t :which-key "toggles")
-      "tt" '(counsel-load-theme :which-key "choose theme")))
+#+end_src
 
+** User Interface Toggles
+
+#+begin_src emacs-lisp
+
+  (jw/leader-key-def
+    "t"  '(:ignore t :which-key "toggles")
+    "tw" 'whitespace-mode
+    "tt" '(counsel-load-theme :which-key "choose theme"))
+
+#+end_src
+
+** Let's Be Evil
+
+This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil-mode]] for a Vi-like modal editing experience.  [[https://github.com/emacs-evil/evil-collection][evil-collection]] is used to automatically configure various Emacs modes with Vi-like keybindings for evil-mode.
+
+#+begin_src emacs-lisp
   (use-package evil
     :init
     (setq evil-want-integration t)
@@ -138,9 +151,22 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+end_src
 
-* UI Configuration
+** Key Binding Panel (which-key)
 
-** Basic UI Config
+[[https://github.com/justbur/emacs-which-key][which-key]] is a useful UI panel that appears when you start pressing any key binding in Emacs to offer you all possible completions for the prefix. For example, if you press =C-c= (hold control and press the letter =c=), a panel will appear at the bottom of the frame displaying all of the bindings under that prefix and which command they run. This is very useful for learning the possible key bindings in the mode of your current buffer.
+
+#+begin_src emacs-lisp
+
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
+
+#+end_src
+
+* General Configuration
+** User Interface
 
 For a minimalistic UI, the startup messages, scroll-bar, tool-bar, tooltip, menu-bar
 were all removed from the display.
@@ -189,6 +215,121 @@ In addition to line numbers, the column number will also be displayed.
                   shell-mode-hook
                   eshell-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+#+end_src
+
+*** Text Scaling (hydra)
+
+This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to design a transient key binding for quickly adjusting the scale of the text on screen.  We define a hydra that is bound to =C-s t s= and, once activated, =j= and =k= increase and decrease the text scale.  You can press any other key (or =f= specifically) to exit the transient key map.
+
+#+begin_src emacs-lisp
+
+  (use-package hydra)
+
+  (defhydra hydra-text-scale (:timeout 4)
+    "scale text"
+    ("j" text-scale-increase "in")
+    ("k" text-scale-decrease "out")
+    ("f" nil "finished" :exit t))
+
+  (jw/leader-key-def
+    "ts" '(hydra-text-scale/body :which-key "scale text"))
+
+#+end_src
+
+** Themes
+
+I currently am using the [[https://github.com/hlissner/emacs-doom-themes][DOOM Themes]], specifically =doom-dracula=.
+
+#+begin_src emacs-lisp
+
+  (use-package doom-themes
+    :init (load-theme 'doom-dracula t))
+
+#+end_src
+
+** Modeline
+*** Basic Customization
+
+#+begin_src emacs-lisp
+
+  (setq display-time-format "%l:%M %p %b %y"
+        display-time-default-load-average nil)
+
+#+end_src
+
+*** Doom Modeline
+
+[[https://github.com/seagle0128/doom-modeline][doom-modeline]] is a very attractive and rich (yet still minimal) mode line configuration for Emacs.  The default configuration is quite good but you can check out the [[https://github.com/seagle0128/doom-modeline#customize][configuration options]] for more things you can enable or disable.
+
+If you are running in the =macos= terminal, then you have to make sure that you set the font to =Droid Sans Mono Nerd Font Complete 18=. You can do this by the following steps:
+
+- Navigate to =Settings=
+- Navigate to =Profiles= tab
+- Navigate to =Text= subtab
+- Under the =Font= menu click on =Change=
+- Select the appropriate font
+
+
+#+begin_src emacs-lisp
+
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1)
+    :custom ((doom-modeline-height 15)))
+
+#+end_src
+
+**** Dependencies
+
+=doom-modeline= icons rely on =nerd-icons=. Thus, you must install the =nerd-icons= if you want to use the icons on the modeline.
+
+#+begin_src emacs-lisp
+
+  (use-package nerd-icons
+    ;; :custom
+    ;; The Nerd Font you want to use in GUI
+    ;; "Symbols Nerd Font Mono" is the default and is recommended
+    ;; but you can use any other Nerd Font if you want
+    ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+    )
+
+#+end_src
+
+**** Turn Off Icons
+
+To turn off icons uncomment the following:
+
+#+begin_src emacs-lisp
+
+  ;; (setq doom-modeline-icon nil)
+
+#+end_src
+
+**** Configuration
+
+The following contains configurations of the =doom-modeline=. All the configurations here use the =setq=.
+
+***** Word Counter
+
+#+begin_src emacs-lisp
+
+  ;; If non-nil, a word count will be added to the selection-info modeline segment.
+  (setq doom-modeline-enable-word-count t)
+
+  ;; Major modes in which to display word count continuously.
+  ;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
+  ;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
+  ;; remove the modes from `doom-modeline-continuous-word-count-modes'.
+  (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
+
+#+end_src
+
+***** Environment Version
+
+#+begin_src emacs-lisp
+
+  (setq doom-modeline-env-version t)
 
 #+end_src
 
@@ -262,134 +403,9 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 
 #+end_src
 
-** Doom Modeline
-
-[[https://github.com/seagle0128/doom-modeline][doom-modeline]] is a very attractive and rich (yet still minimal) mode line configuration for Emacs.  The default configuration is quite good but you can check out the [[https://github.com/seagle0128/doom-modeline#customize][configuration options]] for more things you can enable or disable.
-
-If you are running in the =macos= terminal, then you have to make sure that you set the font to =Droid Sans Mono Nerd Font Complete 18=. You can do this by the following steps:
-
-- Navigate to =Settings=
-- Navigate to =Profiles= tab
-- Navigate to =Text= subtab
-- Under the =Font= menu click on =Change=
-- Select the appropriate font
-
-
-#+begin_src emacs-lisp
-
-  (use-package doom-modeline
-    :ensure t
-    :init (doom-modeline-mode 1)
-    :custom ((doom-modeline-height 15)))
-
-#+end_src
-
-*** Dependencies
-
-=doom-modeline= icons rely on =nerd-icons=. Thus, you must install the =nerd-icons= if you want to use the icons on the modeline.
-
-#+begin_src emacs-lisp
-
-  (use-package nerd-icons
-    ;; :custom
-    ;; The Nerd Font you want to use in GUI
-    ;; "Symbols Nerd Font Mono" is the default and is recommended
-    ;; but you can use any other Nerd Font if you want
-    ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
-    )
-
-#+end_src
-
-*** Turn Off Icons
-
-To turn off icons uncomment the following:
-
-#+begin_src emacs-lisp
-
-  ;; (setq doom-modeline-icon nil)
-
-#+end_src
-
-*** Configure
-
-The following contains configurations of the =doom-modeline=. All the configurations here use the =setq=.
-
-**** Word Counter
-
-#+begin_src emacs-lisp
-
-  ;; If non-nil, a word count will be added to the selection-info modeline segment.
-  (setq doom-modeline-enable-word-count t)
-
-  ;; Major modes in which to display word count continuously.
-  ;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
-  ;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
-  ;; remove the modes from `doom-modeline-continuous-word-count-modes'.
-  (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
-
-#+end_src
-
-**** Environment Version
-
-#+begin_src emacs-lisp
-
-  (setq doom-modeline-env-version t)
-
-#+end_src
-
-** Color Themes
-
-*** Doom Dracula
-
-#+begin_src emacs-lisp
-
-  (use-package doom-themes
-    :init (load-theme 'doom-dracula t))
-
-#+end_src
-
-** Which Key
-
-[[https://github.com/justbur/emacs-which-key][which-key]] is a useful UI panel that appears when you start pressing any key binding in Emacs to offer you all possible completions for the prefix. For example, if you press =C-c= (hold control and press the letter =c=), a panel will appear at the bottom of the frame displaying all of the bindings under that prefix and which command they run. This is very useful for learning the possible key bindings in the mode of your current buffer.
-
-#+begin_src emacs-lisp
-
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 1))
-
-#+end_src
-
-** Text Scaling
-
-This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to design a transient key binding for quickly adjusting the scale of the text on screen.  We define a hydra that is bound to =C-s t s= and, once activated, =j= and =k= increase and decrease the text scale.  You can press any other key (or =f= specifically) to exit the transient key map.
-
-#+begin_src emacs-lisp
-
-  (use-package hydra)
-
-  (defhydra hydra-text-scale (:timeout 4)
-    "scale text"
-    ("j" text-scale-increase "in")
-    ("k" text-scale-decrease "out")
-    ("f" nil "finished" :exit t))
-
-  (jw/leader-key-def
-    "ts" '(hydra-text-scale/body :which-key "scale text"))
-
-#+end_src
-
 * Org Mode
 
-** Tips
-
-To change the view to outline or full view use =SHIFT-TAB= repeatedly for the desired visual look.
-
-To condense or uncondense content under a heading, make sure the cursor is on the same line as the heading and use =TAB= to cycle through uncondensing or condensing the content.
-
-** Basic Config
+Set up Org Mode with a baseline configuration. The following sections will add more things to it.
 
 #+begin_src emacs-lisp
 
@@ -407,7 +423,14 @@ To condense or uncondense content under a heading, make sure the cursor is on th
 
 #+end_src
 
-*** Visual Fill Column
+** Tips
+
+To change the view to outline or full view use =SHIFT-TAB= repeatedly for the desired visual look.
+
+To condense or uncondense content under a heading, make sure the cursor is on the same line as the heading and use =TAB= to cycle through uncondensing or condensing the content.
+
+** User Interface
+*** Text Display (visual-fill-column) 
 
 =visual-fill-column= will create a document looking display with the extra padding on the left and on the right.
 
@@ -423,7 +446,7 @@ To condense or uncondense content under a heading, make sure the cursor is on th
 
 #+end_src
 
-*** Custom Heading Bullets
+*** Bullets (org-bullets)
 
 Customize the heading bullets to make it consistent and nicer.
 
@@ -437,7 +460,8 @@ Customize the heading bullets to make it consistent and nicer.
 
 #+end_src
 
-** Configure Babel Languages
+** Babel
+*** Load Languages
 
 To execute or export code in =org-mode= code blocks, you'll need to set up =org-babel-load-languages= for each language you'd like to use. [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
 
@@ -452,7 +476,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 
 #+end_src
 
-** Auto-tangle Configuration Files
+*** Auto-tangle
 
 This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-config= gets executed each time such a buffer gets saved.  This function checks to see if the file being saved is the Emacs.org file you're looking at right now, and if so, automatically exports the configuration here to the associated output files.
 
@@ -471,12 +495,8 @@ This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-con
 #+end_src
 
 * Development
-
-** Languages
-
-*** Language Server Support
-
-**** lsp-mode
+** Language Server Support
+*** lsp-mode
 
 We use the excellent [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] to enable IDE-like functionality for many different programming languages via "language servers" that speak the [[https://microsoft.github.io/language-server-protocol/][Language Server Protocol]].  Before trying to set up =lsp-mode= for a particular language, check out the [[https://emacs-lsp.github.io/lsp-mode/page/languages/][documentation for your language]] so that you can learn which language servers are available and how to install them.
 
@@ -534,8 +554,7 @@ Try these commands with =M-x=:
      :hook (lsp-mode . lsp-ivy-mode))
 
 #+end_src
-
-**** Company Mode
+*** Company Mode
 
 [[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
 
@@ -558,6 +577,9 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
     :hook (company-mode . company-box-mode))
 
 #+end_src
+
+** Languages
+*** Python
 
 ** Projectile
 
@@ -583,7 +605,6 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 #+end_src
 
 ** Git
-
 *** Magit
 
 [[https://magit.vc/][Magit]] is the best Git interface I've ever used.  Common Git operations are easy to execute quickly using Magit's command panel system.
@@ -605,9 +626,8 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-*** Command List
-
-**** Global Commands
+**** Commands
+***** Global Commands
 
 - =C-x g= (=magit-status=): Open Magit status buffer.
 - =C-c M-g= (=magit-dispatch-popup=): Open Magit command popup.
@@ -617,7 +637,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 - =C-c M-f= (=magit-pull-popup=): Pull changes.
 - =C-c M-b= (=magit-branch-popup=): Manage branches.
 
-**** In Magit Status Buffer
+***** Status Buffer
 
 - =TAB=: Expand/collapse section.
 - =S= (=magit-stage-item=): Stage changes.
@@ -630,7 +650,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 - =r= (=magit-refresh=): Refresh status buffer.
 - =d= (=magit-diff-popup=): Show changes.
 
-**** In Magit Diff Buffer
+***** Diff Buffer
 
 - =n= (=magit-section-forward=): Move to the next hunk.
 - =p= (=magit-section-backward=): Move to the previous hunk.
@@ -639,24 +659,35 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 - =C-c C-a= (=magit-diff-show-or-scroll-up=): Scroll up in diff buffer.
 - =C-c C-e= (=magit-diff-show-or-scroll-down=): Scroll down in diff buffer.
 
-**** In Magit Log Buffer
+***** Log Buffer
 - =l l= (=magit-log=): Refresh log buffer.
 - =RET=: Show details of the commit at point.
 - =d= (=magit-diff-visit-file=): Show changes for the commit at point.
 - =TAB=: Toggle commit details.
 
-**** In Magit Commit Buffer
+***** Commit Buffer
 - =C-c C-c= (=magit-commit=): Finish the commit.
 - =C-c C-a= (=magit-commit-ammend=): Amend the last commit.
 
-**** In Magit Branch Popup
+***** Branch Popup
 - =b c= (=magit-branch-create=): Create a new branch.
 - =b k= (=magit-branch-delete=): Delete a branch.
 - =b m= (=magit-branch-move=): Rename a branch.
 - =b r= (=magit-branch-rename=): Rename the current branch.
 - =b c= (=magit-branch-checkout=): Checkout a branch.
   
-** Rainbow Delimiters
+** Productivity
+*** Visualizing Delimiters
+**** Show Parent (native)
+
+=show-paren-mode= allows one to see matching pairs of parentheses and other characters. When point is on the opening character of one of the paired characters, the other is highlighted. When the point is after the closing character of one of the paired characters, the other is highlighted. 
+
+#+begin_src emacs-lisp
+
+  (show-paren-mode 1)
+
+#+end_src
+**** Rainbow Delimiters
 
 [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] is useful in programming modes because it colorizes nested parentheses and brackets according to their nesting depth.  This makes it a lot easier to visually match parentheses in Emacs Lisp code without having to count them yourself.
 
@@ -667,22 +698,8 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-** Managing Parent Pairs
-
-*** Evil Surround
-
-=evil-surround= emulates [[https://github.com/tpope/vim-surround][surround.vim]]. For usage instructions visit [[https://github.com/emacs-evil/evil-surround][evil-surround]]
-
-#+begin_src emacs-lisp
-
-  (use-package evil-surround
-    :ensure t
-    :config
-    (global-evil-surround-mode 1))
-
-#+end_src
-
-*** Eletric Pair Mode (native)
+*** Pairing Delimiters
+**** Eletric Pair (native)
 
 =electric-pair-mode= will auto pair delimiters for you. One issue with the auto pairing is the =<= character in =org-mode=. The following hook to the enabling of =electric-pair-mode= aims to solve the issue when in =org-mode=.
 
@@ -697,12 +714,17 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-*** Show Parent Mode (native)
+**** Evil Surround
 
-=show-paren-mode= allows one to see matching pairs of parentheses and other characters. When point is on the opening character of one of the paired characters, the other is highlighted. When the point is after the closing character of one of the paired characters, the other is highlighted. 
+=evil-surround= emulates [[https://github.com/tpope/vim-surround][surround.vim]]. For usage instructions visit [[https://github.com/emacs-evil/evil-surround][evil-surround]]
 
 #+begin_src emacs-lisp
 
-  (show-paren-mode 1)
+  (use-package evil-surround
+    :ensure t
+    :config
+    (global-evil-surround-mode 1))
 
 #+end_src
+
+

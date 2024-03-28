@@ -44,11 +44,12 @@
   (general-create-definer jw/leader-key-def
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
-    :global-prefix "C-SPC")
+    :global-prefix "C-SPC"))
 
-  (jw/leader-key-def
-    "t"  '(:ignore t :which-key "toggles")
-    "tt" '(counsel-load-theme :which-key "choose theme")))
+(jw/leader-key-def
+  "t"  '(:ignore t :which-key "toggles")
+  "tw" 'whitespace-mode
+  "tt" '(counsel-load-theme :which-key "choose theme"))
 
 (use-package evil
   :init
@@ -72,6 +73,12 @@
   :after evil
   :config
   (evil-collection-init))
+
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
 
 ;; Disable startup message when emacs starts
 (setq inhibit-startup-message t)
@@ -100,6 +107,49 @@
                 shell-mode-hook
                 eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+(use-package hydra)
+
+(defhydra hydra-text-scale (:timeout 4)
+  "scale text"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("f" nil "finished" :exit t))
+
+(jw/leader-key-def
+  "ts" '(hydra-text-scale/body :which-key "scale text"))
+
+(use-package doom-themes
+  :init (load-theme 'doom-dracula t))
+
+(setq display-time-format "%l:%M %p %b %y"
+      display-time-default-load-average nil)
+
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 15)))
+
+(use-package nerd-icons
+  ;; :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  )
+
+;; (setq doom-modeline-icon nil)
+
+;; If non-nil, a word count will be added to the selection-info modeline segment.
+(setq doom-modeline-enable-word-count t)
+
+;; Major modes in which to display word count continuously.
+;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
+;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
+;; remove the modes from `doom-modeline-continuous-word-count-modes'.
+(setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
+
+(setq doom-modeline-env-version t)
 
 (use-package command-log-mode)
 
@@ -141,52 +191,6 @@
   ([remap describe-command] . helpful-command)
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
-
-(use-package doom-modeline
-  :ensure t
-  :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 15)))
-
-(use-package nerd-icons
-  ;; :custom
-  ;; The Nerd Font you want to use in GUI
-  ;; "Symbols Nerd Font Mono" is the default and is recommended
-  ;; but you can use any other Nerd Font if you want
-  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
-  )
-
-;; (setq doom-modeline-icon nil)
-
-;; If non-nil, a word count will be added to the selection-info modeline segment.
-(setq doom-modeline-enable-word-count t)
-
-;; Major modes in which to display word count continuously.
-;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
-;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
-;; remove the modes from `doom-modeline-continuous-word-count-modes'.
-(setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
-
-(setq doom-modeline-env-version t)
-
-(use-package doom-themes
-  :init (load-theme 'doom-dracula t))
-
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 1))
-
-(use-package hydra)
-
-(defhydra hydra-text-scale (:timeout 4)
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("f" nil "finished" :exit t))
-
-(jw/leader-key-def
-  "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 (defun efs/org-mode-setup ()
   (org-indent-mode) ;; auto-indentation for headings
@@ -296,13 +300,10 @@
 ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
 (use-package forge)
 
+(show-paren-mode 1)
+
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
-
-(use-package evil-surround
-  :ensure t
-  :config
-  (global-evil-surround-mode 1))
 
 (electric-pair-mode t)
 
@@ -311,4 +312,7 @@
                  `(lambda (c)
                 (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
 
-(show-paren-mode 1)
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
