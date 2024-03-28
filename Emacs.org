@@ -403,6 +403,14 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 
 #+end_src
 
+* Edit Configuration
+** Use Spaces Instead of Tabs for Indentation
+
+#+begin_src emacs-lisp
+
+  (setq-default indent-tabs-mode nil)
+
+#+end_src
 * Org Mode
 
 Set up Org Mode with a baseline configuration. The following sections will add more things to it.
