@@ -604,6 +604,19 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
+**** Bindings
+
+#+begin_src emacs-lisp
+
+  (jw/leader-key-def
+    "pf"  'projectile-find-file
+    "ps"  'projectile-switch-project
+    "pp"  'projectile-find-file
+    "pc"  'projectile-compile-project
+    "pd"  'projectile-dired)
+
+#+end_src
+
 ** Git
 *** Magit
 
