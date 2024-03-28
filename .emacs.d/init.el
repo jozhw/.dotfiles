@@ -192,6 +192,8 @@
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
 
+(setq-default indent-tabs-mode nil)
+
 (defun efs/org-mode-setup ()
   (org-indent-mode) ;; auto-indentation for headings
   (variable-pitch-mode 1) ;; cause fonts to vary by proportionality
