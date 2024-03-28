@@ -287,6 +287,13 @@
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
 
+(jw/leader-key-def
+  "pf"  'projectile-find-file
+  "ps"  'projectile-switch-project
+  "pp"  'projectile-find-file
+  "pc"  'projectile-compile-project
+  "pd"  'projectile-dired)
+
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
