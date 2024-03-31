@@ -31,6 +31,35 @@ hit the =TAB= button. For example, the python snippit would be =<py TAB=.
 
 Since the compilation is sequential, you have to be careful in that =jw/leader-key-def= was defined in the *Keyboard Bindings* section and it is used in the *General Configuration* section under *Text Scaling* where =hydra= was used. This means that *Key Bindings* must be before the *Text Scaling* otherwise there will be a void error.
 
+* Running Emacs
+** Command Line (terminal)
+
+To run emacs in the command-line/terminal simply use the following command while in your command-line/terminal: =emacs -nw=.
+
+** Graphical User Interface
+*** Set Window Size to Full
+
+#+begin_src emacs-lisp
+
+  (if (display-graphic-p)
+      (progn
+        (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
+        (add-to-list 'default-frame-alist '(alpha . (90 . 90)))
+        (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
+        (add-to-list 'default-frame-alist '(fullscreen . maximized))))
+
+#+end_src
+
+*** Increase Font Size
+
+#+begin_src emacs-lisp
+
+  (if (display-graphic-p)
+      (progn
+        (set-face-attribute 'default nil :height 180)))
+
+#+end_src
+
 * Startup Performance
 
 Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
@@ -58,15 +87,15 @@ Also, turn on =lexical-binding= for the init file!
 * Package System 
 ** Setup (use-package)
 
-Emacs has a built in package manager but it doesn't make it easy to automatically install packages on a new system the first time you pull down your configuration. [[https://github.com/jwiegley/use-package][use-package]] is a really helpful package used in this configuration to make it a lot easier to automate the installation and configuration of everything else we use.
+[[https://github.com/jwiegley/use-package][use-package]] is a native package built into emacs since =v29.0.0= and is used in this configuration to make it a lot easier to automate the installation and configuration of everything else.
  
 #+begin_src emacs-lisp
-
 
   ;; Initialize package sources
   (require 'package)
 
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                           ("melpa-stable" . "https://stable.melpa.org/packages/")
                            ("org" . "https://orgmode.org/elpa/")
                            ("elpa" . "https://elpa.gnu.org/packages/")))
 
@@ -78,10 +107,28 @@ Emacs has a built in package manager but it doesn't make it easy to automaticall
   (unless (package-installed-p 'use-package)
      (package-install 'use-package))
 
-  (require 'use-package)
   (setq use-package-always-ensure t)
 
 #+end_src
+
+*** Debugging
+
+To debug =use-package= run =emacs --debug-init=.
+
+#+begin_src emacs-lisp
+  (if init-file-debug
+      (setq use-package-verbose t
+            use-package-expand-minimally nil
+            use-package-compute-statistics t
+            debug-on-error t)
+    (setq use-package-verbose nil
+          use-package-expand-minimally t))
+#+end_src
+
+**** Package Not Found
+
+If you get a package not found error and the package exists, then you can try
+refreshing the package contents by running =M-x package-refresh-contents=.
 
 * Keyboard Bindings
 ** ESC Cancels All
@@ -166,6 +213,30 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 #+end_src
 
 * General Configuration
+** Emacs
+#+begin_src emacs-lisp
+
+  ;; A few more useful configurations...
+  (use-package emacs
+    :init
+    ;; TAB cycle if there are only few candidates
+    ;; (setq completion-cycle-threshold 3)
+
+    ;; Enable indentation+completion using the TAB key.
+    ;; `completion-at-point' is often bound to M-TAB.
+    ;; (setq tab-always-indent 'complete)
+
+    ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
+    ;; try `cape-dict'.
+    (setq text-mode-ispell-word-completion nil)
+
+    ;; Emacs 28 and newer: Hide commands in M-x which do not apply to the current
+    ;; mode.  Corfu commands are hidden, since they are not used via M-x. This
+    ;; setting is useful beyond Corfu.
+    (setq read-extended-command-predicate #'command-completion-default-include-p))
+
+#+end_src
+
 ** User Interface
 
 For a minimalistic UI, the startup messages, scroll-bar, tool-bar, tooltip, menu-bar
@@ -411,6 +482,90 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
   (setq-default indent-tabs-mode nil)
 
 #+end_src
+* Completion System
+** Completions in Region with Corfu
+
+#+begin_src emacs-lisp
+  (use-package corfu
+    :ensure t
+    ;; Optional customizations
+    :custom
+    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+    (corfu-auto t)                 ;; Enable auto completion
+    (corfu-auto-prefix 2)
+    (corfu-auto-delay 0.8)
+    (corfu-popinfo-delay '(0.5 . 0.2))
+    (corfu-preview-current 'insert) ; insert previewed candidate
+    (corfu-preselect 'prompt)
+    ;; (corfu-separator ?\s)          ;; Orderless field separator
+    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+    ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+    ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+    ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+    ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+    :bind (:map corfu-map
+         ("C-j" . corfu-next)
+         ("C-k" . corfu-previous)
+         ("C-f" . corfu-insert))
+    ;; Enable Corfu only for certain modes.
+    ;; :hook ((prog-mode . corfu-mode)
+    ;;        (shell-mode . corfu-mode)
+    ;;        (eshell-mode . corfu-mode))
+
+    ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+    ;; be used globally (M-/).  See also the customization variable
+    ;; `global-corfu-modes' to exclude certain modes.
+    :init
+    (global-corfu-mode))
+
+#+end_src
+
+** Improved Candidate Filtering with Orderless
+
+#+begin_src emacs-lisp
+
+  (use-package orderless
+    :init
+    (setq completion-styles '(orderless)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles . (partial-completion))))))
+
+#+end_src
+
+** Completion Interface with Terminal Emacs
+
+Since =corfu.el= does not support running emacs in the terminal, I will just stick with =company.el= instead of =corfu-terminal=.
+
+[[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
+
+We also use [[https://github.com/sebastiencs/company-box][company-box]] to further enhance the look of the completions with icons and better overall presentation.
+
+
+#+begin_src emacs-lisp
+
+  (unless (display-graphic-p)
+      (progn
+        ;; Configuration for GUI mode
+        (use-package company
+          :after eglot
+          :hook (eglot--managed-mode . company-mode)
+          :bind (:map company-active-map
+                 ("<tab>" . company-complete-selection))
+                (:map eglot-mode-map
+                 ("<tab>" . company-indent-or-complete-common))
+          :custom
+          (company-minimum-prefix-length 1)
+          (company-idle-delay 0.0))
+      
+        (use-package company-box
+          :hook (company-mode . company-box-mode)))
+    ;; Configuration for terminal mode (optional)
+    ;; Add your terminal mode specific configuration here
+    )
+
+#+end_src
+
 * Org Mode
 
 Set up Org Mode with a baseline configuration. The following sections will add more things to it.
@@ -503,86 +658,13 @@ This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-con
 #+end_src
 
 * Development
-** Language Server Support
-*** lsp-mode
+** Language Server Support (eglot.el)
 
-We use the excellent [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] to enable IDE-like functionality for many different programming languages via "language servers" that speak the [[https://microsoft.github.io/language-server-protocol/][Language Server Protocol]].  Before trying to set up =lsp-mode= for a particular language, check out the [[https://emacs-lsp.github.io/lsp-mode/page/languages/][documentation for your language]] so that you can learn which language servers are available and how to install them.
-
-The =lsp-keymap-prefix= setting enables you to define a prefix for where =lsp-mode='s default keybindings will be added.  I *highly recommend* using the prefix to find out what you can do with =lsp-mode= in a buffer.
-
-The =which-key= integration adds helpful descriptions of the various keys so you should be able to learn a lot just by pressing =C-c l= in a =lsp-mode= buffer and trying different things that you find there.
-
+Undo the Eglot modifications of =completion-category-defaults=.
 #+begin_src emacs-lisp
 
-  (use-package lsp-mode
-   :init
-   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-   (setq lsp-keymap-prefix "C-c l")
-   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-          ;; if you want which-key integration
-          (lsp-mode . lsp-enable-which-key-integration))
-   :commands (lsp lsp-deferred)
-   ;; if not using company mode uncomment this
-   ;; :bind (:map lsp-mode-map
-   ;;      ("TAB" . completion-at-point))
-   :custom (lsp-headerline-breadcrumb-enable nil))
-
-
-
-#+end_src
-
-***** lsp-ui
-
-[[https://emacs-lsp.github.io/lsp-ui/][lsp-ui]] is a set of UI enhancements built on top of =lsp-mode= which make Emacs feel even more like an IDE.  Check out the screenshots on the =lsp-ui= homepage (linked at the beginning of this paragraph) to see examples of what it can do.
-
-#+begin_src emacs-lisp
-
-  (use-package lsp-ui
-    :hook (lsp-mode . lsp-ui-mode)
-    :config
-    (setq lsp-ui-sideline-enable t)
-    (setq lsp-ui-sideline-show-hover nil)
-    (setq lsp-ui-doc-position 'bottom)
-    (lsp-ui-doc-show))
-
-#+end_src
-
-***** lsp-ivy
-
-[[https://github.com/emacs-lsp/lsp-ivy][lsp-ivy]] integrates Ivy with =lsp-mode= to make it easy to search for things by name in your code.  When you run these commands, a prompt will appear in the minibuffer allowing you to type part of the name of a symbol in your code.  Results will be populated in the minibuffer so that you can find what you're looking for and jump to that location in the code upon selecting the result.
-
-Try these commands with =M-x=:
-
-- =lsp-ivy-workspace-symbol= - Search for a symbol name in the current project workspace
-- =lsp-ivy-global-workspace-symbol= - Search for a symbol name in all active project workspaces
-
-#+begin_src emacs-lisp
-
-  (use-package lsp-ivy
-     :hook (lsp-mode . lsp-ivy-mode))
-
-#+end_src
-*** Company Mode
-
-[[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
-
-We also use [[https://github.com/sebastiencs/company-box][company-box]] to further enhance the look of the completions with icons and better overall presentation.
-
-#+begin_src emacs-lisp
-
-  (use-package company
-    :after lsp-mode
-    :hook (lsp-mode . company-mode)
-    :bind (:map company-active-map
-           ("<tab>" . company-complete-selection))
-          (:map lsp-mode-map
-           ("<tab>" . company-indent-or-complete-common))
-    :custom
-    (company-minimum-prefix-length 1)
-    (company-idle-delay 0.0))
-
-  (use-package company-box
-    :hook (company-mode . company-box-mode))
+  (with-eval-after-load 'eglot
+     (setq completion-category-defaults nil))
 
 #+end_src
 
