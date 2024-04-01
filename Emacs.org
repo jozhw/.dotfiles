@@ -85,7 +85,7 @@ Also, turn on =lexical-binding= for the init file!
 #+end_src
 
 * Package System 
-** Setup (use-package)
+** Setup with use-package (native)
 
 [[https://github.com/jwiegley/use-package][use-package]] is a native package built into emacs since =v29.0.0= and is used in this configuration to make it a lot easier to automate the installation and configuration of everything else.
  
@@ -491,7 +491,7 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 
 #+end_src
 
-** Completions in Region with Corfu
+** Completions in Region (corfu)
 
 #+begin_src emacs-lisp
   (use-package corfu
@@ -529,7 +529,7 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 
 #+end_src
 
-** Improved Candidate Filtering with Orderless
+** Improved Candidate Filtering (orderless)
 
 #+begin_src emacs-lisp
 
@@ -681,7 +681,7 @@ This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-con
 #+end_src
 
 * Development
-** Language Server Support (eglot.el)
+** Language Server Support with Eglot (native)
 
 Undo the Eglot modifications of =completion-category-defaults=.
 #+begin_src emacs-lisp
