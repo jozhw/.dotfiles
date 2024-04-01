@@ -417,45 +417,6 @@ The following contains configurations of the =doom-modeline=. All the configurat
 
 To activate =command-log-mode= you must first run =M-x global-command-log-mode= to have =command-log-mode= in every buffer and then run =M-x clm/toggle-command-log-buffer= to have the buffer be displayed.
 
-** Ivy and Counsel
-
-[[https://oremacs.com/swiper/][Ivy]] is an excellent completion framework for Emacs.  It provides a minimal yet powerful selection menu that appears when you open files, switch buffers, and for many other tasks in Emacs.  Counsel is a customized set of commands to replace `find-file` with `counsel-find-file`, etc which provide useful commands for each of the default completion commands.
-
-[[https://github.com/Yevgnen/ivy-rich][ivy-rich]] adds extra columns to a few of the Counsel commands to provide more information about each item.
-
-#+begin_src emacs-lisp
-
-  (use-package ivy
-    :diminish
-    :bind (("C-s" . swiper)
-           :map ivy-minibuffer-map
-           ("TAB" . ivy-alt-done)
-           ("C-l" . ivy-alt-done)
-           ("C-j" . ivy-next-line)
-           ("C-k" . ivy-previous-line)
-           :map ivy-switch-buffer-map
-           ("C-k" . ivy-previous-line)
-           ("C-l" . ivy-done)
-           ("C-d" . ivy-switch-buffer-kill)
-           :map ivy-reverse-i-search-map
-           ("C-k" . ivy-previous-line)
-           ("C-d" . ivy-reverse-i-search-kill))
-    :config
-    (ivy-mode 1))
-
-  (use-package ivy-rich
-    :init
-    (ivy-rich-mode 1))
-
-  (use-package counsel
-    :bind (("C-M-j" . 'counsel-switch-buffer)
-           :map minibuffer-local-map
-           ("C-r" . 'counsel-minibuffer-history))
-    :config
-    (counsel-mode 1))
-
-#+end_src
-
 ** Helpful
 
 [[https://github.com/Wilfred/helpful][Helpful]] adds a lot of very helpful (get it?) information to Emacs' =describe-= command buffers.  For example, if you use =describe-function=, you will not only get the documentation about the function, you will also see the source code of the function and where it gets used in other places in the Emacs configuration.  It is very useful for figuring out how things work in Emacs.
@@ -483,6 +444,53 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 
 #+end_src
 * Completion System
+** Preserve Minibuffer History (savehist-mode)
+#+begin_src emacs-lisp
+
+  (use-package savehist
+    :config
+    (setq history-length 25)
+    (savehist-mode 1))
+
+    ;; Individual history elements can be configured separately
+    ;;(put 'minibuffer-history 'history-length 25)
+    ;;(put 'evil-ex-history 'history-length 50)
+    ;;(put 'kill-ring 'history-length 25))
+
+#+end_src
+
+** Completion (vertico)
+
+#+begin_src emacs-lisp
+
+  (defun jw/minibuffer-backward-kill (arg)
+    "When minibuffer is completing a file name delete up to parent
+  folder, otherwise delete a word"
+    (interactive "p")
+    (if minibuffer-completing-file-name
+        ;; Borrowed from https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
+        (if (string-match-p "/." (minibuffer-contents))
+            (zap-up-to-char (- arg) ?/)
+          (delete-minibuffer-contents))
+        (delete-word (- arg))))
+
+  (use-package vertico
+    :ensure t
+    :bind (:map vertico-map
+           ("C-j" . vertico-next)
+           ("C-k" . vertico-previous)
+           ("C-f" . vertico-exit)
+           :map minibuffer-local-map
+           ("M-h" . jw/minibuffer-backward-kill))
+    :custom
+    (vertico-cycle t)
+    :custom-face
+    (vertico-current ((t (:background "#3a3f5a"))))
+    :init
+    (vertico-mode))
+
+#+end_src
+
 ** Completions in Region with Corfu
 
 #+begin_src emacs-lisp
@@ -566,6 +574,21 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
+** Completion Annotations (marginalia)
+
+Marginalia provides helpful annotations for various types of minibuffer completions. You can think of it as a replacement of =ivy-rich=.
+
+#+begin_src emacs-lisp
+
+  (use-package marginalia
+    :after vertico
+    :ensure t
+    :custom
+    (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+    :init
+    (marginalia-mode))
+
+#+end_src
 * Org Mode
 
 Set up Org Mode with a baseline configuration. The following sections will add more things to it.
