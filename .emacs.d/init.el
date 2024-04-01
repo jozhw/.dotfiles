@@ -191,35 +191,6 @@
 
 (use-package command-log-mode)
 
-(use-package ivy
-  :diminish
-  :bind (("C-s" . swiper)
-         :map ivy-minibuffer-map
-         ("TAB" . ivy-alt-done)
-         ("C-l" . ivy-alt-done)
-         ("C-j" . ivy-next-line)
-         ("C-k" . ivy-previous-line)
-         :map ivy-switch-buffer-map
-         ("C-k" . ivy-previous-line)
-         ("C-l" . ivy-done)
-         ("C-d" . ivy-switch-buffer-kill)
-         :map ivy-reverse-i-search-map
-         ("C-k" . ivy-previous-line)
-         ("C-d" . ivy-reverse-i-search-kill))
-  :config
-  (ivy-mode 1))
-
-(use-package ivy-rich
-  :init
-  (ivy-rich-mode 1))
-
-(use-package counsel
-  :bind (("C-M-j" . 'counsel-switch-buffer)
-         :map minibuffer-local-map
-         ("C-r" . 'counsel-minibuffer-history))
-  :config
-  (counsel-mode 1))
-
 (use-package helpful
   :custom
   (counsel-describe-function-function #'helpful-callable)
@@ -231,6 +202,42 @@
   ([remap describe-key] . helpful-key))
 
 (setq-default indent-tabs-mode nil)
+
+(use-package savehist
+  :config
+  (setq history-length 25)
+  (savehist-mode 1))
+
+  ;; Individual history elements can be configured separately
+  ;;(put 'minibuffer-history 'history-length 25)
+  ;;(put 'evil-ex-history 'history-length 50)
+  ;;(put 'kill-ring 'history-length 25))
+
+(defun jw/minibuffer-backward-kill (arg)
+  "When minibuffer is completing a file name delete up to parent
+folder, otherwise delete a word"
+  (interactive "p")
+  (if minibuffer-completing-file-name
+      ;; Borrowed from https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
+      (if (string-match-p "/." (minibuffer-contents))
+          (zap-up-to-char (- arg) ?/)
+        (delete-minibuffer-contents))
+      (delete-word (- arg))))
+
+(use-package vertico
+  :ensure t
+  :bind (:map vertico-map
+         ("C-j" . vertico-next)
+         ("C-k" . vertico-previous)
+         ("C-f" . vertico-exit)
+         :map minibuffer-local-map
+         ("M-h" . jw/minibuffer-backward-kill))
+  :custom
+  (vertico-cycle t)
+  :custom-face
+  (vertico-current ((t (:background "#3a3f5a"))))
+  :init
+  (vertico-mode))
 
 (use-package corfu
   :ensure t
@@ -290,6 +297,14 @@
   ;; Configuration for terminal mode (optional)
   ;; Add your terminal mode specific configuration here
   )
+
+(use-package marginalia
+  :after vertico
+  :ensure t
+  :custom
+  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+  :init
+  (marginalia-mode))
 
 (defun efs/org-mode-setup ()
   (org-indent-mode) ;; auto-indentation for headings
