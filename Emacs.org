@@ -595,13 +595,13 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 #+begin_src emacs-lisp
 
-  (defun efs/org-mode-setup ()
+  (defun jw/org-mode-setup ()
     (org-indent-mode) ;; auto-indentation for headings
     (variable-pitch-mode 1) ;; cause fonts to vary by proportionality
     (visual-line-mode 1)) ;; wrap the text so that it does not go out of view
 
   (use-package org
-    :hook (org-mode . efs/org-mode-setup)
+    :hook (org-mode . jw/org-mode-setup)
     :config
     (setq org-ellipsis " ▾") ;; when org headings closed down arrow instead of ellipsis
     )
@@ -622,13 +622,13 @@ To condense or uncondense content under a heading, make sure the cursor is on th
 
 #+begin_src emacs-lisp
 
-  (defun efs/org-mode-visual-fill ()
+  (defun jw/org-mode-visual-fill ()
     (setq visual-fill-column-width 100
           visual-fill-column-center-text t)
     (visual-fill-column-mode 1))
 
   (use-package visual-fill-column
-    :hook (org-mode . efs/org-mode-visual-fill))
+    :hook (org-mode . jw/org-mode-visual-fill))
 
 #+end_src
 
@@ -664,19 +664,19 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 
 *** Auto-tangle
 
-This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-config= gets executed each time such a buffer gets saved.  This function checks to see if the file being saved is the Emacs.org file you're looking at right now, and if so, automatically exports the configuration here to the associated output files.
+This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-config= gets executed each time such a buffer gets saved.  This function checks to see if the file being saved is the Emacs.org file you're looking at right now, and if so, automatically exports the configuration here to the associated output files.
 
 #+begin_src emacs-lisp
 
   ;; Automatically tangle our Emacs.org config file when we save it
-  (defun efs/org-babel-tangle-config ()
+  (defun jw/org-babel-tangle-config ()
     (when (string-equal (buffer-file-name)
                         (expand-file-name "~/.dotfiles/Emacs.org"))
       ;; Dynamic scoping to the rescue
       (let ((org-confirm-babel-evaluate nil))
         (org-babel-tangle))))
 
-  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
+  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'jw/org-babel-tangle-config)))
 
 #+end_src
 
