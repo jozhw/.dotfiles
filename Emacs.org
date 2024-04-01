@@ -533,7 +533,7 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 
 #+end_src
 
-** Completion Interface with Terminal Emacs
+** Completion Interface with Terminal Emacs (company)
 
 Since =corfu.el= does not support running emacs in the terminal, I will just stick with =company.el= instead of =corfu-terminal=.
 
