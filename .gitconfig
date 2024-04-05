@@ -1,0 +1,11 @@
+[user]
+	email = 112655410+jozhw@users.noreply.github.com
+	name = John W.
+	signingkey = /Users/johnz.wu/.ssh/id_ed25519.pub
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[gpg]
+	format = ssh
