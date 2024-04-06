@@ -2,6 +2,7 @@
 \.gitignore
 \.github
 \.gitattributes
+.gitmodules
 
 ^/.*\.org
 ^/README.*
@@ -11,3 +12,7 @@
 archive
 
 CHANGELOG.md
+
+brew/
+stow/
+atzlan/
