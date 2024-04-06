@@ -56,6 +56,39 @@
   (setq use-package-verbose nil
         use-package-expand-minimally t))
 
+(eval-and-compile
+  (defvar use-package-selected-packages nil
+   "Explicitly installed packages.")
+
+  (define-advice use-package-handler/:ensure
+      (:around (fn name-symbol keyword args rest state) select)
+    (let ((items (funcall fn name-symbol keyword args rest state)))
+      (dolist (ensure args items)
+        (let ((package
+               (or (and (eq ensure t) (use-package-as-symbol name-symbol))
+                   ensure)))
+          (when package
+            (when (consp package)
+              (setq package (car package)))
+            (push `(add-to-list 'use-package-selected-packages ',package) items))))))
+
+  (define-advice use-package-handler/:vc
+      (:around (fn name-symbol &rest rest) select)
+    (cons `(add-to-list 'use-package-selected-packages ',name-symbol)
+          (apply fn name-symbol rest))))
+
+(define-advice use-package-handler/:init
+  (:around (fn name-symbol keyword args rest state) select)
+(let ((items (funcall fn name-symbol keyword args rest state)))
+  (dolist (init args items)
+    (push `(add-to-list 'use-package-selected-packages ',name-symbol) items))))
+
+(defun use-package-autoremove ()
+"Autoremove packages not used by use-package."
+(interactive)
+(let ((package-selected-packages use-package-selected-packages))
+  (package-autoremove)))
+
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 (use-package general
