@@ -734,42 +734,6 @@ Undo the Eglot modifications of =completion-category-defaults=.
 ** Languages
 *** Python
 
-** Projectile
-
-[[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to have it installed even if you don't use its commands directly.
-
-#+begin_src emacs-lisp
-
-  (use-package projectile
-    :diminish projectile-mode
-    :config (projectile-mode)
-    :custom ((projectile-completion-system 'ivy))
-    :bind-keymap
-    ("C-c p" . projectile-command-map)
-    :init
-    ;; NOTE: Set this to the folder where you keep your Git repos!
-    (when (file-directory-p "~/projects-code")
-      (setq projectile-project-search-path '("~/projects-code")))
-    (setq projectile-switch-project-action #'projectile-dired))
-
-  (use-package counsel-projectile
-    :config (counsel-projectile-mode))
-
-#+end_src
-
-**** Bindings
-
-#+begin_src emacs-lisp
-
-  (jw/leader-key-def
-    "pf"  'projectile-find-file
-    "ps"  'projectile-switch-project
-    "pp"  'projectile-find-file
-    "pc"  'projectile-compile-project
-    "pd"  'projectile-dired)
-
-#+end_src
-
 ** Git
 *** Magit
 
@@ -893,4 +857,45 @@ Undo the Eglot modifications of =completion-category-defaults=.
 
 #+end_src
 
+* Archive
+** Projectile
+*** Rationale
 
+The reason why =projectile= is archived is because I want to utilize the built in emacs package =project.el=. Additionally, my previous configuration utilized =ivy= and currently I am not using it for my completion system. I have also noticed that =project.el= encountered significant amount of lag when changing to a project file, thus to mitigate that lag, I have decided to switch away from =projectile=. Note, there are amazing features that =projectile= offers, however I do not use them, so I see no point in using =projectile= anymore. 
+
+*** Code
+**** Projectile
+
+[[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to have it installed even if you don't use its commands directly.
+
+#+begin_src emacs-lisp
+
+  ;; (use-package projectile
+  ;;   :diminish projectile-mode
+  ;;   :config (projectile-mode)
+  ;;   :custom ((projectile-completion-system 'ivy))
+  ;;   :bind-keymap
+  ;;   ("C-c p" . projectile-command-map)
+  ;;   :init
+  ;;   ;; NOTE: Set this to the folder where you keep your Git repos!
+  ;;   (when (file-directory-p "~/projects-code")
+  ;;     (setq projectile-project-search-path '("~/projects-code")))
+  ;;   (setq projectile-switch-project-action #'projectile-dired))
+
+  ;; (use-package counsel-projectile
+  ;;   :config (counsel-projectile-mode))
+
+#+end_src
+
+**** Bindings
+
+#+begin_src emacs-lisp
+
+  ;; (jw/leader-key-def
+  ;;   "pf"  'projectile-find-file
+  ;;   "ps"  'projectile-switch-project
+  ;;   "pp"  'projectile-find-file
+  ;;   "pc"  'projectile-compile-project
+  ;;   "pd"  'projectile-dired)
+
+#+end_src
