@@ -384,6 +384,17 @@ folder, otherwise delete a word"
 (with-eval-after-load 'eglot
    (setq completion-category-defaults nil))
 
+(require 'project)
+
+(defun jw/project-prompter ()
+     (read-file-name "Select a project folder:"
+                     "~/Projects/Code/"
+                     nil
+                     nil
+                     nil
+                     #'file-directory-p))
+(setq project-prompter #'jw/project-prompter)
+
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
