@@ -85,7 +85,8 @@ Also, turn on =lexical-binding= for the init file!
 #+end_src
 
 * Package System 
-** Setup with use-package (native)
+** Setup 
+*** Use-package (native)
 
 [[https://github.com/jwiegley/use-package][use-package]] is a native package built into emacs since =v29.0.0= and is used in this configuration to make it a lot easier to automate the installation and configuration of everything else.
  
@@ -111,7 +112,7 @@ Also, turn on =lexical-binding= for the init file!
 
 #+end_src
 
-*** Debugging
+**** Debugging
 
 To debug =use-package= run =emacs --debug-init=.
 
@@ -131,6 +132,7 @@ If you get a package not found error and the package exists, then you can try
 refreshing the package contents by running =M-x package-refresh-contents=.
 
 ** Removing Packages
+*** Use-package (native)
 
 To remove packages that are not used run =M-x use-package-autoremove=. However, the current code only works for packages that have the =:ensure= | =:vc= | =:init= keywords. 
 
@@ -170,6 +172,7 @@ To remove packages that are not used run =M-x use-package-autoremove=. However, 
     (package-autoremove)))
 
 #+end_src
+
 * Keyboard Bindings
 ** ESC Cancels All
 
@@ -181,7 +184,8 @@ Bind the quit prompting function to the =esc= key.
 
 #+end_src
 
-** Simplify Leader Bindings (general.el)
+** Simplify Leader Bindings 
+*** General.el
 
 [[https://github.com/noctuid/general.el][general.el]] is a fantastic library for defining prefixed keybindings, especially
 in conjunction with Evil modes.
@@ -238,17 +242,18 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+end_src
 
-** Key Binding Panel (which-key)
+** Key Binding Panel 
+*** Which-key
 
 [[https://github.com/justbur/emacs-which-key][which-key]] is a useful UI panel that appears when you start pressing any key binding in Emacs to offer you all possible completions for the prefix. For example, if you press =C-c= (hold control and press the letter =c=), a panel will appear at the bottom of the frame displaying all of the bindings under that prefix and which command they run. This is very useful for learning the possible key bindings in the mode of your current buffer.
 
 #+begin_src emacs-lisp
 
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 1))
+  (use-package which-key
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :config
+    (setq which-key-idle-delay 1))
 
 #+end_src
 
@@ -329,7 +334,8 @@ In addition to line numbers, the column number will also be displayed.
 
 #+end_src
 
-*** Text Scaling (hydra)
+*** Text Scaling
+**** Hydra
 
 This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to design a transient key binding for quickly adjusting the scale of the text on screen.  We define a hydra that is bound to =C-s t s= and, once activated, =j= and =k= increase and decrease the text scale.  You can press any other key (or =f= specifically) to exit the transient key map.
 
@@ -349,7 +355,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 #+end_src
 
 ** Themes
-
+*** Doom
 I currently am using the [[https://github.com/hlissner/emacs-doom-themes][DOOM Themes]], specifically =doom-dracula=.
 
 #+begin_src emacs-lisp
@@ -484,7 +490,9 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 
 #+end_src
 * Completion System
-** Preserve Minibuffer History (savehist-mode)
+** Preserve Minibuffer History
+*** Savehist-mode
+
 #+begin_src emacs-lisp
 
   (use-package savehist
@@ -499,7 +507,8 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 
 #+end_src
 
-** Completion (vertico)
+** Completion 
+*** Vertico
 
 #+begin_src emacs-lisp
 
@@ -531,7 +540,8 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 
 #+end_src
 
-** Completions in Region (corfu)
+** Completions in Region 
+*** Corfu
 
 #+begin_src emacs-lisp
   (use-package corfu
@@ -569,19 +579,7 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 
 #+end_src
 
-** Improved Candidate Filtering (orderless)
-
-#+begin_src emacs-lisp
-
-  (use-package orderless
-    :init
-    (setq completion-styles '(orderless)
-          completion-category-defaults nil
-          completion-category-overrides '((file (styles . (partial-completion))))))
-
-#+end_src
-
-** Completion Interface with Terminal Emacs (company)
+** Completion Interface with Terminal Emacs
 
 Since =corfu.el= does not support running emacs in the terminal, I will just stick with =company.el= instead of =corfu-terminal=.
 
@@ -614,7 +612,21 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-** Completion Annotations (marginalia)
+** Improved Candidate Filtering 
+*** Orderless
+
+#+begin_src emacs-lisp
+
+  (use-package orderless
+    :init
+    (setq completion-styles '(orderless)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles . (partial-completion))))))
+
+#+end_src
+
+** Completion Annotations
+*** Marginalia
 
 Marginalia provides helpful annotations for various types of minibuffer completions. You can think of it as a replacement of =ivy-rich=.
 

@@ -305,12 +305,6 @@ folder, otherwise delete a word"
   :init
   (global-corfu-mode))
 
-(use-package orderless
-  :init
-  (setq completion-styles '(orderless)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles . (partial-completion))))))
-
 (unless (display-graphic-p)
     (progn
       ;; Configuration for GUI mode
@@ -330,6 +324,12 @@ folder, otherwise delete a word"
   ;; Configuration for terminal mode (optional)
   ;; Add your terminal mode specific configuration here
   )
+
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion))))))
 
 (use-package marginalia
   :after vertico
