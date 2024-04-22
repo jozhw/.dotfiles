@@ -641,7 +641,8 @@ Marginalia provides helpful annotations for various types of minibuffer completi
     (marginalia-mode))
 
 #+end_src
-* Org Mode
+* Org
+** Org Mode
 
 Set up Org Mode with a baseline configuration. The following sections will add more things to it.
 
@@ -661,13 +662,13 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 #+end_src
 
-** Tips
+*** Tips
 
 To change the view to outline or full view use =SHIFT-TAB= repeatedly for the desired visual look.
 
 To condense or uncondense content under a heading, make sure the cursor is on the same line as the heading and use =TAB= to cycle through uncondensing or condensing the content.
 
-** User Interface
+*** User Interface
 *** Text Display (visual-fill-column) 
 
 =visual-fill-column= will create a document looking display with the extra padding on the left and on the right.
@@ -698,7 +699,7 @@ Customize the heading bullets to make it consistent and nicer.
 
 #+end_src
 
-** Babel
+*** Babel
 *** Load Languages
 
 To execute or export code in =org-mode= code blocks, you'll need to set up =org-babel-load-languages= for each language you'd like to use. [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
@@ -729,6 +730,67 @@ This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-conf
         (org-babel-tangle))))
 
   (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'jw/org-babel-tangle-config)))
+
+#+end_src
+
+** Org Roam
+*** Installation
+
+#+begin_src emacs-lisp
+
+  (use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory (file-truename "~/OrgRoamTest/"))
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ;; Dailies
+           ("C-c n j" . org-roam-dailies-capture-today))
+    :config
+    ;; If you're using a vertical completion framework, you might want a more informative completion interface
+    (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+    (org-roam-db-autosync-mode)
+    ;; If using org-roam-protocol
+    (require 'org-roam-protocol))
+
+#+end_src
+
+*** Switching Zettlekasten
+
+Code taken and adjusted for my usecase from [[https://www.reddit.com/r/emacs/comments/135dhh5/code_snippet_to_switch_between_multiple/][@SnooPets20's post.]]
+
+The idea of this switching is to maximize the utility of =org-roam=. In some cases, especially when learning new things, using the *Zettlekasten* method would be ideal as it is devoid of hierarchical structure, thus allowing pure linkages that are not tainted with biases or influencing on how it is perceived by the framework in which it resides. However, for other things it may be more useful to integrate everything in a more hierarchical fashion and create links between different hierarchies.
+
+In order to maintain these various usecases, the content of each should be stored outside the =org-roam= directory (to avoid duplication). 
+
+#+begin_src emacs-lisp
+
+  (setq zettlekasten-paths-alist '(("Main" . "~/Trove/Epektasi/")
+                                   ("Zettlekasten" . "~/Trove/Zettlekasten/")
+                                   ("Test" . "~/OrgRoamTest/")))
+
+  (defun switch-zettlekasten ()
+    (interactive)
+    (let* ((keys (mapcar #'car zettlekasten-paths-alist))
+           (prompt (format "Select Zettlekasten:"))
+           (key (completing-read prompt keys))
+           (chosen-zettlekasten-path (cdr (assoc key zettlekasten-paths-alist))))
+      (setq org-roam-directory chosen-zettlekasten-path)
+      (setq org-roam-db-location (concat chosen-zettlekasten-path "org-roam.db"))
+      (org-roam-db-sync)))
+
+#+end_src
+
+*** Org-roam-ui
+
+=org-roam-ui= is used to visualize =org-roam= web. 
+
+#+begin_src emacs-lisp
+
+  (package-install 'org-roam-ui)
 
 #+end_src
 
