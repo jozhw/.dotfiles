@@ -1,0 +1,6 @@
+#+title: Emacs Help
+
+* Commenting
+** =C-x C-;=
+
+Comment or uncomment the current line (comment-line). If the region is active, comment or uncomment the lines in the region instead. 
