@@ -794,7 +794,7 @@ In order to maintain these various usecases, the content of each should be store
 
 #+end_src
 
-* Productivity
+* Personal Information Management
 ** Denote
 
 *** Initialization 
