@@ -101,7 +101,7 @@
 (jw/leader-key-def
   "t"  '(:ignore t :which-key "toggles")
   "tw" 'whitespace-mode
-  "tt" '(counsel-load-theme :which-key "choose theme"))
+  )
 
 (use-package evil
   :init
@@ -125,12 +125,6 @@
   :after evil
   :config
   (evil-collection-init))
-
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 1))
 
 ;; A few more useful configurations...
 (use-package emacs
@@ -225,13 +219,8 @@
 (use-package command-log-mode)
 
 (use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
   :bind
-  ([remap describe-function] . counsel-describe-function)
   ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
 
 (setq-default indent-tabs-mode nil)
@@ -538,3 +527,9 @@ folder, otherwise delete a word"
 ;;   "pp"  'projectile-find-file
 ;;   "pc"  'projectile-compile-project
 ;;   "pd"  'projectile-dired)
+
+;; (use-package which-key
+;;   :init (which-key-mode)
+;;   :diminish which-key-mode
+;;   :config
+;;   (setq which-key-idle-delay 1))
