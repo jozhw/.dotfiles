@@ -468,6 +468,11 @@ folder, otherwise delete a word"
 ;; `context-menu-mode'.
 (add-hook 'context-menu-functions #'denote-context-menu)
 
+(setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
+
+(setq lock-file-name-transforms
+    '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
+
 (with-eval-after-load 'eglot
    (setq completion-category-defaults nil))
 

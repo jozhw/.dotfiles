@@ -868,6 +868,17 @@ In order to maintain these various usecases, the content of each should be store
 
 #+end_src
 
+** Keep Directories Clean
+
+#+begin_src emacs-lisp
+
+  (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
+
+  (setq lock-file-name-transforms
+      '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
+
+#+end_src
+
 * Development
 ** Language Server Support with Eglot (native)
 
