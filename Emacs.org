@@ -208,7 +208,7 @@ in conjunction with Evil modes.
   (jw/leader-key-def
     "t"  '(:ignore t :which-key "toggles")
     "tw" 'whitespace-mode
-    "tt" '(counsel-load-theme :which-key "choose theme"))
+    )
 
 #+end_src
 
@@ -239,21 +239,6 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
     :after evil
     :config
     (evil-collection-init))
-
-#+end_src
-
-** Key Binding Panel 
-*** Which-key
-
-[[https://github.com/justbur/emacs-which-key][which-key]] is a useful UI panel that appears when you start pressing any key binding in Emacs to offer you all possible completions for the prefix. For example, if you press =C-c= (hold control and press the letter =c=), a panel will appear at the bottom of the frame displaying all of the bindings under that prefix and which command they run. This is very useful for learning the possible key bindings in the mode of your current buffer.
-
-#+begin_src emacs-lisp
-
-  (use-package which-key
-    :init (which-key-mode)
-    :diminish which-key-mode
-    :config
-    (setq which-key-idle-delay 1))
 
 #+end_src
 
@@ -470,13 +455,8 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 #+begin_src emacs-lisp
 
   (use-package helpful
-    :custom
-    (counsel-describe-function-function #'helpful-callable)
-    (counsel-describe-variable-function #'helpful-variable)
     :bind
-    ([remap describe-function] . counsel-describe-function)
     ([remap describe-command] . helpful-command)
-    ([remap describe-variable] . counsel-describe-variable)
     ([remap describe-key] . helpful-key))
 
 #+end_src
@@ -796,7 +776,6 @@ In order to maintain these various usecases, the content of each should be store
 
 * Personal Information Management
 ** Denote
-
 *** Initialization 
 
 #+begin_src emacs-lisp
@@ -1078,5 +1057,19 @@ The reason why =projectile= is archived is because I want to utilize the built i
   ;;   "pp"  'projectile-find-file
   ;;   "pc"  'projectile-compile-project
   ;;   "pd"  'projectile-dired)
+
+#+end_src
+
+** Which-key
+
+[[https://github.com/justbur/emacs-which-key][which-key]] is a useful UI panel that appears when you start pressing any key binding in Emacs to offer you all possible completions for the prefix. For example, if you press =C-c= (hold control and press the letter =c=), a panel will appear at the bottom of the frame displaying all of the bindings under that prefix and which command they run. This is very useful for learning the possible key bindings in the mode of your current buffer.
+
+#+begin_src emacs-lisp
+
+  ;; (use-package which-key
+  ;;   :init (which-key-mode)
+  ;;   :diminish which-key-mode
+  ;;   :config
+  ;;   (setq which-key-idle-delay 1))
 
 #+end_src
