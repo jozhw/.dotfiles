@@ -402,7 +402,8 @@ folder, otherwise delete a word"
     (setq org-roam-db-location (concat chosen-zettlekasten-path "org-roam.db"))
     (org-roam-db-sync)))
 
-(package-install 'org-roam-ui)
+(use-package org-roam-ui
+  :ensure t)
 
 (use-package denote
                  :ensure t)
@@ -467,45 +468,6 @@ folder, otherwise delete a word"
 
 (require 'project)
 
-(defun jw/project-prompter ()
-     (read-file-name "Select a project folder:"
-                     "~/Projects/Code/"
-                     nil
-                     nil
-                     nil
-                     #'file-directory-p))
-(setq project-prompter #'jw/project-prompter)
-
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
-
-(use-package magit
-  :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-;; NOTE: Make sure to configure a GitHub token before using this package!
-;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
-;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
-(use-package forge)
-
-(show-paren-mode 1)
-
-(use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode))
-
-(electric-pair-mode t)
-
-(add-hook 'org-mode-hook (lambda ()
-         (setq-local electric-pair-inhibit-predicate
-                 `(lambda (c)
-                (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
-
-(use-package evil-surround
-  :ensure t
-  :config
-  (global-evil-surround-mode 1))
-
 ;; (use-package projectile
 ;;   :diminish projectile-mode
 ;;   :config (projectile-mode)
@@ -520,13 +482,6 @@ folder, otherwise delete a word"
 
 ;; (use-package counsel-projectile
 ;;   :config (counsel-projectile-mode))
-
-;; (jw/leader-key-def
-;;   "pf"  'projectile-find-file
-;;   "ps"  'projectile-switch-project
-;;   "pp"  'projectile-find-file
-;;   "pc"  'projectile-compile-project
-;;   "pd"  'projectile-dired)
 
 ;; (use-package which-key
 ;;   :init (which-key-mode)

@@ -770,7 +770,8 @@ In order to maintain these various usecases, the content of each should be store
 
 #+begin_src emacs-lisp
 
-  (package-install 'org-roam-ui)
+  (use-package org-roam-ui
+    :ensure t)
 
 #+end_src
 
@@ -883,14 +884,14 @@ Undo the Eglot modifications of =completion-category-defaults=.
 Currently the code below only works for =emacs 30+=.
 
 #+begin_src emacs-lisp
-  (defun jw/project-prompter ()
-       (read-file-name "Select a project folder:"
-                       "~/Projects/Code/"
-                       nil
-                       nil
-                       nil
-                       #'file-directory-p))
-  (setq project-prompter #'jw/project-prompter)
+  ;; (defun jw/project-prompter ()
+  ;;      (read-file-name "Select a project folder:"
+  ;;                      "~/Projects/Code/"
+  ;;                      nil
+  ;;                      nil
+  ;;                      nil
+  ;;                      #'file-directory-p))
+  ;; (setq project-prompter #'jw/project-prompter)
 
 #+end_src
 
