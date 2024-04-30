@@ -784,7 +784,7 @@ In order to maintain these various usecases, the content of each should be store
   (use-package denote
                    :ensure t)
 
-  (setq denote-directory (expand-file-name "~/Trove/Denote/"))
+  (setq denote-directory (expand-file-name "~/Otzar/Gnosis/"))
   (setq denote-save-buffer-after-creation nil)
 
 #+end_src
@@ -793,7 +793,7 @@ In order to maintain these various usecases, the content of each should be store
 
 #+begin_src emacs-lisp
 
-  (setq denote-known-keywords '("theology" "philosophy" "politics" "journal"))
+  (setq denote-known-keywords '("theology" "philosophy" "politics" "journal" "analysis" "linguistics"))
   (setq denote-infer-keywords t)
   (setq denote-sort-keywords t)
 
