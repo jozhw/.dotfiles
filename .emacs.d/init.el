@@ -92,6 +92,7 @@
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 (use-package general
+  :ensure t
   :config
   (general-create-definer jw/leader-key-def
     :keymaps '(normal insert visual emacs)
@@ -104,6 +105,7 @@
   )
 
 (use-package evil
+  :ensure t
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
@@ -123,11 +125,13 @@
 
 (use-package evil-collection
   :after evil
+  :ensure t
   :config
   (evil-collection-init))
 
 ;; A few more useful configurations...
 (use-package emacs
+  :ensure t
   :init
   ;; TAB cycle if there are only few candidates
   ;; (setq completion-cycle-threshold 3)
