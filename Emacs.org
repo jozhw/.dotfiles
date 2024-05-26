@@ -193,6 +193,7 @@ in conjunction with Evil modes.
 #+begin_src emacs-lisp
 
   (use-package general
+    :ensure t
     :config
     (general-create-definer jw/leader-key-def
       :keymaps '(normal insert visual emacs)
@@ -218,6 +219,7 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+begin_src emacs-lisp
   (use-package evil
+    :ensure t
     :init
     (setq evil-want-integration t)
     (setq evil-want-keybinding nil)
@@ -237,6 +239,7 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
   (use-package evil-collection
     :after evil
+    :ensure t
     :config
     (evil-collection-init))
 
@@ -248,6 +251,7 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
   ;; A few more useful configurations...
   (use-package emacs
+    :ensure t
     :init
     ;; TAB cycle if there are only few candidates
     ;; (setq completion-cycle-threshold 3)
