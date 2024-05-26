@@ -696,6 +696,16 @@ Customize the heading bullets to make it consistent and nicer.
 
 #+end_src
 
+*** In-line Images
+
+#+begin_src emacs-lisp
+
+  (setq org-image-actual-width nil)
+  (setq org-startup-with-inline-images t)
+  (add-hook 'org-mode-hook 'org-display-inline-images)
+
+#+end_src
+
 *** Babel
 *** Load Languages
 

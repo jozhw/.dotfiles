@@ -362,6 +362,10 @@ folder, otherwise delete a word"
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
+(setq org-image-actual-width nil)
+(setq org-startup-with-inline-images t)
+(add-hook 'org-mode-hook 'org-display-inline-images)
+
 (org-babel-do-load-languages
   'org-babel-load-languages
   '((emacs-lisp . t)
