@@ -465,6 +465,19 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 
 #+end_src
 
+** Dired
+
+For macos, make sure to have =coreutils= installed. To install run, =brew install coreutils=
+
+#+begin_src emacs-lisp
+
+  (setq insert-directory-program "gls" 
+       dired-use-ls-dired t)
+
+  (setq dired-listing-switches "-alD")
+
+#+end_src
+
 * Edit Configuration
 ** Use Spaces Instead of Tabs for Indentation
 

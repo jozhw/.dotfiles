@@ -227,6 +227,11 @@
   ([remap describe-command] . helpful-command)
   ([remap describe-key] . helpful-key))
 
+(setq insert-directory-program "gls" 
+     dired-use-ls-dired t)
+
+(setq dired-listing-switches "-alD")
+
 (setq-default indent-tabs-mode nil)
 
 (use-package savehist
