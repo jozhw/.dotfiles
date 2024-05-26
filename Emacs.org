@@ -983,6 +983,16 @@ Currently the code below only works for =emacs 30+=.
 
 #+end_src
 
+*** Formatting
+**** Fill-paragraph (native)
+
+Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-column= variable.
+
+#+begin_src emacs-lisp
+
+  (setq-default fill-column 80)
+
+#+end_src
 * Archive
 ** Projectile
 *** Rationale
