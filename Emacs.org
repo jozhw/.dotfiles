@@ -740,68 +740,6 @@ This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-conf
 
 #+end_src
 
-** Org Roam
-*** Installation
-
-#+begin_src emacs-lisp
-
-  (use-package org-roam
-    :ensure t
-    :custom
-    (org-roam-directory (file-truename "~/OrgRoamTest/"))
-    :bind (("C-c n l" . org-roam-buffer-toggle)
-           ("C-c n f" . org-roam-node-find)
-           ("C-c n g" . org-roam-graph)
-           ("C-c n i" . org-roam-node-insert)
-           ("C-c n c" . org-roam-capture)
-           ;; Dailies
-           ("C-c n j" . org-roam-dailies-capture-today))
-    :config
-    ;; If you're using a vertical completion framework, you might want a more informative completion interface
-    (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-    (org-roam-db-autosync-mode)
-    ;; If using org-roam-protocol
-    (require 'org-roam-protocol))
-
-#+end_src
-
-*** Switching Zettlekasten
-
-Code taken and adjusted for my usecase from [[https://www.reddit.com/r/emacs/comments/135dhh5/code_snippet_to_switch_between_multiple/][@SnooPets20's post.]]
-
-The idea of this switching is to maximize the utility of =org-roam=. In some cases, especially when learning new things, using the *Zettlekasten* method would be ideal as it is devoid of hierarchical structure, thus allowing pure linkages that are not tainted with biases or influencing on how it is perceived by the framework in which it resides. However, for other things it may be more useful to integrate everything in a more hierarchical fashion and create links between different hierarchies.
-
-In order to maintain these various usecases, the content of each should be stored outside the =org-roam= directory (to avoid duplication). 
-
-#+begin_src emacs-lisp
-
-  (setq zettlekasten-paths-alist '(("Main" . "~/Trove/Epektasi/")
-                                   ("Zettlekasten" . "~/Trove/Zettlekasten/")
-                                   ("Test" . "~/OrgRoamTest/")))
-
-  (defun switch-zettlekasten ()
-    (interactive)
-    (let* ((keys (mapcar #'car zettlekasten-paths-alist))
-           (prompt (format "Select Zettlekasten:"))
-           (key (completing-read prompt keys))
-           (chosen-zettlekasten-path (cdr (assoc key zettlekasten-paths-alist))))
-      (setq org-roam-directory chosen-zettlekasten-path)
-      (setq org-roam-db-location (concat chosen-zettlekasten-path "org-roam.db"))
-      (org-roam-db-sync)))
-
-#+end_src
-
-*** Org-roam-ui
-
-=org-roam-ui= is used to visualize =org-roam= web. 
-
-#+begin_src emacs-lisp
-
-  (use-package org-roam-ui
-    :ensure t)
-
-#+end_src
-
 * Personal Information Management
 ** Denote
 *** Initialization 
@@ -1101,3 +1039,65 @@ The reason why =projectile= is archived is because I want to utilize the built i
   ;;   (setq which-key-idle-delay 1))
 
 #+end_src
+
+** Org-roam
+*** Installation
+
+#+begin_src emacs-lisp
+
+  ;; (use-package org-roam
+  ;;   :ensure t
+  ;;   :custom
+  ;;   (org-roam-directory (file-truename "~/OrgRoamTest/"))
+  ;;   :bind (("C-c n l" . org-roam-buffer-toggle)
+  ;;          ("C-c n f" . org-roam-node-find)
+  ;;          ("C-c n g" . org-roam-graph)
+  ;;          ("C-c n i" . org-roam-node-insert)
+  ;;          ("C-c n c" . org-roam-capture)
+  ;;          ;; Dailies
+  ;;          ("C-c n j" . org-roam-dailies-capture-today))
+  ;;   :config
+  ;;   ;; If you're using a vertical completion framework, you might want a more informative completion interface
+  ;;   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  ;;   (org-roam-db-autosync-mode)
+  ;;   ;; If using org-roam-protocol
+  ;;   (require 'org-roam-protocol))
+
+#+end_src
+
+*** Switching Zettlekasten
+
+Code taken and adjusted for my usecase from [[https://www.reddit.com/r/emacs/comments/135dhh5/code_snippet_to_switch_between_multiple/][@SnooPets20's post.]]
+
+The idea of this switching is to maximize the utility of =org-roam=. In some cases, especially when learning new things, using the *Zettlekasten* method would be ideal as it is devoid of hierarchical structure, thus allowing pure linkages that are not tainted with biases or influencing on how it is perceived by the framework in which it resides. However, for other things it may be more useful to integrate everything in a more hierarchical fashion and create links between different hierarchies.
+
+In order to maintain these various usecases, the content of each should be stored outside the =org-roam= directory (to avoid duplication). 
+
+#+begin_src emacs-lisp
+
+  ;; (setq zettlekasten-paths-alist '(("Main" . "~/Trove/Epektasi/")
+  ;;                                  ("Zettlekasten" . "~/Trove/Zettlekasten/")
+  ;;                                  ("Test" . "~/OrgRoamTest/")))
+
+  ;; (defun switch-zettlekasten ()
+  ;;   (interactive)
+  ;;   (let* ((keys (mapcar #'car zettlekasten-paths-alist))
+  ;;          (prompt (format "Select Zettlekasten:"))
+  ;;          (key (completing-read prompt keys))
+  ;;          (chosen-zettlekasten-path (cdr (assoc key zettlekasten-paths-alist))))
+  ;;     (setq org-roam-directory chosen-zettlekasten-path)
+  ;;     (setq org-roam-db-location (concat chosen-zettlekasten-path "org-roam.db"))
+  ;;     (org-roam-db-sync)))
+
+#+end_src
+*** Org-roam-ui
+
+=org-roam-ui= is used to visualize =org-roam= web. 
+
+#+begin_src emacs-lisp
+
+  ;; (use-package org-roam-ui
+  ;;   :ensure t)
+
+#+end_src
+
