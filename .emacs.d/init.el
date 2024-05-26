@@ -394,7 +394,7 @@ folder, otherwise delete a word"
 (setq denote-sort-keywords t)
 
 (setq denote-file-type nil) ; Org is the default, set others here
-(setq denote-prompts '(title keywords))
+(setq denote-prompts '(subdirectory title keywords))
 (setq denote-excluded-directories-regexp nil)
 (setq denote-excluded-keywords-regexp nil)
 (setq denote-rename-no-confirm nil) ; Set to t if you are familiar with `denote-rename-file'
