@@ -485,6 +485,8 @@ folder, otherwise delete a word"
   :config
   (global-evil-surround-mode 1))
 
+(setq-default fill-column 80)
+
 ;; (use-package projectile
 ;;   :diminish projectile-mode
 ;;   :config (projectile-mode)
