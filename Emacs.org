@@ -993,6 +993,19 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
   (setq-default fill-column 80)
 
 #+end_src
+*** Copy File Path
+
+#+begin_src emacs-lisp
+  (defun jw-dired-get-file-path ()
+    "Get the full path of the file at point in Dired mode and display it in the minibuffer."
+    (interactive)
+    (let ((file (dired-get-file-for-visit)))
+      (message file)
+      (kill-new file)))
+
+  (define-key dired-mode-map (kbd "C-c p") 'jw-dired-get-file-path)
+
+#+end_src
 * Archive
 ** Projectile
 *** Rationale

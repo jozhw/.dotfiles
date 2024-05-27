@@ -487,6 +487,15 @@ folder, otherwise delete a word"
 
 (setq-default fill-column 80)
 
+(defun jw-dired-get-file-path ()
+  "Get the full path of the file at point in Dired mode and display it in the minibuffer."
+  (interactive)
+  (let ((file (dired-get-file-for-visit)))
+    (message file)
+    (kill-new file)))
+
+(define-key dired-mode-map (kbd "C-c p") 'jw-dired-get-file-path)
+
 ;; (use-package projectile
 ;;   :diminish projectile-mode
 ;;   :config (projectile-mode)
