@@ -38,6 +38,9 @@
                          ("org" . "https://orgmode.org/elpa/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
 
+(add-to-list 'package-archives
+             '("gnu-devel" . "https://elpa.gnu.org/devel/") :append)
+
 (package-initialize)
 (unless package-archive-contents
  (package-refresh-contents))
