@@ -383,6 +383,12 @@ folder, otherwise delete a word"
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'jw/org-babel-tangle-config)))
 
+(unless (package-installed-p 'org-transclusion)
+  (package-refresh-contents)
+  (package-install 'org-transclusion))
+
+(require 'org-transclusion)
+
 (use-package denote
                  :ensure t)
 
