@@ -740,6 +740,17 @@ This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-conf
 
 #+end_src
 
+*** Org Transclusion
+
+#+begin_src emacs-lisp
+
+  (unless (package-installed-p 'org-transclusion)
+    (package-refresh-contents)
+    (package-install 'org-transclusion))
+
+  (require 'org-transclusion)
+
+#+end_src
 * Personal Information Management
 ** Denote
 *** Initialization 
