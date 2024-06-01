@@ -477,6 +477,9 @@ folder, otherwise delete a word"
 ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
 (use-package forge)
 
+(defun magit-read-gpg-signing-key (prompt &optional initial-input history)
+  "")
+
 (show-paren-mode 1)
 
 (use-package rainbow-delimiters
