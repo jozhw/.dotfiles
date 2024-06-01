@@ -897,6 +897,19 @@ Currently the code below only works for =emacs 30+=.
 
 #+end_src
 
+**** Configurations
+
+***** SSH Signing
+
+Sign git commits with ssh rather than gpg. Not the optimal solution, but the solution was found to work on this  issue on magit github repo: [[https://github.com/magit/magit/discussions/5046][magit ssh signing discussion]]
+
+#+begin_src emacs-lisp
+
+  (defun magit-read-gpg-signing-key (prompt &optional initial-input history)
+    "")
+
+#+end_src
+
 **** Commands
 ***** Global Commands
 
