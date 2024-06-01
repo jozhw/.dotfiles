@@ -486,6 +486,7 @@ For macos, make sure to have =coreutils= installed. To install run, =brew instal
   (setq-default indent-tabs-mode nil)
 
 #+end_src
+
 * Completion System
 ** Preserve Minibuffer History
 *** Savehist-mode
@@ -943,9 +944,9 @@ Currently the code below only works for =emacs 30+=.
 - =b r= (=magit-branch-rename=): Rename the current branch.
 - =b c= (=magit-branch-checkout=): Checkout a branch.
   
-** Productivity
-*** Visualizing Delimiters
-**** Show Parent (native)
+* Productivity
+** Visualizing Delimiters
+*** Show Parent (native)
 
 =show-paren-mode= allows one to see matching pairs of parentheses and other characters. When point is on the opening character of one of the paired characters, the other is highlighted. When the point is after the closing character of one of the paired characters, the other is highlighted. 
 
@@ -954,7 +955,7 @@ Currently the code below only works for =emacs 30+=.
   (show-paren-mode 1)
 
 #+end_src
-**** Rainbow Delimiters
+*** Rainbow Delimiters
 
 [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] is useful in programming modes because it colorizes nested parentheses and brackets according to their nesting depth.  This makes it a lot easier to visually match parentheses in Emacs Lisp code without having to count them yourself.
 
@@ -965,8 +966,8 @@ Currently the code below only works for =emacs 30+=.
 
 #+end_src
 
-*** Pairing Delimiters
-**** Eletric Pair (native)
+** Pairing Delimiters
+*** Eletric Pair (native)
 
 =electric-pair-mode= will auto pair delimiters for you. One issue with the auto pairing is the =<= character in =org-mode=. The following hook to the enabling of =electric-pair-mode= aims to solve the issue when in =org-mode=.
 
@@ -981,7 +982,7 @@ Currently the code below only works for =emacs 30+=.
 
 #+end_src
 
-**** Evil Surround
+*** Evil Surround
 
 =evil-surround= emulates [[https://github.com/tpope/vim-surround][surround.vim]]. For usage instructions visit [[https://github.com/emacs-evil/evil-surround][evil-surround]]
 
@@ -994,8 +995,8 @@ Currently the code below only works for =emacs 30+=.
 
 #+end_src
 
-*** Formatting
-**** Fill-paragraph (native)
+** Formatting
+*** Fill-paragraph (native)
 
 Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-column= variable.
 
@@ -1004,7 +1005,7 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
   (setq-default fill-column 80)
 
 #+end_src
-*** Copy File Path
+** Copy File Path
 
 #+begin_src emacs-lisp
   (defun jw-dired-get-file-path ()
