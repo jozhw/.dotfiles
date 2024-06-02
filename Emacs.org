@@ -1,72 +1,32 @@
 #+title: Emacs Configuration
 
+* Inspirations of this Emacs configuration
+
+The organization of this emacs configuration was inspired by [[https://protesilaos.com/emacs/dotemacs][prot's dotemacs configuration]].
+
 * Getting Started
 
 This org file is used to set up my emacs configuration. The code blocks of this org file
 will be executed using =org-babel-tangle=. Thus, to initiate you must use =M-x ^org-babel-tangle= or use the key-binding =C-c C-v t=.
-
-** Configure Tangle
-The following line =#+PROPERTY: header-args:emacs-lisp :tangle .emacs.d/init.el :mkdirp yes= cause the tangle command to compile and save the code blocks in the =.emacs.d/init.el= file.
-
-#+PROPERTY: header-args:emacs-lisp :tangle .emacs.d/init.el :mkdirp yes
-
-** Structured Templates
-
-These structured templates are used to auto generate code blocks for org mode. In order
-to use the template simply type =<= followed by the abbreviation of the language and
-hit the =TAB= button. For example, the python snippit would be =<py TAB=.
-
-#+begin_src emacs-lisp
-
-;; This is needed as of Org 9.2
-(require 'org-tempo)
-
-(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
-
-#+end_src
 
 ** Emacs.org Organization
 
 Since the compilation is sequential, you have to be careful in that =jw/leader-key-def= was defined in the *Keyboard Bindings* section and it is used in the *General Configuration* section under *Text Scaling* where =hydra= was used. This means that *Key Bindings* must be before the *Text Scaling* otherwise there will be a void error.
 
 * Running Emacs
-** Command Line (terminal)
+** In the Command Line 
 
 To run emacs in the command-line/terminal simply use the following command while in your command-line/terminal: =emacs -nw=.
 
-** Graphical User Interface
-*** Set Window Size to Full
+* The early initialization of Emacs (=early-init.el=) 
 
-#+begin_src emacs-lisp
-
-  (if (display-graphic-p)
-      (progn
-        (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
-        (add-to-list 'default-frame-alist '(alpha . (90 . 90)))
-        (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
-        (add-to-list 'default-frame-alist '(fullscreen . maximized))))
-
-#+end_src
-
-*** Increase Font Size
-
-#+begin_src emacs-lisp
-
-  (if (display-graphic-p)
-      (progn
-        (set-face-attribute 'default nil :height 180)))
-
-#+end_src
-
-* Startup Performance
+** The =early-init.el= hook to improve Startup Performance
 
 Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
 
 Also, turn on =lexical-binding= for the init file!
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/early-init.el" :mkdirp yes
 
   ;; -*- lexical-binding: t; -*-
 
@@ -84,13 +44,46 @@ Also, turn on =lexical-binding= for the init file!
 
 #+end_src
 
-* Package System 
-** Setup 
-*** Use-package (native)
+** The =early-init.el= section to add modules and libraries to the Emacs configuration
+
+#+begin_src emacs-lisp :tangle ".emacs.d/early-init.el" :mkdirp yes
+
+  (add-to-list 'load-path (expand-file-name "jw-emacs-modules" user-emacs-directory))
+  (add-to-list 'load-path (expand-file-name "jw-lisp" user-emacs-directory))
+
+#+end_src
+* The main initialization of Emacs (=init.el=)
+** The =init.el= conditional to adjust Window Size
+
+Set the window size to full for =GUI= version of emacs.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+  (if (display-graphic-p)
+      (progn
+        (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
+        (add-to-list 'default-frame-alist '(alpha . (90 . 90)))
+        (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
+        (add-to-list 'default-frame-alist '(fullscreen . maximized))))
+
+#+end_src
+
+** The =init.el= conditional to increase Font Size
+
+Increase the font size if =GUI= version of emacs.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+  (if (display-graphic-p)
+      (progn
+        (set-face-attribute 'default nil :height 180)))
+
+#+end_src
+** The =init.el= settings for packages (=use-package=) --native
 
 [[https://github.com/jwiegley/use-package][use-package]] is a native package built into emacs since =v29.0.0= and is used in this configuration to make it a lot easier to automate the installation and configuration of everything else.
- 
-#+begin_src emacs-lisp
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
   ;; Initialize package sources
   (require 'package)
@@ -115,11 +108,10 @@ Also, turn on =lexical-binding= for the init file!
 
 #+end_src
 
-**** Debugging
-
 To debug =use-package= run =emacs --debug-init=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
   (if init-file-debug
       (setq use-package-verbose t
             use-package-expand-minimally nil
@@ -129,17 +121,9 @@ To debug =use-package= run =emacs --debug-init=.
           use-package-expand-minimally t))
 #+end_src
 
-**** Package Not Found
-
-If you get a package not found error and the package exists, then you can try
-refreshing the package contents by running =M-x package-refresh-contents=.
-
-** Removing Packages
-*** Use-package (native)
-
 To remove packages that are not used run =M-x use-package-autoremove=. However, the current code only works for packages that have the =:ensure= | =:vc= | =:init= keywords. 
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
   (eval-and-compile
     (defvar use-package-selected-packages nil
@@ -176,24 +160,15 @@ To remove packages that are not used run =M-x use-package-autoremove=. However, 
 
 #+end_src
 
-* Keyboard Bindings
-** ESC Cancels All
+If you get a package not found error and the package exists, then you can try
+refreshing the package contents by running =M-x package-refresh-contents=.
 
-Bind the quit prompting function to the =esc= key.
-
-#+begin_src emacs-lisp
-
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
-#+end_src
-
-** Simplify Leader Bindings 
-*** General.el
+** The =init.el= for easy leader key management (=general.el=)
 
 [[https://github.com/noctuid/general.el][general.el]] is a fantastic library for defining prefixed keybindings, especially
 in conjunction with Evil modes.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
   (use-package general
     :ensure t
@@ -205,9 +180,30 @@ in conjunction with Evil modes.
 
 #+end_src
 
-** User Interface Toggles
+** The =init.el= essential key configurations
+*** The =init.el= essential key configuration for =esc=
 
-#+begin_src emacs-lisp
+Bind the quit prompting function to the =esc= key.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+#+end_src
+
+*** The =init.el= essential key configuration for indentation
+
+Use spaces instead of tabs for indentation
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+  (setq-default indent-tabs-mode nil)
+
+#+end_src
+
+*** The =init.el= essential key configuration for user interface toggles
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
   (jw/leader-key-def
     "t"  '(:ignore t :which-key "toggles")
@@ -215,12 +211,11 @@ in conjunction with Evil modes.
     )
 
 #+end_src
-
-** Let's Be Evil
+*** The =init.el= essential key configuration for =evil-mode=
 
 This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil-mode]] for a Vi-like modal editing experience.  [[https://github.com/emacs-evil/evil-collection][evil-collection]] is used to automatically configure various Emacs modes with Vi-like keybindings for evil-mode.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
   (use-package evil
     :ensure t
     :init
@@ -248,9 +243,9 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+end_src
 
-* General Configuration
-** Emacs
-#+begin_src emacs-lisp
+** The =init.el= for additional configurations for =emacs=
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
   ;; A few more useful configurations...
   (use-package emacs
@@ -274,12 +269,60 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+end_src
 
-** User Interface
+** The =init.el= final part to load the individual modules
+
+Load the =jw-emacs-modules=.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+  (require 'jw-emacs-theme)
+  (require 'jw-emacs-essentials)
+  (require 'jw-emacs-modeline)
+  (require 'jw-emacs-completion)
+  (require 'jw-emacs-org)
+  (require 'jw-emacs-git)
+  (require 'jw-emacs-dired)
+  (require 'jw-emacs-information-management)
+  (require 'jw-emacs-development)
+  (require 'jw-emacs-langs)
+
+#+end_src
+
+Load =jw-lisp=.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+  (require 'jw-copy)
+
+#+end_src
+* The modules of my Emacs configuration (=jw-emacs-modules/=)
+** The =jw-emacs-theme.el= module
+*** The =jw-emacs-theme.el= section to load a theme (=doom-themes=)
+
+I currently am using the [[https://github.com/hlissner/emacs-doom-themes][DOOM Themes]], specifically =doom-dracula=.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
+
+  (use-package doom-themes
+    :init (load-theme 'doom-dracula t))
+
+#+end_src
+
+*** The =jw-emacs-theme.el= call to provide
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
+
+  (provide 'jw-emacs-theme)
+
+#+end_src
+
+** The =jw-emacs-essentials.el= module
+*** The =jw-emacs-essentials.el= section for gui configurations
 
 For a minimalistic UI, the startup messages, scroll-bar, tool-bar, tooltip, menu-bar
 were all removed from the display.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el" :mkdirp yes
 
   ;; Disable startup message when emacs starts
   (setq inhibit-startup-message t)
@@ -297,20 +340,20 @@ were all removed from the display.
 
 #+end_src
 
+
 Set up the visible bell to be on instead of the beeping. For macos it is best to leave commented below to not have the visual bell because it is distracting.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el"
 
   ;; (setq visible-bell t)
 
 #+end_src
 
-*** Line Numbers
 
 Enable line numbers globally, but not in the following modes: org, term, shell, and eshell.
 
 In addition to line numbers, the column number will also be displayed. 
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el"
 
   ;; Enable column numbers
   (column-number-mode)
@@ -326,12 +369,19 @@ In addition to line numbers, the column number will also be displayed.
 
 #+end_src
 
-*** Text Scaling
-**** Hydra
+Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-column= variable.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el"
+
+  (setq-default fill-column 80)
+
+#+end_src
+
+*** The =jw-emacs-essentials.el= section for text scaling (=hydra.el=)
 
 This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to design a transient key binding for quickly adjusting the scale of the text on screen.  We define a hydra that is bound to =C-s t s= and, once activated, =j= and =k= increase and decrease the text scale.  You can press any other key (or =f= specifically) to exit the transient key map.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el" :mkdirp yes
 
   (use-package hydra)
 
@@ -346,28 +396,38 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 #+end_src
 
-** Themes
-*** Doom
-I currently am using the [[https://github.com/hlissner/emacs-doom-themes][DOOM Themes]], specifically =doom-dracula=.
+*** The =jw-emacs-essentials.el= section for =helpful.el=
 
-#+begin_src emacs-lisp
+[[https://github.com/Wilfred/helpful][Helpful]] adds a lot of very helpful (get it?) information to Emacs' =describe-= command buffers.  For example, if you use =describe-function=, you will not only get the documentation about the function, you will also see the source code of the function and where it gets used in other places in the Emacs configuration.  It is very useful for figuring out how things work in Emacs.
 
-  (use-package doom-themes
-    :init (load-theme 'doom-dracula t))
+#+begin_src emacs-lisp ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el" :mkdirp yes
+
+  (use-package helpful
+    :bind
+    ([remap describe-command] . helpful-command)
+    ([remap describe-key] . helpful-key))
 
 #+end_src
 
-** Modeline
-*** Basic Customization
+*** The =jw-emacs-essentials.el= call to provide
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el" :mkdirp yes
+
+  (provide 'jw-emacs-essentials)
+
+#+end_src
+
+** The =jw-emacs-modeline.el= module
+*** The =jw-emacs-modeline.el= basic user interface configuration
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
   (setq display-time-format "%l:%M %p %b %y"
         display-time-default-load-average nil)
 
 #+end_src
 
-*** Doom Modeline
+*** The =jw-emacs-modeline.el= section for =doom-modeline=
 
 [[https://github.com/seagle0128/doom-modeline][doom-modeline]] is a very attractive and rich (yet still minimal) mode line configuration for Emacs.  The default configuration is quite good but you can check out the [[https://github.com/seagle0128/doom-modeline#customize][configuration options]] for more things you can enable or disable.
 
@@ -380,7 +440,7 @@ If you are running in the =macos= terminal, then you have to make sure that you 
 - Select the appropriate font
 
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
   (use-package doom-modeline
     :ensure t
@@ -389,11 +449,10 @@ If you are running in the =macos= terminal, then you have to make sure that you 
 
 #+end_src
 
-**** Dependencies
 
 =doom-modeline= icons rely on =nerd-icons=. Thus, you must install the =nerd-icons= if you want to use the icons on the modeline.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el"
 
   (use-package nerd-icons
     ;; :custom
@@ -405,23 +464,20 @@ If you are running in the =macos= terminal, then you have to make sure that you 
 
 #+end_src
 
-**** Turn Off Icons
 
 To turn off icons uncomment the following:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el"
 
   ;; (setq doom-modeline-icon nil)
 
 #+end_src
 
-**** Configuration
 
 The following contains configurations of the =doom-modeline=. All the configurations here use the =setq=.
 
-***** Word Counter
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el"
 
   ;; If non-nil, a word count will be added to the selection-info modeline segment.
   (setq doom-modeline-enable-word-count t)
@@ -434,67 +490,27 @@ The following contains configurations of the =doom-modeline=. All the configurat
 
 #+end_src
 
-***** Environment Version
 
-#+begin_src emacs-lisp
+Display the virtual environment version.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el"
 
   (setq doom-modeline-env-version t)
 
 #+end_src
 
-** Command Log Mode
+*** The =jw-emacs-modeline.el= call to provide
 
-[[https://github.com/lewang/command-log-mode][command-log-mode]] is useful for displaying a panel showing each key binding you use in a panel on the right side of the frame. Great for live streams and screencasts!
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
-
-#+begin_src emacs-lisp
-
-  (use-package command-log-mode)
+  (provide 'jw-emacs-modeline)
 
 #+end_src
 
-To activate =command-log-mode= you must first run =M-x global-command-log-mode= to have =command-log-mode= in every buffer and then run =M-x clm/toggle-command-log-buffer= to have the buffer be displayed.
+** The =jw-emacs-completion.el= module
+*** The =jw-emacs-completion.el= section for preserving minibuffer history (=savehist.el=)
 
-** Helpful
-
-[[https://github.com/Wilfred/helpful][Helpful]] adds a lot of very helpful (get it?) information to Emacs' =describe-= command buffers.  For example, if you use =describe-function=, you will not only get the documentation about the function, you will also see the source code of the function and where it gets used in other places in the Emacs configuration.  It is very useful for figuring out how things work in Emacs.
-
-#+begin_src emacs-lisp
-
-  (use-package helpful
-    :bind
-    ([remap describe-command] . helpful-command)
-    ([remap describe-key] . helpful-key))
-
-#+end_src
-
-** Dired
-
-For macos, make sure to have =coreutils= installed. To install run, =brew install coreutils=
-
-#+begin_src emacs-lisp
-
-  (setq insert-directory-program "gls" 
-       dired-use-ls-dired t)
-
-  (setq dired-listing-switches "-alD")
-
-#+end_src
-
-* Edit Configuration
-** Use Spaces Instead of Tabs for Indentation
-
-#+begin_src emacs-lisp
-
-  (setq-default indent-tabs-mode nil)
-
-#+end_src
-
-* Completion System
-** Preserve Minibuffer History
-*** Savehist-mode
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
   (use-package savehist
     :config
@@ -508,10 +524,9 @@ For macos, make sure to have =coreutils= installed. To install run, =brew instal
 
 #+end_src
 
-** Completion 
-*** Vertico
+*** The =jw-emacs-completion.el= section for completions (=vertico.el=)
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
   (defun jw/minibuffer-backward-kill (arg)
     "When minibuffer is completing a file name delete up to parent
@@ -540,11 +555,9 @@ For macos, make sure to have =coreutils= installed. To install run, =brew instal
     (vertico-mode))
 
 #+end_src
+*** The =jw-emacs-completion.el= section for completions in region (=corfu.el=)
 
-** Completions in Region 
-*** Corfu
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
   (use-package corfu
     :ensure t
     ;; Optional customizations
@@ -579,8 +592,7 @@ For macos, make sure to have =coreutils= installed. To install run, =brew instal
     (global-corfu-mode))
 
 #+end_src
-
-** Completion Interface with Terminal Emacs
+*** The =jw-emacs-completion.el= section for completions in region on terminal
 
 Since =corfu.el= does not support running emacs in the terminal, I will just stick with =company.el= instead of =corfu-terminal=.
 
@@ -589,7 +601,7 @@ Since =corfu.el= does not support running emacs in the terminal, I will just sti
 We also use [[https://github.com/sebastiencs/company-box][company-box]] to further enhance the look of the completions with icons and better overall presentation.
 
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
   (unless (display-graphic-p)
       (progn
@@ -613,10 +625,9 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-** Improved Candidate Filtering 
-*** Orderless
+*** The =jw-emacs-completion.el= section for candidate filtering (=orderless.el=)
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
   (use-package orderless
     :init
@@ -626,12 +637,11 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-** Completion Annotations
-*** Marginalia
+*** The =jw-emacs-completion.el= section for completion annotations (=marginalia.el=)
 
 Marginalia provides helpful annotations for various types of minibuffer completions. You can think of it as a replacement of =ivy-rich=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
   (use-package marginalia
     :after vertico
@@ -642,12 +652,21 @@ Marginalia provides helpful annotations for various types of minibuffer completi
     (marginalia-mode))
 
 #+end_src
-* Org
-** Org Mode
+
+*** The =jw-emacs-completion.el= call to provide
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
+
+  (provide 'jw-emacs-completion)
+
+#+end_src
+
+** The =jw-emacs-org.el= module
+*** The =jw-emacs-org.el= section for org-mode setup --native
 
 Set up Org Mode with a baseline configuration. The following sections will add more things to it.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
   (defun jw/org-mode-setup ()
     (org-indent-mode) ;; auto-indentation for headings
@@ -663,34 +682,11 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 #+end_src
 
-*** Tips
-
-To change the view to outline or full view use =SHIFT-TAB= repeatedly for the desired visual look.
-
-To condense or uncondense content under a heading, make sure the cursor is on the same line as the heading and use =TAB= to cycle through uncondensing or condensing the content.
-
-*** User Interface
-*** Text Display (visual-fill-column) 
-
-=visual-fill-column= will create a document looking display with the extra padding on the left and on the right.
-
-#+begin_src emacs-lisp
-
-  (defun jw/org-mode-visual-fill ()
-    (setq visual-fill-column-width 100
-          visual-fill-column-center-text t)
-    (visual-fill-column-mode 1))
-
-  (use-package visual-fill-column
-    :hook (org-mode . jw/org-mode-visual-fill))
-
-#+end_src
-
-*** Bullets (org-bullets)
+*** The =jw-emacs-org.el= section for bullets
 
 Customize the heading bullets to make it consistent and nicer.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
   (use-package org-bullets
     :after org
@@ -700,9 +696,10 @@ Customize the heading bullets to make it consistent and nicer.
 
 #+end_src
 
-*** In-line Images
+*** The =jw-emacs-org.el= section for inline images
 
-#+begin_src emacs-lisp
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
   (setq org-image-actual-width nil)
   (setq org-startup-with-inline-images t)
@@ -710,27 +707,40 @@ Customize the heading bullets to make it consistent and nicer.
 
 #+end_src
 
-*** Babel
-*** Load Languages
+*** The =jw-emacs-org.el= section for =org-transclusion=
 
-To execute or export code in =org-mode= code blocks, you'll need to set up =org-babel-load-languages= for each language you'd like to use. [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
-#+begin_src emacs-lisp
+  (unless (package-installed-p 'org-transclusion)
+    (package-refresh-contents)
+    (package-install 'org-transclusion))
 
-  (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((emacs-lisp . t)
-      (python . t)))
-
-  (push '("conf-unix" . conf-unix) org-src-lang-modes)
+  (require 'org-transclusion)
 
 #+end_src
 
-*** Auto-tangle
+*** The =jw-emacs-org.el= section for structured templates (=org-tempo=)
+
+These structured templates are used to auto generate code blocks for org mode. In order
+to use the template simply type =<= followed by the abbreviation of the language and
+hit the =TAB= button. For example, the python snippit would be =<py TAB=.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
+
+;; This is needed as of Org 9.2
+(require 'org-tempo)
+
+(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
+
+#+end_src
+
+*** The =jw-emacs-org.el= section for auto-tangle
 
 This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-config= gets executed each time such a buffer gets saved.  This function checks to see if the file being saved is the Emacs.org file you're looking at right now, and if so, automatically exports the configuration here to the associated output files.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
   ;; Automatically tangle our Emacs.org config file when we save it
   (defun jw/org-babel-tangle-config ()
@@ -744,22 +754,116 @@ This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-conf
 
 #+end_src
 
-*** Org Transclusion
+*** The =jw-emacs-org.el= section for executing code (=org-babel=)
 
-#+begin_src emacs-lisp
+To execute or export code in =org-mode= code blocks, you'll need to set up =org-babel-load-languages= for each language you'd like to use. [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
 
-  (unless (package-installed-p 'org-transclusion)
-    (package-refresh-contents)
-    (package-install 'org-transclusion))
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
-  (require 'org-transclusion)
+  (org-babel-do-load-languages
+    'org-babel-load-languages
+    '((emacs-lisp . t)
+      (python . t)))
+
+  (push '("conf-unix" . conf-unix) org-src-lang-modes)
 
 #+end_src
-* Personal Information Management
-** Denote
-*** Initialization 
 
-#+begin_src emacs-lisp
+*** The =jw-emacs-org.el= section for text display (=visual-fill-column.el=)
+
+=visual-fill-column= will create a document looking display with the extra padding on the left and on the right.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
+
+  (defun jw/org-mode-visual-fill ()
+    (setq visual-fill-column-width 100
+          visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+
+  (use-package visual-fill-column
+    :hook (org-mode . jw/org-mode-visual-fill))
+
+#+end_src
+*** The =jw-emacs-org.el= call to provide
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
+
+  (provide 'jw-emacs-org)
+
+#+end_src
+
+** The =jw-emacs-git.el= module
+*** The =jw-emacs-git.el= section for =magit.el=
+
+[[https://magit.vc/][Magit]] is the best Git interface I've ever used.  Common Git operations are easy to execute quickly using Magit's command panel system.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-git.el" :mkdirp yes
+
+  (require 'package)
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/") t)
+
+  (use-package magit
+    :custom
+    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+  ;; NOTE: Make sure to configure a GitHub token before using this package!
+  ;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
+  ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
+  (use-package forge)
+
+#+end_src
+
+
+Sign git commits with ssh rather than gpg. Not the optimal solution, but the solution was found to work on this  issue on magit github repo: [[https://github.com/magit/magit/discussions/5046][magit ssh signing discussion]]
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-git.el" :mkdirp yes
+
+  (defun magit-read-gpg-signing-key (prompt &optional initial-input history)
+    "")
+
+#+end_src
+
+*** The =jw-emacs-git.el= call to provide
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-git.el" :mkdirp yes
+
+  (provide 'jw-emacs-git)
+
+#+end_src
+
+** The =jw-emacs-dired.el= module
+*** The =jw-emacs-dired.el= section for dired display
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-dired.el" :mkdirp yes
+
+  (setq dired-listing-switches "-alD")
+
+#+end_src
+
+*** The =jw-emacs-dired.el= section for gnu =gls=
+
+For macos, make sure to have =coreutils= installed. To install run, =brew install coreutils=
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-dired.el" :mkdirp yes
+
+  (setq insert-directory-program "gls" 
+       dired-use-ls-dired t)
+
+#+end_src
+
+*** The =jw-emacs-dired.el= call to provide
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-dired.el" :mkdirp yes
+
+  (provide 'jw-emacs-dired)
+
+#+end_src
+
+** The =jw-emacs-information-management.el= module
+*** The =jw-emacs-information-management.el= section for =denote=
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
   (use-package denote
                    :ensure t)
@@ -769,9 +873,8 @@ This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-conf
 
 #+end_src
 
-*** Set Tags/Keywords
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
   (setq denote-known-keywords '("theology" "philosophy" "politics" "journal" "analysis" "linguistics"))
   (setq denote-infer-keywords t)
@@ -779,9 +882,7 @@ This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-conf
 
 #+end_src
 
-*** Rest of Configuration
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
   (setq denote-file-type nil) ; Org is the default, set others here
   (setq denote-prompts '(subdirectory title keywords))
@@ -828,9 +929,11 @@ This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-conf
 
 #+end_src
 
-** Keep Directories Clean
+*** The =jw-emacs-information-management.el= section for clean directories
 
-#+begin_src emacs-lisp
+Move the =#<FILE>#= to a temporary directory instead of root directory.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
   (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
 
@@ -839,155 +942,64 @@ This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-conf
 
 #+end_src
 
-* Development
-** Language Server Support with Eglot (native)
+*** The =jw-emacs-information-management.el= call to provide
 
-Undo the Eglot modifications of =completion-category-defaults=.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
-  (with-eval-after-load 'eglot
-     (setq completion-category-defaults nil))
+  (provide 'jw-emacs-information-management)
 
 #+end_src
 
-** Languages
-*** Python
+** The =jw-emacs-development.el= module
+*** The =jw-emacs-development.el= section for =project.el=  --native
 
-** Project.el (native)
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
 
-#+begin_src emacs-lisp
   (require 'project)
-#+end_src
-
-*** Set Project Paths
-
-Currently the code below only works for =emacs 30+=.
-
-#+begin_src emacs-lisp
-  ;; (defun jw/project-prompter ()
-  ;;      (read-file-name "Select a project folder:"
-  ;;                      "~/Projects/Code/"
-  ;;                      nil
-  ;;                      nil
-  ;;                      nil
-  ;;                      #'file-directory-p))
-  ;; (setq project-prompter #'jw/project-prompter)
 
 #+end_src
 
-** Git
-*** Magit
 
-[[https://magit.vc/][Magit]] is the best Git interface I've ever used.  Common Git operations are easy to execute quickly using Magit's command panel system.
+Set the project paths, but currently the code below only works for =emacs 30+=.
 
-#+begin_src emacs-lisp
-
-  (require 'package)
-  (add-to-list 'package-archives
-               '("melpa" . "https://melpa.org/packages/") t)
-
-  (use-package magit
-    :custom
-    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-  ;; NOTE: Make sure to configure a GitHub token before using this package!
-  ;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
-  ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
-  (use-package forge)
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
+   (defun jw/project-prompter ()
+        (read-file-name "Select a project folder:"
+                        "~/Projects/Code/"
+                        nil
+                        nil
+                        nil
+                        #'file-directory-p))
+   (setq project-prompter #'jw/project-prompter)
 
 #+end_src
 
-**** Configurations
-
-***** SSH Signing
-
-Sign git commits with ssh rather than gpg. Not the optimal solution, but the solution was found to work on this  issue on magit github repo: [[https://github.com/magit/magit/discussions/5046][magit ssh signing discussion]]
-
-#+begin_src emacs-lisp
-
-  (defun magit-read-gpg-signing-key (prompt &optional initial-input history)
-    "")
-
-#+end_src
-
-**** Commands
-***** Global Commands
-
-- =C-x g= (=magit-status=): Open Magit status buffer.
-- =C-c M-g= (=magit-dispatch-popup=): Open Magit command popup.
-- =q= (=magit-mode-quit-window=): Close Magit buffer.
-- =C-c M-c= (=magit-commit=): Start commit process.
-- =C-c M-p= (=magit-push-popup=): Push changes.
-- =C-c M-f= (=magit-pull-popup=): Pull changes.
-- =C-c M-b= (=magit-branch-popup=): Manage branches.
-
-***** Status Buffer
-
-- =TAB=: Expand/collapse section.
-- =S= (=magit-stage-item=): Stage changes.
-- =U= (=magit-unstage-item=): Unstage changes.
-- =c= (=magit-commit-popup=): Commit changes.
-- =P= (=magit-push-popup=): Push changes.
-- =F= (=magit-pull-popup=): Pull changes.
-- =b= (=magit-branch-popup=): Manage branches.
-- =l l= (=magit-log=): View commit log.
-- =r= (=magit-refresh=): Refresh status buffer.
-- =d= (=magit-diff-popup=): Show changes.
-
-***** Diff Buffer
-
-- =n= (=magit-section-forward=): Move to the next hunk.
-- =p= (=magit-section-backward=): Move to the previous hunk.
-- =s= (=magit-stage=): Stage current hunk.
-- =u= (=magit-unstage=): Unstage current hunk.
-- =C-c C-a= (=magit-diff-show-or-scroll-up=): Scroll up in diff buffer.
-- =C-c C-e= (=magit-diff-show-or-scroll-down=): Scroll down in diff buffer.
-
-***** Log Buffer
-- =l l= (=magit-log=): Refresh log buffer.
-- =RET=: Show details of the commit at point.
-- =d= (=magit-diff-visit-file=): Show changes for the commit at point.
-- =TAB=: Toggle commit details.
-
-***** Commit Buffer
-- =C-c C-c= (=magit-commit=): Finish the commit.
-- =C-c C-a= (=magit-commit-ammend=): Amend the last commit.
-
-***** Branch Popup
-- =b c= (=magit-branch-create=): Create a new branch.
-- =b k= (=magit-branch-delete=): Delete a branch.
-- =b m= (=magit-branch-move=): Rename a branch.
-- =b r= (=magit-branch-rename=): Rename the current branch.
-- =b c= (=magit-branch-checkout=): Checkout a branch.
-  
-* Productivity
-** Visualizing Delimiters
-*** Show Parent (native)
+*** The =jw-emacs-development.el= section for visualizing parent delimiters --native
 
 =show-paren-mode= allows one to see matching pairs of parentheses and other characters. When point is on the opening character of one of the paired characters, the other is highlighted. When the point is after the closing character of one of the paired characters, the other is highlighted. 
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
 
   (show-paren-mode 1)
 
 #+end_src
-*** Rainbow Delimiters
+
+*** The =jw-emacs-development.el= section for visualizing all delimiters 
 
 [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] is useful in programming modes because it colorizes nested parentheses and brackets according to their nesting depth.  This makes it a lot easier to visually match parentheses in Emacs Lisp code without having to count them yourself.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
 #+end_src
 
-** Pairing Delimiters
-*** Eletric Pair (native)
+*** The =jw-emacs-development.el= section for pairing delimiters (=electric-pair-mode=) --native
 
 =electric-pair-mode= will auto pair delimiters for you. One issue with the auto pairing is the =<= character in =org-mode=. The following hook to the enabling of =electric-pair-mode= aims to solve the issue when in =org-mode=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
 
   (electric-pair-mode t)
 
@@ -998,11 +1010,11 @@ Sign git commits with ssh rather than gpg. Not the optimal solution, but the sol
 
 #+end_src
 
-*** Evil Surround
+*** The =jw-emacs-development.el= section for pairing delimiters (=evil-surround=)
 
 =evil-surround= emulates [[https://github.com/tpope/vim-surround][surround.vim]]. For usage instructions visit [[https://github.com/emacs-evil/evil-surround][evil-surround]]
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
 
   (use-package evil-surround
     :ensure t
@@ -1011,19 +1023,50 @@ Sign git commits with ssh rather than gpg. Not the optimal solution, but the sol
 
 #+end_src
 
-** Formatting
-*** Fill-paragraph (native)
+*** The =jw-emacs-development.el= section for logging keys (=command-log-mode=)
 
-Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-column= variable.
+[[https://github.com/lewang/command-log-mode][command-log-mode]] is useful for displaying a panel showing each key binding you use in a panel on the right side of the frame. Great for live streams and screencasts!
 
-#+begin_src emacs-lisp
 
-  (setq-default fill-column 80)
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
+
+  (use-package command-log-mode)
 
 #+end_src
-** Copy File Path
 
-#+begin_src emacs-lisp
+To activate =command-log-mode= you must first run =M-x global-command-log-mode= to have =command-log-mode= in every buffer and then run =M-x clm/toggle-command-log-buffer= to have the buffer be displayed.
+*** The =jw-emacs-development.el= call to provide
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
+
+  (provide 'jw-emacs-development)
+
+#+end_src
+
+** The =jw-emacs-langs.el= module
+*** The =jw-emacs-langs.el= section for language server configuration (=eglot=) --native
+
+Undo the Eglot modifications of =completion-category-defaults=.
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (with-eval-after-load 'eglot
+     (setq completion-category-defaults nil))
+
+#+end_src
+*** The =jw-emacs-langs.el= call to provide
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (provide 'jw-emacs-langs)
+
+#+end_src
+
+* The custom libraries of my Emacs configuration (=jw-lisp/=)
+** The =jw-copy.el= library
+
+*** The =jw-copy.el= for copying file path
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-lisp/jw-copy.el" :mkdirp yes
   (defun jw-dired-get-file-path ()
     "Get the full path of the file at point in Dired mode and display it in the minibuffer."
     (interactive)
@@ -1035,9 +1078,10 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
 
 #+end_src
 
-** Copy File
 
-#+begin_src emacs-lisp
+*** The =jw-copy.el= for copying a file
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-lisp/jw-copy.el" :mkdirp yes
 
   (defun jw-copy-file (source-file destination-file)
     "Copy a file from SOURCE-FILE to DESTINATION-FILE."
@@ -1055,89 +1099,41 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
 
 #+end_src
 
-* Archive
-** Projectile
-*** Rationale
+*** The =jw-copy.el= call to provide
 
-The reason why =projectile= is archived is because I want to utilize the built in emacs package =project.el=. Additionally, my previous configuration utilized =ivy= and currently I am not using it for my completion system. I have also noticed that =project.el= encountered significant amount of lag when changing to a project file, thus to mitigate that lag, I have decided to switch away from =projectile=. Note, there are amazing features that =projectile= offers, however I do not use them, so I see no point in using =projectile= anymore. 
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-lisp/jw-copy.el" :mkdirp yes
 
-*** Code
-**** Projectile
-
-[[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to have it installed even if you don't use its commands directly.
-
-#+begin_src emacs-lisp
-
-  ;; (use-package projectile
-  ;;   :diminish projectile-mode
-  ;;   :config (projectile-mode)
-  ;;   :custom ((projectile-completion-system 'ivy))
-  ;;   :bind-keymap
-  ;;   ("C-c p" . projectile-command-map)
-  ;;   :init
-  ;;   ;; NOTE: Set this to the folder where you keep your Git repos!
-  ;;   (when (file-directory-p "~/projects-code")
-  ;;     (setq projectile-project-search-path '("~/projects-code")))
-  ;;   (setq projectile-switch-project-action #'projectile-dired))
-
-  ;; (use-package counsel-projectile
-  ;;   :config (counsel-projectile-mode))
+  (provide 'jw-emacs-copy)
 
 #+end_src
 
-**** Bindings
+* The archive of deprecated Emacs Configurations (=archive/emacs/=)
 
-#+begin_src emacs-lisp
+The following code consists of legacy code that is no longer used in this emacs configuration. However, it is recommended to keep a history of the previous configurations that I used for packages no longer used as references, which on rare occasion be reinstated.
 
-  ;; (jw/leader-key-def
-  ;;   "pf"  'projectile-find-file
-  ;;   "ps"  'projectile-switch-project
-  ;;   "pp"  'projectile-find-file
-  ;;   "pc"  'projectile-compile-project
-  ;;   "pd"  'projectile-dired)
+** =org-roam.el= Configurations
 
-#+end_src
+#+begin_src emacs-lisp :tangle "archive/emacs/jw-emacs-org-roam.el" :mkdirp yes
 
-** Which-key
-
-[[https://github.com/justbur/emacs-which-key][which-key]] is a useful UI panel that appears when you start pressing any key binding in Emacs to offer you all possible completions for the prefix. For example, if you press =C-c= (hold control and press the letter =c=), a panel will appear at the bottom of the frame displaying all of the bindings under that prefix and which command they run. This is very useful for learning the possible key bindings in the mode of your current buffer.
-
-#+begin_src emacs-lisp
-
-  ;; (use-package which-key
-  ;;   :init (which-key-mode)
-  ;;   :diminish which-key-mode
-  ;;   :config
-  ;;   (setq which-key-idle-delay 1))
-
-#+end_src
-
-** Org-roam
-*** Installation
-
-#+begin_src emacs-lisp
-
-  ;; (use-package org-roam
-  ;;   :ensure t
-  ;;   :custom
-  ;;   (org-roam-directory (file-truename "~/OrgRoamTest/"))
-  ;;   :bind (("C-c n l" . org-roam-buffer-toggle)
-  ;;          ("C-c n f" . org-roam-node-find)
-  ;;          ("C-c n g" . org-roam-graph)
-  ;;          ("C-c n i" . org-roam-node-insert)
-  ;;          ("C-c n c" . org-roam-capture)
-  ;;          ;; Dailies
-  ;;          ("C-c n j" . org-roam-dailies-capture-today))
-  ;;   :config
-  ;;   ;; If you're using a vertical completion framework, you might want a more informative completion interface
-  ;;   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-  ;;   (org-roam-db-autosync-mode)
-  ;;   ;; If using org-roam-protocol
-  ;;   (require 'org-roam-protocol))
+  (use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory (file-truename "~/OrgRoamTest/"))
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ;; Dailies
+           ("C-c n j" . org-roam-dailies-capture-today))
+    :config
+    If you're using a vertical completion framework, you might want a more informative completion interface
+    (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+    (org-roam-db-autosync-mode)
+    If using org-roam-protocol
+    (require 'org-roam-protocol))
 
 #+end_src
-
-*** Switching Zettlekasten
 
 Code taken and adjusted for my usecase from [[https://www.reddit.com/r/emacs/comments/135dhh5/code_snippet_to_switch_between_multiple/][@SnooPets20's post.]]
 
@@ -1145,31 +1141,88 @@ The idea of this switching is to maximize the utility of =org-roam=. In some cas
 
 In order to maintain these various usecases, the content of each should be stored outside the =org-roam= directory (to avoid duplication). 
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle "archive/emacs/jw-emacs-org-roam.el" :mkdirp yes
 
-  ;; (setq zettlekasten-paths-alist '(("Main" . "~/Trove/Epektasi/")
-  ;;                                  ("Zettlekasten" . "~/Trove/Zettlekasten/")
-  ;;                                  ("Test" . "~/OrgRoamTest/")))
+  (setq zettlekasten-paths-alist '(("Main" . "~/Trove/Epektasi/")
+                                   ("Zettlekasten" . "~/Trove/Zettlekasten/")
+                                   ("Test" . "~/OrgRoamTest/")))
 
-  ;; (defun switch-zettlekasten ()
-  ;;   (interactive)
-  ;;   (let* ((keys (mapcar #'car zettlekasten-paths-alist))
-  ;;          (prompt (format "Select Zettlekasten:"))
-  ;;          (key (completing-read prompt keys))
-  ;;          (chosen-zettlekasten-path (cdr (assoc key zettlekasten-paths-alist))))
-  ;;     (setq org-roam-directory chosen-zettlekasten-path)
-  ;;     (setq org-roam-db-location (concat chosen-zettlekasten-path "org-roam.db"))
-  ;;     (org-roam-db-sync)))
+  (defun switch-zettlekasten ()
+    (interactive)
+    (let* ((keys (mapcar #'car zettlekasten-paths-alist))
+           (prompt (format "Select Zettlekasten:"))
+           (key (completing-read prompt keys))
+           (chosen-zettlekasten-path (cdr (assoc key zettlekasten-paths-alist))))
+      (setq org-roam-directory chosen-zettlekasten-path)
+      (setq org-roam-db-location (concat chosen-zettlekasten-path "org-roam.db"))
+      (org-roam-db-sync)))
 
 #+end_src
-*** Org-roam-ui
+
+** =org-roam-ui.el= Configurations
 
 =org-roam-ui= is used to visualize =org-roam= web. 
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle "archive/emacs/jw-emacs-org-roam-ui.el" :mkdirp yes
 
-  ;; (use-package org-roam-ui
-  ;;   :ensure t)
+  (use-package org-roam-ui
+    :ensure t)
 
 #+end_src
 
+** =which-key.el= Configurations
+
+[[https://github.com/justbur/emacs-which-key][which-key]] is a useful UI panel that appears when you start pressing any key binding in Emacs to offer you all possible completions for the prefix. For example, if you press =C-c= (hold control and press the letter =c=), a panel will appear at the bottom of the frame displaying all of the bindings under that prefix and which command they run. This is very useful for learning the possible key bindings in the mode of your current buffer.
+
+#+begin_src emacs-lisp :tangle "archive/emacs/jw-emacs-which-key.el" :mkdirp yes
+
+  (use-package which-key
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :config
+    (setq which-key-idle-delay 1))
+
+#+end_src
+** =projectile.el= Configurations
+
+[[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to have it installed even if you don't use its commands directly.
+
+#+begin_src emacs-lisp :tangle "archive/emacs/jw-emacs-projectile.el" :mkdirp yes
+
+  (use-package projectile
+    :diminish projectile-mode
+    :config (projectile-mode)
+    :custom ((projectile-completion-system 'ivy))
+    :bind-keymap
+    ("C-c p" . projectile-command-map)
+    :init
+    NOTE: Set this to the folder where you keep your Git repos!
+    (when (file-directory-p "~/projects-code")
+      (setq projectile-project-search-path '("~/projects-code")))
+    (setq projectile-switch-project-action #'projectile-dired))
+
+  (use-package counsel-projectile
+    :config (counsel-projectile-mode))
+
+#+end_src
+
+#+begin_src emacs-lisp :tangle "archive/emacs/jw-emacs-projectile.el" :mkdirp yes
+
+  (jw/leader-key-def
+    "pf"  'projectile-find-file
+    "ps"  'projectile-switch-project
+    "pp"  'projectile-find-file
+    "pc"  'projectile-compile-project
+    "pd"  'projectile-dired)
+
+#+end_src
+
+*** Rationale for Archiving
+
+The reason why =projectile= is archived is because I want to utilize the built in emacs package =project.el=. Additionally, my previous configuration utilized =ivy= and currently I am not using it for my completion system. I have also noticed that =project.el= encountered significant amount of lag when changing to a project file, thus to mitigate that lag, I have decided to switch away from =projectile=. Note, there are amazing features that =projectile= offers, however I do not use them, so I see no point in using =projectile= anymore. 
+
+** =org-tangle= Configuration
+
+The following line =#+PROPERTY: header-args:emacs-lisp :tangle .emacs.d/init.el :mkdirp yes= cause the tangle command to compile and save the code blocks in the =.emacs.d/init.el= file.
+
+; #+PROPERTY: header-args:emacs-lisp :tangle .emacs.d/init.el :mkdirp yes
