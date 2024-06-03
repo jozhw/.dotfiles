@@ -143,5 +143,6 @@
 (require 'jw-emacs-information-management)
 (require 'jw-emacs-development)
 (require 'jw-emacs-langs)
+(require 'jw-emacs-org-latex)
 
 (require 'jw-copy)
