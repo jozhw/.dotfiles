@@ -67,3 +67,9 @@ In this mode, you can edit file names just like you would any file. However, whe
 - =b r= (=magit-branch-rename=): Rename the current branch.
 - =b c= (=magit-branch-checkout=): Checkout a branch.
   
+
+* Org
+
+To change the view to outline or full view use =SHIFT-TAB= repeatedly for the desired visual look.
+
+To condense or uncondense content under a heading, make sure the cursor is on the same line as the heading and use =TAB= to cycle through uncondensing or condensing the content.
