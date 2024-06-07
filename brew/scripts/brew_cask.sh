@@ -4,3 +4,6 @@
 
 # Install miniconda for python envs.
 brew install --cask miniconda
+
+# Install fastmail client
+brew install --cask fmail2
