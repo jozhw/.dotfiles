@@ -67,9 +67,71 @@ In this mode, you can edit file names just like you would any file. However, whe
 - =b r= (=magit-branch-rename=): Rename the current branch.
 - =b c= (=magit-branch-checkout=): Checkout a branch.
   
-
 * Org
 
 To change the view to outline or full view use =SHIFT-TAB= repeatedly for the desired visual look.
 
 To condense or uncondense content under a heading, make sure the cursor is on the same line as the heading and use =TAB= to cycle through uncondensing or condensing the content.
+
+** Org-Latex
+
+[[https://jakebox.github.io/youtube/org_latex_video.html][Straightfoward Emacs guide]]. The following is copied from that guide.
+
+*** Create & include a =SETUPFILE=
+
+A =SETUPFILE= is simply a file that contains some sort of org mode configuration. For example, the =#+LATEX_CLASS:= we saw earlier. Or, maybe =#+LATEX_HEADER:=. It could even be as simple as =#+TITLE:=. In this =SETUPFILE= we can place all of our lines of LaTeX code we want included in the final generated document. This is a very powerful and easy method of perfectly customizing our export.
+
+Linking the =SETUPFILE=:
+
+#+BEGIN_SRC
+
+#+SETUPFILE: ~/Dropbox/Mackup/emacs-stuff/org/jake-standard-latex-export.org
+
+#+END_SRC
+
+*** Structure the =SETUPFILE=
+
+Now, in that =SETUPFILE=, we place the LaTeX lines we normally would put in a =.tex= file. For example, =\usepackage{amsmath}=. Hopefully you have your own favorite =.tex= file setup, but if not I suggest learning LaTeX and/or finding a template online.
+
+I suggest using a macro to add =#+LATEX_CLASS:= to each line, rather than typing it manually of course! Notice the =LaTeX_CLASS:= - the custom one we just created.
+
+#+BEGIN_SRC
+
+#+LaTeX_CLASS: org-plain-latex
+#+LaTeX_CLASS_OPTIONS: [letter]
+#+LATEX_HEADER: \usepackage{lmodern} % Ensures we have the right font
+
+#+LATEX_HEADER: \usepackage[AUTO]{inputenc}
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{amsmath, amsthm, amssymb}
+#+LATEX_HEADER: \usepackage[table, xcdraw]{xcolor}
+
+% and so on...
+
+#+END_SRC
+
+*** Extra Notes
+
+Some notes not covered in the video.
+
+Enable using =listings= for code highlighting
+
+#+begin_src emacs-lisp
+
+  (setq org-latex-listings 't)
+
+#+end_src
+
+In your =SETUPFILE:=
+
+#+BEGIN_SRC
+
+#+LATEX_HEADER: \usepackage{listings}
+
+#+END_SRC
+
+If you enable =org-latex-listings= but don’t include the =listings= package in your TeX file, it will likely not compile (if you are exporting an org file with code blocks).
+
+Useful commands
+
+- =org-latex-preview= - toggles preview LaTeX math at point
