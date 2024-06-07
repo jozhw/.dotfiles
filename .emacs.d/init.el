@@ -133,6 +133,14 @@
   ;; setting is useful beyond Corfu.
   (setq read-extended-command-predicate #'command-completion-default-include-p))
 
+(defcustom prot-emacs-load-which-key nil
+  "When non-nil, display key binding hints after a short delay.
+This user option must be set in the `prot-emacs-pre-custom.el'
+file.  If that file exists in the Emacs directory, it is loaded
+before all other modules of my setup."
+  :group 'prot-emacs
+  :type 'boolean)
+
 (require 'jw-emacs-theme)
 (require 'jw-emacs-essentials)
 (require 'jw-emacs-modeline)
