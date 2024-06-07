@@ -1078,18 +1078,6 @@ To activate =command-log-mode= you must first run =M-x global-command-log-mode= 
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org-latex.el" :mkdirp yes
 
-  (with-eval-after-load 'ox-latex
-  (add-to-list 'org-latex-classes
-               '("org-plain-latex"
-                 "\\documentclass{article}
-             [NO-DEFAULT-PACKAGES]
-             [PACKAGES]
-             [EXTRA]"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
   (provide 'jw-emacs-org-latex)
 #+end_src
