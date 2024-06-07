@@ -12,5 +12,7 @@
                               (time-subtract after-init-time before-init-time)))
                      gcs-done)))
 
+(add-hook 'after-init-hook (lambda () (set-frame-name "home")))
+
 (add-to-list 'load-path (expand-file-name "jw-emacs-modules" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "jw-lisp" user-emacs-directory))

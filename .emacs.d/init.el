@@ -113,6 +113,9 @@
   :config
   (evil-collection-init))
 
+;; Always start with *scratch*
+(setq initial-buffer-choice t)
+
 ;; A few more useful configurations...
 (use-package emacs
   :ensure t
