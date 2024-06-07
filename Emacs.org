@@ -285,7 +285,6 @@ Load the =jw-emacs-modules=.
   (require 'jw-emacs-information-management)
   (require 'jw-emacs-development)
   (require 'jw-emacs-langs)
-  (require 'jw-emacs-org-latex)
 
 #+end_src
 
@@ -785,6 +784,37 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
     :hook (org-mode . jw/org-mode-visual-fill))
 
 #+end_src
+*** The =jw-emacs-org.el= section for org-latex
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
+
+(with-eval-after-load 'ox-latex
+  (add-to-list 'org-latex-classes
+               '("org-plain-latex"
+                 "\\documentclass{article}
+             [NO-DEFAULT-PACKAGES]
+             [PACKAGES]
+             [EXTRA]"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+  (add-to-list 'org-latex-classes
+               '("org-plain-no-section-numbering-latex"
+                 "\\documentclass{article}
+             [NO-DEFAULT-PACKAGES]
+             [PACKAGES]
+             [EXTRA]"
+                 ("\\section*{%s}" . "\\section*{%s}")
+                 ("\\subsection*{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection*{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph*{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph*{%s}" . "\\subparagraph*{%s}"))))
+
+#+end_src
+
 *** The =jw-emacs-org.el= call to provide
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
