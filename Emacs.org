@@ -9,10 +9,6 @@ The organization of this emacs configuration was inspired by [[https://protesila
 This org file is used to set up my emacs configuration. The code blocks of this org file
 will be executed using =org-babel-tangle=. Thus, to initiate you must use =M-x ^org-babel-tangle= or use the key-binding =C-c C-v t=.
 
-** Emacs.org Organization
-
-Since the compilation is sequential, you have to be careful in that =jw/leader-key-def= was defined in the *Keyboard Bindings* section and it is used in the *General Configuration* section under *Text Scaling* where =hydra= was used. This means that *Key Bindings* must be before the *Text Scaling* otherwise there will be a void error.
-
 * Running Emacs
 ** In the Command Line 
 
