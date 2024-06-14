@@ -943,6 +943,14 @@ For macos, make sure to have =coreutils= installed. To install run, =brew instal
 #+end_src
 
 
+Enable the denote dired mode for all files so that the components can easily be seen.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
+
+  (add-hook 'dired-mode-hook #'denote-dired-mode)
+
+#+end_src
+
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
   (setq denote-known-keywords '("theology" "philosophy" "politics" "journal" "analysis" "linguistics"))
