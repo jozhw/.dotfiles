@@ -21,4 +21,4 @@
           (message "Destination directory does not exist.")))
     (message "Source file does not exist.")))
 
-(provide 'jw-emacs-copy)
+(provide 'jw-copy)

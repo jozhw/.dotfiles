@@ -1195,9 +1195,10 @@ Undo the Eglot modifications of =completion-category-defaults=.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-lisp/jw-copy.el" :mkdirp yes
 
-  (provide 'jw-emacs-copy)
+  (provide 'jw-copy)
 
 #+end_src
+
 
 * The archive of deprecated Emacs Configurations (=archive/emacs/=)
 
