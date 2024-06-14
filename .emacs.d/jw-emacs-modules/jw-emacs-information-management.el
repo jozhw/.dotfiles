@@ -4,6 +4,8 @@
 (setq denote-directory (expand-file-name "~/Otzar/Gnosis/"))
 (setq denote-save-buffer-after-creation nil)
 
+(add-hook 'dired-mode-hook #'denote-dired-mode)
+
 (setq denote-known-keywords '("theology" "philosophy" "politics" "journal" "analysis" "linguistics"))
 (setq denote-infer-keywords t)
 (setq denote-sort-keywords t)
