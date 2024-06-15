@@ -590,25 +590,6 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
 
 #+end_src
 
-*** The =jw-emacs-essentials.el= section for text scaling (=hydra.el=)
-
-This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to design a transient key binding for quickly adjusting the scale of the text on screen.  We define a hydra that is bound to =C-s t s= and, once activated, =j= and =k= increase and decrease the text scale.  You can press any other key (or =f= specifically) to exit the transient key map.
-
-#+begin_src emacs-lisp ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el" :mkdirp yes
-
-  (use-package hydra)
-
-  (defhydra hydra-text-scale (:timeout 4)
-    "scale text"
-    ("j" text-scale-increase "in")
-    ("k" text-scale-decrease "out")
-    ("f" nil "finished" :exit t))
-
-  (jw/leader-key-def
-    "ts" '(hydra-text-scale/body :which-key "scale text"))
-
-#+end_src
-
 *** The =jw-emacs-essentials.el= section for =helpful.el=
 
 [[https://github.com/Wilfred/helpful][Helpful]] adds a lot of very helpful (get it?) information to Emacs' =describe-= command buffers.  For example, if you use =describe-function=, you will not only get the documentation about the function, you will also see the source code of the function and where it gets used in other places in the Emacs configuration.  It is very useful for figuring out how things work in Emacs.
@@ -1498,3 +1479,21 @@ The reason why =projectile= is archived is because I want to utilize the built i
 The following line =#+PROPERTY: header-args:emacs-lisp :tangle .emacs.d/init.el :mkdirp yes= cause the tangle command to compile and save the code blocks in the =.emacs.d/init.el= file.
 
 ; #+PROPERTY: header-args:emacs-lisp :tangle .emacs.d/init.el :mkdirp yes
+** =hydra.el= Configuration
+
+This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to design a transient key binding for quickly adjusting the scale of the text on screen.  We define a hydra that is bound to =C-s t s= and, once activated, =j= and =k= increase and decrease the text scale.  You can press any other key (or =f= specifically) to exit the transient key map.
+
+#+begin_src emacs-lisp :tangle "archive/emacs/hydra.el" :mkdirp yes
+
+  (use-package hydra)
+
+  (defhydra hydra-text-scale (:timeout 4)
+    "scale text"
+    ("j" text-scale-increase "in")
+    ("k" text-scale-decrease "out")
+    ("f" nil "finished" :exit t))
+
+  (jw/leader-key-def
+    "ts" '(hydra-text-scale/body :which-key "scale text"))
+
+#+end_src
