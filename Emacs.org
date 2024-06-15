@@ -9,6 +9,12 @@ The organization of this emacs configuration was inspired by [[https://protesila
 This org file is used to set up my emacs configuration. The code blocks of this org file
 will be executed using =org-babel-tangle=. Thus, to initiate you must use =M-x ^org-babel-tangle= or use the key-binding =C-c C-v t=.
 
+* Dependencies
+
+** Fonts
+
+This emacs configuration, if running the GUI version requires the font type called [[https://github.com/protesilaos/iosevka-comfy][iosevka-comfy]]. I have a copy of the git repo attached as a submodule in the fonts directory of this repository. Make sure that have that font style installed.
+
 * Running Emacs
 ** In the Command Line 
 
