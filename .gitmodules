@@ -1,3 +1,9 @@
 [submodule "atzlan"]
 	path = atzlan
 	url = https://github.com/jozhw/atzlan
+[submodule "fonts/iosevka-comfy"]
+	path = fonts/iosevka-comfy
+	url = https://git.sr.ht/~protesilaos/iosevka-comfy
+[submodule "fonts/Iosevka"]
+	path = fonts/Iosevka
+	url = https://github.com/be5invis/Iosevka.git
