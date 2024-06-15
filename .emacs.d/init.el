@@ -146,6 +146,26 @@ before all other modules of my setup."
   :group 'jw-emacs
   :type 'boolean)
 
+(defcustom jw-emacs-load-theme-family 'modus
+  "Set of themes to load.
+Valid values are the symbols `ef', `modus', and `standard', which
+reference the `ef-themes', `modus-themes', and `standard-themes',
+respectively.
+
+A nil value does not load any of the above (use Emacs without a
+theme).
+
+This user option must be set in the `jw-emacs-pre-custom.el'
+file.  If that file exists in the Emacs directory, it is loaded
+before all other modules of my setup."
+  :group 'jw-emacs
+  :type '(choice :tag "Set of themes to load" :value modus
+                 (const :tag "The `ef-themes' module" ef)
+                 (const :tag "The `modus-themes' module" modus)
+                 (const :tag "The `standard-themes' module" standard)
+                 (const :tag "Do not load a theme module" nil)))
+
+(load (locate-user-emacs-file "jw-emacs-pre-custom.el") :no-error :no-message)
 (require 'jw-emacs-theme)
 (require 'jw-emacs-essentials)
 (require 'jw-emacs-modeline)
