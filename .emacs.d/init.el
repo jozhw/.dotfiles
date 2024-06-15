@@ -1,13 +1,4 @@
-(if (display-graphic-p)
-    (progn
-      (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
-      (add-to-list 'default-frame-alist '(alpha . (90 . 90)))
-      (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
-      (add-to-list 'default-frame-alist '(fullscreen . maximized))))
-
-(if (display-graphic-p)
-    (progn
-      (set-face-attribute 'default nil :height 180)))
+(setq-default mode-line-format nil)
 
 ;; Initialize package sources
 (require 'package)
