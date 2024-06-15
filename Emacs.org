@@ -677,8 +677,6 @@ Display the virtual environment version.
            ("M-h" . jw/minibuffer-backward-kill))
     :custom
     (vertico-cycle t)
-    :custom-face
-    (vertico-current ((t (:background "#3a3f5a"))))
     :init
     (vertico-mode))
 
@@ -1268,7 +1266,6 @@ Undo the Eglot modifications of =completion-category-defaults=.
 
 #+end_src
 
-
 *** The =jw-copy.el= for copying a file
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-lisp/jw-copy.el" :mkdirp yes
@@ -1296,7 +1293,6 @@ Undo the Eglot modifications of =completion-category-defaults=.
   (provide 'jw-copy)
 
 #+end_src
-
 
 * The archive of deprecated Emacs Configurations (=archive/emacs/=)
 
