@@ -127,12 +127,23 @@
   ;; setting is useful beyond Corfu.
   (setq read-extended-command-predicate #'command-completion-default-include-p))
 
-(defcustom prot-emacs-load-which-key nil
+;; taken from prot's config
+;; For those who use my dotfiles and need an easy way to write their
+;; own extras on top of what I already load: search below for the files
+;; prot-emacs-pre-custom.el and prot-emacs-post-custom.el
+(defgroup jw-emacs nil
+  "User options for my dotemacs.
+These produce the expected results only when set in a file called
+prot-emacs-pre-custom.el.  This file must be in the same
+directory as the init.el."
+  :group 'file)
+
+(defcustom jw-emacs-load-which-key nil
   "When non-nil, display key binding hints after a short delay.
 This user option must be set in the `prot-emacs-pre-custom.el'
 file.  If that file exists in the Emacs directory, it is loaded
 before all other modules of my setup."
-  :group 'prot-emacs
+  :group 'jw-emacs
   :type 'boolean)
 
 (require 'jw-emacs-theme)
