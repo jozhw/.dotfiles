@@ -1,3 +1,5 @@
+(setq-default mode-line-format (default-value 'mode-line-format))
+
 (setq display-time-format "%l:%M %p %b %y"
       display-time-default-load-average nil)
 
