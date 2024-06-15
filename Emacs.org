@@ -377,6 +377,22 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+end_src
 
+** The =init.el= user options
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+  ;; taken from prot's config
+  ;; For those who use my dotfiles and need an easy way to write their
+  ;; own extras on top of what I already load: search below for the files
+  ;; prot-emacs-pre-custom.el and prot-emacs-post-custom.el
+  (defgroup jw-emacs nil
+    "User options for my dotemacs.
+  These produce the expected results only when set in a file called
+  prot-emacs-pre-custom.el.  This file must be in the same
+  directory as the init.el."
+    :group 'file)
+
+#+end_src
 ** The =init.el= user option to enable which-key
 
 The =which-key= package provides hints for keys that complete the currently incomplete sequence. Here we determine whether to load the module or not. I personally never rely on =which-key= even if I enable its mode. If I ever need to review which key bindings are available I will either type =C-h= to complete a key sequence (produces a Help buffer with relevant keys) or I will do =C-h m= (=M-x describe-mode= to get information about the current major mode).
@@ -387,7 +403,7 @@ Also check the [[https://protesilaos.com/emacs/dotemacs#h:ddb1070d-2f91-4224-ad4
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
-  (defcustom prot-emacs-load-which-key nil
+  (defcustom jw-emacs-load-which-key nil
     "When non-nil, display key binding hints after a short delay.
   This user option must be set in the `prot-emacs-pre-custom.el'
   file.  If that file exists in the Emacs directory, it is loaded
@@ -397,12 +413,37 @@ Also check the [[https://protesilaos.com/emacs/dotemacs#h:ddb1070d-2f91-4224-ad4
 
 #+end_src
 
+** The =init.el= user option to load a theme family
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+
+  (defcustom jw-emacs-load-theme-family 'modus
+    "Set of themes to load.
+  Valid values are the symbols `ef', `modus', and `standard', which
+  reference the `ef-themes', `modus-themes', and `standard-themes',
+  respectively.
+
+  A nil value does not load any of the above (use Emacs without a
+  theme).
+
+  This user option must be set in the `jw-emacs-pre-custom.el'
+  file.  If that file exists in the Emacs directory, it is loaded
+  before all other modules of my setup."
+    :group 'jw-emacs
+    :type '(choice :tag "Set of themes to load" :value modus
+                   (const :tag "The `ef-themes' module" ef)
+                   (const :tag "The `modus-themes' module" modus)
+                   (const :tag "The `standard-themes' module" standard)
+                   (const :tag "Do not load a theme module" nil)))
+
+#+end_src
 ** The =init.el= final part to load the individual modules
 
 Load the =jw-emacs-modules=.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
-
+  (load (locate-user-emacs-file "jw-emacs-pre-custom.el") :no-error :no-message)
   (require 'jw-emacs-theme)
   (require 'jw-emacs-essentials)
   (require 'jw-emacs-modeline)
@@ -425,18 +466,62 @@ Load =jw-lisp=.
 #+end_src
 * The modules of my Emacs configuration (=jw-emacs-modules/=)
 ** The =jw-emacs-theme.el= module
-*** The =jw-emacs-theme.el= section to load a theme (=doom-themes=)
-
-I currently am using the [[https://github.com/hlissner/emacs-doom-themes][DOOM Themes]], specifically =doom-dracula=.
+*** The =jw-emacs-theme.el= section to load a theme (=jw-emacs-load-theme-family=)
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
-  (use-package doom-themes
-    :init (load-theme 'doom-dracula t))
+  ;;; Theme setup and related
+
+  ;;;; Load the desired theme module
+  ;; These all reference my packages: `modus-themes', `ef-themes',
+  ;; `standard-themes'.
+  (when jw-emacs-load-theme-family
+    (require
+     (pcase jw-emacs-load-theme-family
+       ('ef 'jw-emacs-ef-themes)
+       ('modus 'jw-emacs-modus-themes)
+       ('standard 'jw-emacs-standard-themes))))
 
 #+end_src
 
-*** The =jw-emacs-theme.el= call to provide
+**** The =jw-emacs-modus-themes.el= module -- native
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modus-themes.el" :mkdirp yes
+
+  ;;; The Modus themes
+
+  ;; The themes are highly customisable.  Read the manual:
+  ;; <https://protesilaos.com/emacs/modus-themes>.
+  (use-package modus-themes
+    :ensure t
+    :demand t
+    :bind (("<f5>" . modus-themes-toggle)
+           ("C-<f5>" . modus-themes-select))
+    :config
+    (setq modus-themes-custom-auto-reload nil
+          modus-themes-to-toggle '(modus-operandi modus-vivendi)
+          ;; modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted)
+          ;; modus-themes-to-toggle '(modus-operandi-deuteranopia modus-vivendi-deuteranopia)
+          ;; modus-themes-to-toggle '(modus-operandi-tritanopia modus-vivendi-tritanopia)
+          modus-themes-mixed-fonts t
+          modus-themes-variable-pitch-ui t
+          modus-themes-italic-constructs t
+          modus-themes-bold-constructs nil
+          modus-themes-completions '((t . (extrabold)))
+          modus-themes-prompts '(extrabold)
+          modus-themes-headings
+          '((agenda-structure . (variable-pitch light 2.2))
+            (agenda-date . (variable-pitch regular 1.3))
+            (t . (regular 1.15))))
+
+    (setq modus-themes-common-palette-overrides nil))
+    (if (jw-emacs-theme-environment-dark-p)
+      (modus-themes-load-theme (cadr modus-themes-to-toggle))
+      (modus-themes-load-theme (car modus-themes-to-toggle))))
+   (provide 'jw-emacs-modus-themes)
+
+#+end_src
+
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
