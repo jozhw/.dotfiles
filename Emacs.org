@@ -535,7 +535,7 @@ Load =jw-lisp=.
 For a minimalistic UI, the startup messages, scroll-bar, tool-bar, tooltip, menu-bar
 were all removed from the display.
 
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
   ;; Disable startup message when emacs starts
   (setq inhibit-startup-message t)
@@ -612,6 +612,15 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
 #+end_src
 
 ** The =jw-emacs-modeline.el= module
+*** The =jw-emacs-modeline.el= to enable the mode-line
+The mode-line was disabled earlier ([[*The =init.el= conditional to remove display of mode-line][The =init.el= conditional to remove display of mode-line]]) so that the startup UI would look smooth
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
+
+  (setq-default mode-line-format (default-value 'mode-line-format))
+
+#+end_src
+
 *** The =jw-emacs-modeline.el= basic user interface configuration
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
@@ -621,7 +630,7 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
 
 #+end_src
 
-*** The =jw-emacs-modeline.el= section for =doom-modeline=
+*** The =jw-emacs-modeline.el= customization with =doom-modeline=
 
 [[https://github.com/seagle0128/doom-modeline][doom-modeline]] is a very attractive and rich (yet still minimal) mode line configuration for Emacs.  The default configuration is quite good but you can check out the [[https://github.com/seagle0128/doom-modeline#customize][configuration options]] for more things you can enable or disable.
 
@@ -646,7 +655,7 @@ If you are running in the =macos= terminal, then you have to make sure that you 
 
 =doom-modeline= icons rely on =nerd-icons=. Thus, you must install the =nerd-icons= if you want to use the icons on the modeline.
 
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el"
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
   (use-package nerd-icons
     ;; :custom
@@ -661,7 +670,7 @@ If you are running in the =macos= terminal, then you have to make sure that you 
 
 To turn off icons uncomment the following:
 
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el"
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
   ;; (setq doom-modeline-icon nil)
 
@@ -671,7 +680,7 @@ To turn off icons uncomment the following:
 The following contains configurations of the =doom-modeline=. All the configurations here use the =setq=.
 
 
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el"
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
   ;; If non-nil, a word count will be added to the selection-info modeline segment.
   (setq doom-modeline-enable-word-count t)
@@ -687,7 +696,7 @@ The following contains configurations of the =doom-modeline=. All the configurat
 
 Display the virtual environment version.
 
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el"
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
   (setq doom-modeline-env-version t)
 
@@ -1479,6 +1488,91 @@ The reason why =projectile= is archived is because I want to utilize the built i
 The following line =#+PROPERTY: header-args:emacs-lisp :tangle .emacs.d/init.el :mkdirp yes= cause the tangle command to compile and save the code blocks in the =.emacs.d/init.el= file.
 
 ; #+PROPERTY: header-args:emacs-lisp :tangle .emacs.d/init.el :mkdirp yes
+
+** =doom-themes.el= Configuration
+
+I currently am using the [[https://github.com/hlissner/emacs-doom-themes][DOOM Themes]], specifically =doom-dracula=.
+
+#+begin_src emacs-lisp :tangle "archive/emacs/doom-themes.el" :mkdirp yes
+
+  (use-package doom-themes
+    :init (load-theme 'doom-dracula t))
+
+#+end_src
+
+** =doom-modeline.el= Configuration
+
+
+[[https://github.com/seagle0128/doom-modeline][doom-modeline]] is a very attractive and rich (yet still minimal) mode line configuration for Emacs.  The default configuration is quite good but you can check out the [[https://github.com/seagle0128/doom-modeline#customize][configuration options]] for more things you can enable or disable.
+
+If you are running in the =macos= terminal, then you have to make sure that you set the font to =Droid Sans Mono Nerd Font Complete 18=. You can do this by the following steps:
+
+- Navigate to =Settings=
+- Navigate to =Profiles= tab
+- Navigate to =Text= subtab
+- Under the =Font= menu click on =Change=
+- Select the appropriate font
+
+
+#+begin_src emacs-lisp :tangle "archive/emacs/doom-modeline.el" :mkdirp yes
+
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1)
+    :custom ((doom-modeline-height 15)))
+
+#+end_src
+
+
+=doom-modeline= icons rely on =nerd-icons=. Thus, you must install the =nerd-icons= if you want to use the icons on the modeline.
+
+#+begin_src emacs-lisp :tangle "archive/emacs/doom-modeline.el" :mkdirp yes
+
+  (use-package nerd-icons
+    ;; :custom
+    ;; The Nerd Font you want to use in GUI
+    ;; "Symbols Nerd Font Mono" is the default and is recommended
+    ;; but you can use any other Nerd Font if you want
+    ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+    )
+
+#+end_src
+
+
+To turn off icons uncomment the following:
+
+#+begin_src emacs-lisp :tangle "archive/emacs/doom-modeline.el" :mkdirp yes
+
+  ;; (setq doom-modeline-icon nil)
+
+#+end_src
+
+
+The following contains configurations of the =doom-modeline=. All the configurations here use the =setq=.
+
+
+#+begin_src emacs-lisp :tangle "archive/emacs/doom-modeline.el" :mkdirp yes
+
+  ;; If non-nil, a word count will be added to the selection-info modeline segment.
+  (setq doom-modeline-enable-word-count t)
+
+  ;; Major modes in which to display word count continuously.
+  ;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
+  ;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
+  ;; remove the modes from `doom-modeline-continuous-word-count-modes'.
+  (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
+
+#+end_src
+
+
+Display the virtual environment version.
+
+#+begin_src emacs-lisp :tangle "archive/emacs/doom-modeline.el" :mkdirp yes
+
+  (setq doom-modeline-env-version t)
+
+#+end_src
+
 ** =hydra.el= Configuration
 
 This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to design a transient key binding for quickly adjusting the scale of the text on screen.  We define a hydra that is bound to =C-s t s= and, once activated, =j= and =k= increase and decrease the text scale.  You can press any other key (or =f= specifically) to exit the transient key map.
