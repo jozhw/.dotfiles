@@ -414,7 +414,7 @@ Also check the [[https://protesilaos.com/emacs/dotemacs#h:ddb1070d-2f91-4224-ad4
   This user option must be set in the `prot-emacs-pre-custom.el'
   file.  If that file exists in the Emacs directory, it is loaded
   before all other modules of my setup."
-    :group 'prot-emacs
+    :group 'jw-emacs
     :type 'boolean)
 
 #+end_src
