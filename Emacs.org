@@ -1743,7 +1743,7 @@ The following code consists of legacy code that is no longer used in this emacs 
 
 ** =org-roam.el= Configurations
 
-#+begin_src emacs-lisp :tangle "archive/emacs/jw-emacs-org-roam.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "archive/emacs/org-roam.el" :mkdirp yes
 
   (use-package org-roam
     :ensure t
@@ -1793,7 +1793,7 @@ In order to maintain these various usecases, the content of each should be store
 
 =org-roam-ui= is used to visualize =org-roam= web. 
 
-#+begin_src emacs-lisp :tangle "archive/emacs/jw-emacs-org-roam-ui.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "archive/emacs/org-roam-ui.el" :mkdirp yes
 
   (use-package org-roam-ui
     :ensure t)
@@ -1804,7 +1804,7 @@ In order to maintain these various usecases, the content of each should be store
 
 [[https://github.com/justbur/emacs-which-key][which-key]] is a useful UI panel that appears when you start pressing any key binding in Emacs to offer you all possible completions for the prefix. For example, if you press =C-c= (hold control and press the letter =c=), a panel will appear at the bottom of the frame displaying all of the bindings under that prefix and which command they run. This is very useful for learning the possible key bindings in the mode of your current buffer.
 
-#+begin_src emacs-lisp :tangle "archive/emacs/jw-emacs-which-key.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "archive/emacs/which-key.el" :mkdirp yes
 
   (use-package which-key
     :init (which-key-mode)
@@ -1817,7 +1817,7 @@ In order to maintain these various usecases, the content of each should be store
 
 [[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to have it installed even if you don't use its commands directly.
 
-#+begin_src emacs-lisp :tangle "archive/emacs/jw-emacs-projectile.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "archive/emacs/projectile.el" :mkdirp yes
 
   (use-package projectile
     :diminish projectile-mode
