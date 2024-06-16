@@ -135,3 +135,9 @@ If you enable =org-latex-listings= but don’t include the =listings= package in
 Useful commands
 
 - =org-latex-preview= - toggles preview LaTeX math at point
+
+* Special Symbols
+
+To access special symbols run the =C-x 8 RET=
+
+** "—" (=em-dash=)
