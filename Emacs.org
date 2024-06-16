@@ -185,6 +185,21 @@ Want to disable to mode-line at the very start and enable it when the mode-line 
 (setq-default mode-line-format nil)
 
 #+end_src
+** The =init.el= setting to =dired= --native
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+  (require 'dired)
+
+  (add-hook 'dired-mode-hook
+            (lambda ()
+              (define-key dired-mode-map (kbd "(") 'dired-hide-details-mode)
+              ;; Uncomment the next line to start with details hidden
+              (dired-hide-details-mode 1)
+              ))
+
+
+#+end_src
 ** The =init.el= settings for packages (=use-package=) --native
 
 [[https://github.com/jwiegley/use-package][use-package]] is a native package built into emacs since =v29.0.0= and is used in this configuration to make it a lot easier to automate the installation and configuration of everything else.

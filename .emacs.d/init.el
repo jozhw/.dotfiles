@@ -1,5 +1,14 @@
 (setq-default mode-line-format nil)
 
+(require 'dired)
+
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (define-key dired-mode-map (kbd "(") 'dired-hide-details-mode)
+            ;; Uncomment the next line to start with details hidden
+            (dired-hide-details-mode 1)
+            ))
+
 ;; Initialize package sources
 (require 'package)
 
