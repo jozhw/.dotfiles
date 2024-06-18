@@ -53,6 +53,12 @@
 ;; `context-menu-mode'.
 (add-hook 'context-menu-functions #'denote-context-menu)
 
+(use-package ledger-mode
+  :ensure t
+  :mode (
+         "\\.ledger\\'")
+  :custom (ledger-clear-whole-transactions t))
+
 (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
 
 (setq lock-file-name-transforms
