@@ -9,6 +9,9 @@
   (setq org-ellipsis " ▾") ;; when org headings closed down arrow instead of ellipsis
   )
 
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c C-l") 'org-insert-link)
+
 (use-package org-bullets
   :after org
   :hook (org-mode . org-bullets-mode)

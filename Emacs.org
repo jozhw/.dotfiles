@@ -1251,6 +1251,16 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 #+end_src
 
+*** The =jw-emacs-org.el= section for org-links
+
+As recommended by the official =org= manual to have these keys bound.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
+
+  (global-set-key (kbd "C-c l") 'org-store-link)
+  (global-set-key (kbd "C-c C-l") 'org-insert-link)
+
+#+end_src
 *** The =jw-emacs-org.el= section for bullets
 
 Customize the heading bullets to make it consistent and nicer.
