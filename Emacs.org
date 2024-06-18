@@ -1537,6 +1537,19 @@ Enable the denote dired mode for all files so that the components can easily be 
 
 #+end_src
 
+*** The =jw-emacs-information-management.el= section for =ledger-mode=
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
+
+  (use-package ledger-mode
+    :ensure t
+    :mode (
+           "\\.ledger\\'")
+    :custom (ledger-clear-whole-transactions t))
+
+
+#+end_src
+
 *** The =jw-emacs-information-management.el= section for clean directories
 
 Move the =#<FILE>#= to a temporary directory instead of root directory.
