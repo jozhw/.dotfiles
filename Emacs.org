@@ -1794,7 +1794,7 @@ The idea of this switching is to maximize the utility of =org-roam=. In some cas
 
 In order to maintain these various usecases, the content of each should be stored outside the =org-roam= directory (to avoid duplication). 
 
-#+begin_src emacs-lisp :tangle "archive/emacs/jw-emacs-org-roam.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "archive/emacs/org-roam.el" :mkdirp yes
 
   (setq zettlekasten-paths-alist '(("Main" . "~/Trove/Epektasi/")
                                    ("Zettlekasten" . "~/Trove/Zettlekasten/")
@@ -1859,7 +1859,7 @@ In order to maintain these various usecases, the content of each should be store
 
 #+end_src
 
-#+begin_src emacs-lisp :tangle "archive/emacs/jw-emacs-projectile.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "archive/emacs/projectile.el" :mkdirp yes
 
   (jw/leader-key-def
     "pf"  'projectile-find-file
