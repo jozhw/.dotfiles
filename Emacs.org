@@ -1698,6 +1698,7 @@ When the =which-key-mode= is enabled, any incomplete key sequence will produce a
 
 #+end_src
 ** The =jw-emacs-langs.el= module
+
 *** The =jw-emacs-langs.el= section for language server configuration (=eglot=) --native
 
 Undo the Eglot modifications of =completion-category-defaults=.
@@ -1707,6 +1708,102 @@ Undo the Eglot modifications of =completion-category-defaults=.
      (setq completion-category-defaults nil))
 
 #+end_src
+
+*** The =jw-emacs-langs.el= section for =python= support
+
+Configuring pythone envs with =conda=.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+    (unless (package-installed-p 'conda)
+      (package-refresh-contents)
+      (package-install 'conda))
+
+    (require 'conda)
+    (setq conda-anaconda-home (expand-file-name "~/miniconda3"))
+    (setq conda-env-home-directory (expand-file-name "~/miniconda3"))
+      (conda-env-autoactivate-mode t)
+
+
+#+end_src
+
+Define =jw/find-python-langserver=
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (defun jw/find-pyright-langserver ()
+    (or (executable-find "pyright-langserver")
+        (expand-file-name "~/miniconda3/bin/pyright-langserver")))
+
+#+end_src
+
+
+*** The =jw-emacs-langs.el= section for =rust= support
+
+Download =rust-mode=.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (unless (package-installed-p 'rust-mode)
+    (package-refresh-contents)
+    (package-install 'rust-mode))
+
+#+end_src
+
+Setting up =rust-mode=.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (require 'rust-mode)
+  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+
+#+end_src
+
+Custom function to find rust analyzer.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (defun jw/find-rust-analyzer ()
+    (or (executable-find "rust-analyzer")
+        (expand-file-name "~/.cargo/bin/rust-analyzer")))
+
+#+end_src
+
+*** The =jw-emacs-langs.el= auto start =eglot= based on lang
+
+Add to =eglot= server list and setup hook after eglot is loaded.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+      (with-eval-after-load 'eglot
+        (add-to-list 'eglot-server-programs
+                     `(python-mode . (,(jw/find-pyright-langserver) "--stdio")))
+        (add-to-list 'eglot-server-programs
+                     `(rust-mode . (,(jw/find-rust-analyzer))))
+        )
+
+#+end_src
+
+Function to start eglot.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (defun jw/maybe-start-eglot ()
+    (when (or (derived-mode-p 'python-mode)
+              (derived-mode-p 'rust-mode))
+      (eglot-ensure)))
+
+#+end_src
+
+Add the hook to auto start =eglot= depending on configured language.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (add-hook 'python-mode-hook #'jw/maybe-start-eglot)
+  (add-hook 'rust-mode-hook #'jw/maybe-start-eglot)
+
+#+end_src
+
 *** The =jw-emacs-langs.el= call to provide
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
