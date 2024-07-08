@@ -14,6 +14,11 @@
   (or (executable-find "pyright-langserver")
       (expand-file-name "~/miniconda3/bin/pyright-langserver")))
 
+(use-package python-black
+  :demand t
+  :after python
+  :hook (python-mode . python-black-on-save-mode-enable-dwim))
+
 (unless (package-installed-p 'rust-mode)
   (package-refresh-contents)
   (package-install 'rust-mode))
