@@ -1737,6 +1737,17 @@ Define =jw/find-python-langserver=
 
 #+end_src
 
+Python formatter configuration.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (use-package python-black
+    :demand t
+    :after python
+    :hook (python-mode . python-black-on-save-mode-enable-dwim))
+
+#+end_src
+
 
 *** The =jw-emacs-langs.el= section for =rust= support
 
