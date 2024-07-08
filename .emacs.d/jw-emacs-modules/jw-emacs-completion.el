@@ -85,6 +85,12 @@ folder, otherwise delete a word"
   ;; Add your terminal mode specific configuration here
   )
 
+(use-package cape
+  :ensure t
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+
 (use-package orderless
   :init
   (setq completion-styles '(orderless)

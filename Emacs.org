@@ -1194,6 +1194,18 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
+*** The =jw-emacs-completion.el= section for additional completions in region (=cape.el=)
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
+
+  (use-package cape
+    :ensure t
+    :init
+    (add-to-list 'completion-at-point-functions #'cape-file)
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+
+#+end_src
+
 *** The =jw-emacs-completion.el= section for candidate filtering (=orderless.el=)
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
