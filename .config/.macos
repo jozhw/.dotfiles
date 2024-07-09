@@ -14,11 +14,6 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 # Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
 ###############################################################################
 
-# Trackpad: enable tap to click for this user and for the login screen
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-
 # Set a blazingly fast keyboard repeat rate
 defaults write NSGlobalDomain KeyRepeat -int 1
 defaults write NSGlobalDomain InitialKeyRepeat -int 10
@@ -26,12 +21,6 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 10
 ###############################################################################
 # Screen                                                                      #
 ###############################################################################
-
-# set to military time
-defaults write NSGlobalDomain AppleICUForce24HourTime -bool true
-
-# show percentage sign on battery icon
-defaults write com.apple.menuextra.battery ShowPercent -string "YES"
 
 ###############################################################################
 # Dock, Dashboard, and hot corners                                            #
