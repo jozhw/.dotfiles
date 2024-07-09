@@ -27,5 +27,5 @@
   (setq modus-themes-common-palette-overrides nil))
   (if (jw-emacs-theme-environment-dark-p)
     (modus-themes-load-theme (cadr modus-themes-to-toggle))
-    (modus-themes-load-theme (car modus-themes-to-toggle))))
+    (modus-themes-load-theme (car modus-themes-to-toggle)))
  (provide 'jw-emacs-modus-themes)
