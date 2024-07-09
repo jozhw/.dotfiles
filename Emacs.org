@@ -1023,6 +1023,8 @@ If you are running in the =macos= terminal, then you have to make sure that you 
 
 =doom-modeline= icons rely on =nerd-icons=. Thus, you must install the =nerd-icons= if you want to use the icons on the modeline.
 
+IMPORTANT: must run the following command — =Mx - nerd-icons-install-fonts= for the icons to populate. See the github issue here: [[https://github.com/doomemacs/doomemacs/issues/7368#issuecomment-1689292109][Doom Emacs Issue #7368]]
+
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
   (use-package nerd-icons
