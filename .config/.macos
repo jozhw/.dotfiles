@@ -55,11 +55,5 @@ defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 # Safari & WebKit                                                             #
 ###############################################################################
 
-# Privacy: don’t send search queries to Apple
-defaults write com.apple.Safari UniversalSearchEnabled -bool false
-defaults write com.apple.Safari SuppressSearchSuggestions -bool true
-
-# Enable “Do Not Track”
-defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool true
 
 echo "Done. Note that some of these changes require a logout/restart to take effect."
