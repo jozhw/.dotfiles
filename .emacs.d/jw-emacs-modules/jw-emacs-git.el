@@ -11,7 +11,4 @@
 ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
 (use-package forge)
 
-(defun magit-read-gpg-signing-key (prompt &optional initial-input history)
-  "")
-
 (provide 'jw-emacs-git)

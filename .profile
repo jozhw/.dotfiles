@@ -3,3 +3,5 @@ export PATH="$HOME/.bin:$PATH"
 
 # add conda initialization to all shell types 
 eval "$(conda "shell.$(basename "${SHELL}")" hook)"
+
+export GPG_TTY=$(tty)
