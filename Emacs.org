@@ -1439,15 +1439,6 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 #+end_src
 
 
-Sign git commits with ssh rather than gpg. Not the optimal solution, but the solution was found to work on this  issue on magit github repo: [[https://github.com/magit/magit/discussions/5046][magit ssh signing discussion]]
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-git.el" :mkdirp yes
-
-  (defun magit-read-gpg-signing-key (prompt &optional initial-input history)
-    "")
-
-#+end_src
-
 *** The =jw-emacs-git.el= call to provide
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-git.el" :mkdirp yes
