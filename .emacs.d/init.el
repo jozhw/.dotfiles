@@ -187,3 +187,33 @@ before all other modules of my setup."
 (require 'jw-emacs-langs)
 
 (require 'jw-copy)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(ef-themes visual-fill-column vertico theme-buffet spacious-padding rust-mode rainbow-delimiters python-black pulsar org-transclusion org-bullets orderless modus-themes marginalia lin ledger-mode general forge fontaine evil-surround evil-collection doom-modeline denote cursory corfu conda company-box command-log-mode cape)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(fringe ((t :background "#f5f5ff")))
+ '(header-line ((t :box (:line-width 4 :color "#e8e8ea" :style nil))))
+ '(header-line-highlight ((t :box (:color "#1a1a2f"))))
+ '(keycast-key ((t)))
+ '(line-number ((t :background "#f5f5ff")))
+ '(mode-line ((t :background "#f5f5ff" :overline "#965000" :box (:line-width 6 :color "#f5f5ff" :style nil))))
+ '(mode-line-active ((t :background "#f5f5ff" :overline "#965000" :box (:line-width 6 :color "#f5f5ff" :style nil))))
+ '(mode-line-highlight ((t :box (:color "#1a1a2f"))))
+ '(mode-line-inactive ((t :background "#f5f5ff" :overline "#bcbcd0" :box (:line-width 6 :color "#f5f5ff" :style nil))))
+ '(tab-bar-tab ((t :box (:line-width 4 :color "#f5f5ff" :style nil))))
+ '(tab-bar-tab-inactive ((t :box (:line-width 4 :color "#b3b3c0" :style nil))))
+ '(tab-line-tab ((t)))
+ '(tab-line-tab-active ((t)))
+ '(tab-line-tab-inactive ((t)))
+ '(vertical-border ((t :background "#f5f5ff" :foreground "#f5f5ff")))
+ '(window-divider ((t nil)))
+ '(window-divider-first-pixel ((t nil)))
+ '(window-divider-last-pixel ((t nil))))
