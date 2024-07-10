@@ -31,7 +31,7 @@
 
 ;; If you use Markdown or plain text files (Org renders links as buttons
 ;; right away)
-(add-hook 'find-file-hook #'denote-link-buttonize-buffer)
+(add-hook 'find-file-hook #'denote-fontify-links-mode-maybe)
 
 (with-eval-after-load 'org-capture
 (setq denote-org-capture-specifiers "%l\n%i\n%?")
