@@ -1,1 +1,0 @@
-../atzlan/yt-dlp/yt_dlp.sh
