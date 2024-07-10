@@ -1,1 +1,0 @@
-../atzlan/rsync/rsync_macos_local.sh
