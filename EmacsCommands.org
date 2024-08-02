@@ -22,9 +22,8 @@ In this mode, you can edit file names just like you would any file. However, whe
 
 * Magit
 
-** Commands
 
-*** Global Commands
+** Global Commands
 
 - =C-x g= (=magit-status=): Open Magit status buffer.
 - =C-c M-g= (=magit-dispatch-popup=): Open Magit command popup.
@@ -34,7 +33,7 @@ In this mode, you can edit file names just like you would any file. However, whe
 - =C-c M-f= (=magit-pull-popup=): Pull changes.
 - =C-c M-b= (=magit-branch-popup=): Manage branches.
 
-*** Status Buffer
+** Status Buffer
 
 - =TAB=: Expand/collapse section.
 - =S= (=magit-stage-item=): Stage changes.
@@ -47,7 +46,7 @@ In this mode, you can edit file names just like you would any file. However, whe
 - =r= (=magit-refresh=): Refresh status buffer.
 - =d= (=magit-diff-popup=): Show changes.
 
-*** Diff Buffer
+** Diff Buffer
 
 - =n= (=magit-section-forward=): Move to the next hunk.
 - =p= (=magit-section-backward=): Move to the previous hunk.
@@ -56,17 +55,17 @@ In this mode, you can edit file names just like you would any file. However, whe
 - =C-c C-a= (=magit-diff-show-or-scroll-up=): Scroll up in diff buffer.
 - =C-c C-e= (=magit-diff-show-or-scroll-down=): Scroll down in diff buffer.
 
-*** Log Buffer
+** Log Buffer
 - =l l= (=magit-log=): Refresh log buffer.
 - =RET=: Show details of the commit at point.
 - =d= (=magit-diff-visit-file=): Show changes for the commit at point.
 - =TAB=: Toggle commit details.
 
-*** Commit Buffer
+** Commit Buffer
 - =C-c C-c= (=magit-commit=): Finish the commit.
 - =C-c C-a= (=magit-commit-ammend=): Amend the last commit.
 
-*** Branch Popup
+** Branch Popup
 - =b c= (=magit-branch-create=): Create a new branch.
 - =b k= (=magit-branch-delete=): Delete a branch.
 - =b m= (=magit-branch-move=): Rename a branch.
