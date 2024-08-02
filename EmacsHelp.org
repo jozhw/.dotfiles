@@ -2,15 +2,13 @@
 
 The purpose of =EmacsHelp.org= is to keep documentation on setups and configurations that are beyond the scope of =Emacs.org=. Any help with identifying key commands for Emacs or its packages will be in the =EmacsCommands.org= file.
   
-** Setting up GPG
+* Setting up GPG
 
 *** Signing for Github
 
-**** On Github
-
 After creating the =gpg-key= make sure the follow the directions on =github= to upload the key on your account. After that is done follow the instructions below.
 
-**** On Local
+*** Signing on Local Machine
 
 Make sure the =.gitconfig= is configured to have the =signingkey= ready. To do so you can simply run:
 
