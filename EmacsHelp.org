@@ -24,7 +24,7 @@ Trust the key (can skip, however may be necessary).
 
 #+begin_src shell
 
-  gpgp --edit-key <YOUR_KEY_ID>
+  gpg --edit-key <YOUR_KEY_ID>
 
 #+end_src
 
