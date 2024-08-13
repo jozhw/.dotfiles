@@ -17,8 +17,8 @@ if [ "$input" -eq 0 ]; then
     rsync -anPv --exclude='**/.DS_Store' myPhotos jozhw@ds1522p.winterume.com:/volume1/johnz.wu
     rsync -anPv --exclude='**/.DS_Store' myArchive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
     rsync -anPv --exclude='**/.DS_Store' wuMedia jozhw@ds1522p.winterume.com:/volume1/wu
-    rsync -anPv --exclude='**/.DS_Store' wuLibrary jozhw@ds1522p.winterume.com:/volume1/wu
     rsync -anPv --exclude='**/.DS_Store' wuArchive-v1 jozhw@ds1522p.winterume.com:/volume1/wu/wuArchive
+    rsync -anPv --exclude='**/.DS_Store' Downloads/books/* jozhw@ds1522p.winterume.com:/volume1/Downloads/books/
 
 elif [ "$input" -eq 1 ]; then
     echo "Running rsync script"
@@ -27,8 +27,8 @@ elif [ "$input" -eq 1 ]; then
     rsync -aPv --exclude='**/.DS_Store' myPhotos jozhw@ds1522p.winterume.com:/volume1/johnz.wu
     rsync -aPv --exclude='**/.DS_Store' myArchive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
     rsync -aPv --exclude='**/.DS_Store' wuMedia jozhw@ds1522p.winterume.com:/volume1/wu
-    rsync -aPv --exclude='**/.DS_Store' wuLibrary jozhw@ds1522p.winterume.com:/volume1/wu
     rsync -aPv --exclude='**/.DS_Store' wuArchive-v1 jozhw@ds1522p.winterume.com:/volume1/wu/wuArchive
+    rsync -aPv --exclude='**/.DS_Store' Downloads/books/* jozhw@ds1522p.winterume.com:/volume1/Downloads/books/
 else
     echo "No command selected"
 fi
