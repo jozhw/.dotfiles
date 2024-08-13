@@ -1715,16 +1715,6 @@ When the =which-key-mode= is enabled, any incomplete key sequence will produce a
 #+end_src
 ** The =jw-emacs-langs.el= module
 
-*** The =jw-emacs-langs.el= section for language server configuration (=eglot=) --native
-
-Undo the Eglot modifications of =completion-category-defaults=.
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
-
-  (with-eval-after-load 'eglot
-     (setq completion-category-defaults nil))
-
-#+end_src
-
 *** The =jw-emacs-langs.el= section for =python= support
 
 Configuring pythone envs with =conda=.
@@ -1736,8 +1726,8 @@ Configuring pythone envs with =conda=.
       (package-install 'conda))
 
     (require 'conda)
-    (setq conda-anaconda-home (expand-file-name "~/miniconda3"))
-    (setq conda-env-home-directory (expand-file-name "~/miniconda3"))
+    (setq conda-anaconda-home (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver"))
+    (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver"))
       (conda-env-autoactivate-mode t)
 
 
@@ -1749,7 +1739,19 @@ Define =jw/find-python-langserver=
 
   (defun jw/find-pyright-langserver ()
     (or (executable-find "pyright-langserver")
-        (expand-file-name "~/miniconda3/bin/pyright-langserver")))
+        (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver")
+        ))
+
+#+end_src
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (defun jw/local-pyright-command ()
+    "Return the command to run the local Pyright server."
+    (let ((pyright-path (jw/find-pyright-langserver)))
+      (if pyright-path
+          (list pyright-path "--stdio")
+        (error "Could not find pyright-langserver"))))
 
 #+end_src
 
@@ -1796,18 +1798,22 @@ Custom function to find rust analyzer.
 
 #+end_src
 
-*** The =jw-emacs-langs.el= auto start =eglot= based on lang
+*** The =jw-emacs-langs.el= section for language server configuration (=eglot=) --native
 
 Add to =eglot= server list and setup hook after eglot is loaded.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-      (with-eval-after-load 'eglot
-        (add-to-list 'eglot-server-programs
-                     `(python-mode . (,(jw/find-pyright-langserver) "--stdio")))
-        (add-to-list 'eglot-server-programs
-                     `(rust-mode . (,(jw/find-rust-analyzer))))
-        )
+    (with-eval-after-load 'eglot
+      (setq eglot-prefer-local-server t)
+      ;; undo elgot modifications of completion-category-defaults
+      (setq completion-category-defaults nil)
+      (setq eglot-connect-timeout 120)
+      (add-to-list 'eglot-server-programs
+                 `(python-mode . ,(jw/local-pyright-command)))
+      (add-to-list 'eglot-server-programs
+                 `(rust-mode . (,(jw/find-rust-analyzer))))
+      )
 
 #+end_src
 

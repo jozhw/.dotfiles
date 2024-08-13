@@ -1,18 +1,23 @@
-(with-eval-after-load 'eglot
-   (setq completion-category-defaults nil))
-
 (unless (package-installed-p 'conda)
   (package-refresh-contents)
   (package-install 'conda))
 
 (require 'conda)
-(setq conda-anaconda-home (expand-file-name "~/miniconda3"))
-(setq conda-env-home-directory (expand-file-name "~/miniconda3"))
+(setq conda-anaconda-home (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver"))
+(setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver"))
   (conda-env-autoactivate-mode t)
 
 (defun jw/find-pyright-langserver ()
   (or (executable-find "pyright-langserver")
-      (expand-file-name "~/miniconda3/bin/pyright-langserver")))
+      (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver")
+      ))
+
+(defun jw/local-pyright-command ()
+  "Return the command to run the local Pyright server."
+  (let ((pyright-path (jw/find-pyright-langserver)))
+    (if pyright-path
+        (list pyright-path "--stdio")
+      (error "Could not find pyright-langserver"))))
 
 (use-package python-black
   :demand t
@@ -31,10 +36,14 @@
       (expand-file-name "~/.cargo/bin/rust-analyzer")))
 
 (with-eval-after-load 'eglot
+  (setq eglot-prefer-local-server t)
+  ;; undo elgot modifications of completion-category-defaults
+  (setq completion-category-defaults nil)
+  (setq eglot-connect-timeout 120)
   (add-to-list 'eglot-server-programs
-               `(python-mode . (,(jw/find-pyright-langserver) "--stdio")))
+             `(python-mode . ,(jw/local-pyright-command)))
   (add-to-list 'eglot-server-programs
-               `(rust-mode . (,(jw/find-rust-analyzer))))
+             `(rust-mode . (,(jw/find-rust-analyzer))))
   )
 
 (defun jw/maybe-start-eglot ()
