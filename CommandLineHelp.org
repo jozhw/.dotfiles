@@ -1,0 +1,158 @@
+#+title: Command Line Help
+
+* Keyboard Shortcuts
+
+** Clearing: =command= + =K= 
+
+** Auto-fill/Completion: =tab=
+
+** Navigation: =control= + ...
+
+*** Beginning of line:  =a=
+
+*** End of the line: =e=
+
+** Deletion: =control= + ...
+
+*** On cursor: =d=
+
+*** Before cursor: =u=
+
+*** From cursor to end of the line: =k=
+
+*** Word immediately before cursor: =w=
+
+** Switch places of words: =esc= + =t=
+
+** Drop cursor at mouse: hold =option= + move =cursor=
+
+** Find/Search: =command= + =F=
+
+** Previous command: =↑=
+
+** Earliest command/reverse: =↓=
+
+* Mac Specific Keyboard Shortcuts
+
+** Enlarge window: =command= + =+=
+
+* Commands
+
+** Manual:
+
+#+begin_src shell
+
+  man
+  
+#+end_src
+
+** Current Location:
+
+#+begin_src shell
+
+  pwd
+
+#+end_src
+
+** List files:
+
+#+begin_src shell
+
+  ls
+  # flags
+  # - l: long format
+  # - a: hidden files
+  # - h: hidden files
+  # - G: color coat
+  # - F: add wax to back off older
+  ls -lahGF
+#+end_src
+
+** Clearing:
+
+#+begin_src shell
+
+  clear
+  
+#+end_src
+
+** Creating new files:
+
+#+begin_src shell
+
+  touch
+  
+#+end_src
+
+** Disk usage:
+
+#+begin_src shell
+
+  du
+  # flags
+  # - s: size of each individual file
+  # - h: human readable
+  du -sh
+
+#+end_src
+
+** History:
+
+Gets the command history.
+
+#+begin_src shell
+
+  history
+
+#+end_src
+
+** Reading the contents of a file w/o opening:
+
+#+begin_src shell
+
+  cat
+  
+#+end_src
+
+** Word count:
+
+#+begin_src shell
+
+  wc
+  # flags
+  # - c: word count for a file
+  # - l: number of lines
+
+#+end_src
+
+** Networking:
+
+*** Find IP Address
+
+Find ip address (en0 if vpn also vton).
+
+#+begin_src shell
+
+  ifconfig
+
+#+end_src
+
+*** Ping
+
+See if you are connected.
+
+#+begin_src shell
+
+  ping
+  
+#+end_src
+
+*** Host
+
+More information about the site
+
+#+begin_src shell
+
+  host
+  
+#+end_src
