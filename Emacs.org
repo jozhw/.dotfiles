@@ -1587,6 +1587,17 @@ Move the =#<FILE>#= to a temporary directory instead of root directory.
 #+end_src
 
 ** The =jw-emacs-development.el= module
+*** The =jw-emacs-development.el= section for =tramp.el= --native
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
+
+  (require 'tramp)
+  (setq tramp-default-method "ssh")
+  ;; for debugging
+  (setq tramp-verbose 10)
+
+#+end_src
+
 *** The =jw-emacs-development.el= section for =project.el=  --native
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
@@ -1820,6 +1831,15 @@ Add the hook to auto start =eglot= depending on configured language.
 
 #+end_src
 
+*** The =jw-emacs-langs.el= for =tramp-sh.el= and remote configs
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (with-eval-after-load 'tramp
+    (require 'tramp-sh)
+    (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+
+#+end_src
 *** The =jw-emacs-langs.el= call to provide
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
