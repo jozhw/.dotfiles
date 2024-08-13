@@ -45,4 +45,8 @@
 (add-hook 'python-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'rust-mode-hook #'jw/maybe-start-eglot)
 
+(with-eval-after-load 'tramp
+  (require 'tramp-sh)
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+
 (provide 'jw-emacs-langs)

@@ -1,3 +1,8 @@
+(require 'tramp)
+(setq tramp-default-method "ssh")
+;; for debugging
+(setq tramp-verbose 10)
+
 (require 'project)
 
 (defun jw/project-prompter ()
