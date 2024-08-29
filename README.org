@@ -14,7 +14,7 @@ All of the brew scripts are within the brew dir. The path relative to this proje
 
 *** brew.sh
 
-The script was taken from [[https://github.com/mathiasbynens/dotfiles/blob/main/brew.sh][mathiasbynens dotfiles github repo]], but adjusted to suit my needs.
+The script was heavily inspired from [[https://github.com/mathiasbynens/dotfiles/blob/main/brew.sh][mathiasbynens dotfiles github repo]], but adjusted to suit my needs. A notable difference between my "brew.sh" is that it is modularized with the brew.sh being the wrapper that will download all of the brew files.
 
 Make sure that permissions are added by running =chmod +x brew.sh= in your command line.
 
@@ -26,11 +26,19 @@ To run the script:
 
 #+end_src
 
-*** brew_cask.sh
+*** brew_<category>.sh
 
-This script acts similarly to =brew.sh=, but was created to house all of the =brew install --cask= installations.
+The purpose of these scripts are to categorize brew installs. The wrapper, =brew.sh=, when executed will iterate through all of the =brew_<cetagory>.sh= scripts within the same directory as the =brew.sh=. 
+
+** stow
+
+To stow (create symbolic links), after installing gnu stow, run the script in the =/.config/stow/stow.sh= script.
 
 * Configurations
+
+** emacs
+
+All emacs configurations are written via a literate configuration in =org-mode= named =Emacs.org=. Each section in =Emacs.org= is modularized via =tangle= upon saving the file. All of the modularized configs are stored within the =.emacs.d= directory.
 
 ** wget
 
