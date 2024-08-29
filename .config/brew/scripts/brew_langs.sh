@@ -7,3 +7,6 @@ brew install lua  # Powerful, efficient, lightweight, embeddable scripting langu
 
 # Install lsp
 brew install rust-analyzer
+
+# Install r
+brew install r
