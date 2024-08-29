@@ -16,3 +16,12 @@ brew install --cask macfuse
 
 # Install inkscape for photo editing
 brew install --cask inkscape
+
+# Install gnucash for financial management
+brew install --cask gnucash
+
+# Install mullvadvpn
+brew install --cask mullvadvpn
+
+# Install rstudio
+brew install --cask rstudio
