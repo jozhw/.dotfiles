@@ -25,3 +25,9 @@ brew install --cask mullvadvpn
 
 # Install rstudio
 brew install --cask rstudio
+
+# Install tor browser
+brew install --cask tor-browser
+
+# Install qbittorrent
+brew install --cask qbittorrent
