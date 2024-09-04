@@ -8,6 +8,12 @@ The =EmacsCommands.org= is strictly for explaining and keeping documentation of 
 
 Comment or uncomment the current line (comment-line). If the region is active, comment or uncomment the lines in the region instead. 
 
+* Indenting
+
+** =C-x TAB=
+
+Use the arrow keys (← or →) to indent interactively and then press =esc= three times to finish indenting.
+
 * Dired
 
 ** =C-x d=
