@@ -31,3 +31,6 @@ brew install --cask tor-browser
 
 # Install qbittorrent
 brew install --cask qbittorrent
+
+# Install vlc media player
+brew install --cask vlc
