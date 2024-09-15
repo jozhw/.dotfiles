@@ -71,6 +71,20 @@
 (let ((package-selected-packages use-package-selected-packages))
   (package-autoremove)))
 
+(setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
+
+;; auto-save-mode doesn't create the path automatically!
+(make-directory (expand-file-name "tmp/auto-saves/" user-emacs-directory) t)
+
+(setq auto-save-list-file-prefix (expand-file-name "tmp/auto-saves/sessions/" user-emacs-directory)
+      auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves/" user-emacs-directory) t)))
+
+(use-package no-littering
+  :ensure t)
+
+;; this will cause the jw-emacs-pre-custom to no longer work to load themes
+;; (setq user-emacs-directory (expand-file-name "tmp/cache/"))
+
 (use-package general
   :ensure t
   :config
