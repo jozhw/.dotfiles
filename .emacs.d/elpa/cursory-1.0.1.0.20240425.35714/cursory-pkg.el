@@ -1,0 +1,2 @@
+;; Generated package description from cursory.el  -*- no-byte-compile: t -*-
+(define-package "cursory" "1.0.1.0.20240425.35714" "Manage cursor styles using presets" '((emacs "27.1")) :commit "83402d4f3e1f11be27c166e11ced64ba2ec83377" :authors '(("Protesilaos Stavrou" . "info@protesilaos.com")) :maintainer '("Protesilaos Stavrou" . "info@protesilaos.com") :keywords '("convenience" "cursor") :url "https://github.com/protesilaos/cursory")
