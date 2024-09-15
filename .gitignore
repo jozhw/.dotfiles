@@ -1,2 +1,13 @@
 # ignore emacs buffer files
 *~
+
+# ignore emacs package files
+.emacs.d/var/*
+.emacs.d/tmp/*
+.emacs.d/*.eld
+
+# ignore sensitve signed files
+*.signed
+
+# ignore all compiled elisp
+*.elc
