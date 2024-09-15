@@ -4,6 +4,7 @@
 # ignore emacs package files
 .emacs.d/var/*
 .emacs.d/tmp/*
+.emacs.d/etc/*
 .emacs.d/*.eld
 
 # ignore sensitve signed files
@@ -11,3 +12,9 @@
 
 # ignore all compiled elisp
 *.elc
+*.gif
+
+.emacs.d/elpa/*
+
+# Include only files and directories matching the pattern
+!.emacs.d/elpa/[a-zA-Z0-9_@+-]*-[0-9]*.**
