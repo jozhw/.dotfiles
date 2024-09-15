@@ -10,3 +10,6 @@ brew install rust-analyzer
 
 # Install r
 brew install r
+
+# Install texlive for latex
+brew install texlive
