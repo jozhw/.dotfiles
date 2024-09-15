@@ -64,6 +64,10 @@ Make sure the =GPG_TTY= environment variable is set and then source the configur
 
 #+end_src
 
+* Magit GPG Signing
+
+When on the commit buffer, the argument for =gpg-signing= or =-S= may not be displayed. To resolve this issue manually, on the commit buffer menu, you must enter transient mode with =C-x l= and follow the prompting from there by typing the argument that you want to change the layering and then set the layering.
+
 * Org
 
 To change the view to outline or full view use =SHIFT-TAB= repeatedly for the desired visual look.

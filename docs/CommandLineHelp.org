@@ -1,5 +1,7 @@
 #+title: Command Line Help
 
+The purpose of this file is to keep a document with essential command line (unix) commands in a convenient area for future reference.
+
 * Keyboard Shortcuts
 
 ** Clearing: =command= + =K= 
