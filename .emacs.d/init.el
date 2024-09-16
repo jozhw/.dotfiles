@@ -82,9 +82,6 @@
 (use-package no-littering
   :ensure t)
 
-;; this will cause the jw-emacs-pre-custom to no longer work to load themes
-;; (setq user-emacs-directory (expand-file-name "tmp/cache/"))
-
 (use-package general
   :ensure t
   :config
