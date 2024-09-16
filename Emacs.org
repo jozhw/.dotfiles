@@ -284,6 +284,23 @@ To remove packages that are not used run =M-x use-package-autoremove=. However, 
 If you get a package not found error and the package exists, then you can try
 refreshing the package contents by running =M-x package-refresh-contents=.
 
+** The =init.el= for keeping =.emacs.d= clean
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+  (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
+
+  ;; auto-save-mode doesn't create the path automatically!
+  (make-directory (expand-file-name "tmp/auto-saves/" user-emacs-directory) t)
+
+  (setq auto-save-list-file-prefix (expand-file-name "tmp/auto-saves/sessions/" user-emacs-directory)
+        auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves/" user-emacs-directory) t)))
+
+  (use-package no-littering
+    :ensure t)
+
+#+end_src
+
 ** The =init.el= for easy leader key management (=general.el=)
 
 [[https://github.com/noctuid/general.el][general.el]] is a fantastic library for defining prefixed keybindings, especially
