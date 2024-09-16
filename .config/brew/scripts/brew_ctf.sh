@@ -23,5 +23,5 @@ brew install tcpflow  # TCP flow recorder
 brew install tcpreplay  # Replay captured network traffic
 brew install tcptrace  # Analyze TCP dump files
 brew install ucspi-tcp  # Command-line tools for building TCP client-server applications
-brew install xpdf  # PDF viewer and tools
+#brew install xpdf  # PDF viewer and tools conflicts with poppler
 brew install xz  # Data compression software
