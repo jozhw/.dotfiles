@@ -34,3 +34,6 @@ brew install --cask qbittorrent
 
 # Install vlc media player
 brew install --cask vlc
+
+# Install discord
+brew install --cask discord
