@@ -37,3 +37,6 @@ brew install --cask vlc
 
 # Install discord
 brew install --cask discord
+
+# Install docker
+brew install --cask docker
