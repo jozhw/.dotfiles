@@ -11,3 +11,6 @@ brew install stow
 
 # Install GNU `sed`, overwriting the built-in `sed`.
 brew install gnu-sed
+
+# For pdf viewing
+brew install poppler automake pkg-config
