@@ -17,8 +17,9 @@ if [ "$input" -eq 0 ]; then
 
     rsync -anPv --exclude='**/.DS_Store' myPhotos jozhw@ds1522p.winterume.com:/volume1/johnz.wu
     rsync -anPv --exclude='**/.DS_Store' myArchive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
+    rsync -anPv --exclude='**/.DS_Store' myProjects-Archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
+    rsync -anPv --exclude='**/.DS_Store' myPhotos-Archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
     rsync -anPv --exclude='**/.DS_Store' wuMedia jozhw@ds1522p.winterume.com:/volume1/wu
-    rsync -anPv --exclude='**/.DS_Store' wuArchive-v1 jozhw@ds1522p.winterume.com:/volume1/wu/wuArchive
 
 
 elif [ "$input" -eq 1 ]; then
@@ -28,6 +29,8 @@ elif [ "$input" -eq 1 ]; then
 
     rsync -aPv --exclude='**/.DS_Store' myPhotos jozhw@ds1522p.winterume.com:/volume1/johnz.wu
     rsync -aPv --exclude='**/.DS_Store' myArchive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
+    rsync -aPv --exclude='**/.DS_Store' myProjects-Archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
+    rsync -aPv --exclude='**/.DS_Store' myPhotos-Archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
     rsync -aPv --exclude='**/.DS_Store' wuMedia jozhw@ds1522p.winterume.com:/volume1/wu
     rsync -aPv --exclude='**/.DS_Store' wuArchive-v1 jozhw@ds1522p.winterume.com:/volume1/wu/wuArchive
 else
