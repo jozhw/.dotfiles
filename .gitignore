@@ -14,7 +14,5 @@
 *.elc
 *.gif
 
-.emacs.d/elpa/*
-
 # Include only files and directories matching the pattern
 !.emacs.d/elpa/[a-zA-Z0-9_@+-]*-[0-9]*.**
