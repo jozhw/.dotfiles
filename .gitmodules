@@ -4,6 +4,6 @@
 [submodule "fonts/Iosevka"]
 	path = fonts/Iosevka
 	url = https://github.com/be5invis/Iosevka.git
-[submodule ".dotfiles/.emacs.d/elpa"]
-	path = .dotfiles/.emacs.d/elpa
-	url = git@github.com:jozhw/elpa.git
+[submodule ".emacs.d/elpa"]
+	path = .emacs.d/elpa
+	url = https://github.com/jozhw/elpa.git
