@@ -40,3 +40,6 @@ brew install --cask discord
 
 # Install docker
 brew install --cask docker
+
+# Install mkv editor
+brew install --cask mkvtoolnix
