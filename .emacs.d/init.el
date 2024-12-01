@@ -122,7 +122,9 @@
   :after evil
   :ensure t
   :config
-  (evil-collection-init))
+  (evil-collection-init)
+  (with-eval-after-load 'forge
+  (evil-collection-forge-setup)))
 
 ;; Always start with *scratch*
 (setq initial-buffer-choice t)
