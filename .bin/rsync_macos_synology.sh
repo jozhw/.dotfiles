@@ -16,10 +16,17 @@ if [ "$input" -eq 0 ]; then
     rsync -anPv --exclude='**/.DS_Store' --delete Downloads/books/* jozhw@ds1522p.winterume.com:/volume1/Downloads/books/
 
     rsync -anPv --exclude='**/.DS_Store' myPhotos jozhw@ds1522p.winterume.com:/volume1/johnz.wu
-    rsync -anPv --exclude='**/.DS_Store' myArchive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
-    rsync -anPv --exclude='**/.DS_Store' myProjects-Archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
-    rsync -anPv --exclude='**/.DS_Store' myPhotos-Archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
+    rsync -anPv --exclude='**/.DS_Store' myOtzar__archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
+    rsync -anPv --exclude='**/.DS_Store' myProjects__archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
+    rsync -anPv --exclude='**/.DS_Store' myPhotos__archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
     rsync -anPv --exclude='**/.DS_Store' wuMedia jozhw@ds1522p.winterume.com:/volume1/wu
+
+    rsync -anPv --exclude='**/.DS_Store' Archival-Library/jwAcademics__archive jozhw@ds1522p.winterume.com:/volume2/Archival-Library/
+    rsync -anPv --exclude='**/.DS_Store' Archival-Library/jwExams__archive jozhw@ds1522p.winterume.com:/volume2/Archival-Library/
+    rsync -anPv --exclude='**/.DS_Store' Archival-Library/jwCertificates__archive jozhw@ds1522p.winterume.com:/volume2/Archival-Library/
+    rsync -anPv --exclude='**/.DS_Store' Archival-Library/jwToil__archive jozhw@ds1522p.winterume.com:/volume2/Archival-Library/
+    rsync -anPv --exclude='**/.DS_Store' Archival-Library/jwResearch__archive jozhw@ds1522p.winterume.com:/volume2/Archival-Library/
+
 
 
 elif [ "$input" -eq 1 ]; then
@@ -28,11 +35,17 @@ elif [ "$input" -eq 1 ]; then
     rsync -aPv --exclude='**/.DS_Store' --delete Downloads/books/* jozhw@ds1522p.winterume.com:/volume1/Downloads/books/
 
     rsync -aPv --exclude='**/.DS_Store' myPhotos jozhw@ds1522p.winterume.com:/volume1/johnz.wu
-    rsync -aPv --exclude='**/.DS_Store' myArchive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
-    rsync -aPv --exclude='**/.DS_Store' myProjects-Archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
-    rsync -aPv --exclude='**/.DS_Store' myPhotos-Archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
+    rsync -aPv --exclude='**/.DS_Store' myOtzar__archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
+    rsync -aPv --exclude='**/.DS_Store' myProjects__archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
+    rsync -aPv --exclude='**/.DS_Store' myPhotos__archive jozhw@ds1522p.winterume.com:/volume1/johnz.wu
     rsync -aPv --exclude='**/.DS_Store' wuMedia jozhw@ds1522p.winterume.com:/volume1/wu
     rsync -aPv --exclude='**/.DS_Store' wuArchive-v1 jozhw@ds1522p.winterume.com:/volume1/wu/wuArchive
+
+    rsync -aPv --exclude='**/.DS_Store' Archival-Library/jwAcademics__archive jozhw@ds1522p.winterume.com:/volume2/Archival-Library/
+    rsync -aPv --exclude='**/.DS_Store' Archival-Library/jwExams__archive jozhw@ds1522p.winterume.com:/volume2/Archival-Library/
+    rsync -aPv --exclude='**/.DS_Store' Archival-Library/jwCertificates__archive jozhw@ds1522p.winterume.com:/volume2/Archival-Library/
+    rsync -aPv --exclude='**/.DS_Store' Archival-Library/jwToil__archive jozhw@ds1522p.winterume.com:/volume2/Archival-Library/
+    rsync -aPv --exclude='**/.DS_Store' Archival-Library/jwResearch__archive jozhw@ds1522p.winterume.com:/volume2/Archival-Library/
 else
     echo "No command selected"
 fi
