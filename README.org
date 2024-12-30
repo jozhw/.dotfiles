@@ -28,7 +28,7 @@ To run the script:
 
 *** brew_<category>.sh
 
-The purpose of these scripts are to categorize brew installs. The wrapper, =brew.sh=, when executed will iterate through all of the =brew_<cetagory>.sh= scripts within the same directory as the =brew.sh=. 
+The purpose of these scripts are to categorize brew installs. The wrapper, =brew.sh=, when executed will iterate through all of the =brew_<category>.sh= scripts within the same directory as the =brew.sh=. 
 
 ** stow
 
@@ -54,3 +54,7 @@ To switch default shells, enter the command =chsh -s <PATH_TO_SHELL>=. The =<PAT
 ** macos
 
 The =.macos= file is used to configure macs. The template was taken from [[https://github.com/mathiasbynens/dotfiles/blob/main/.macos][@mathiasbynens]] and adjusted for my needs.
+
+* Docs
+
+Refer to the =docs= directory and find the specific =.org= file for specific guidance on setup, commands, and etc.
