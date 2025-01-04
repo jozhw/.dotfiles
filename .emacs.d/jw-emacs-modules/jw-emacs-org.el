@@ -12,6 +12,8 @@
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c C-l") 'org-insert-link)
 
+(setq org-id-link-to-org-use-id 'create-if-interactive)
+
 (use-package org-bullets
   :after org
   :hook (org-mode . org-bullets-mode)
