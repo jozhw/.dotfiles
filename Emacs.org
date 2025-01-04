@@ -1297,6 +1297,17 @@ As recommended by the official =org= manual to have these keys bound.
   (global-set-key (kbd "C-c C-l") 'org-insert-link)
 
 #+end_src
+
+Instead of relying on just the path/etc, allow orgmode to use unique IDs to create internal links that can point to specific headings in org files.
+
+With the =create-if-interactive= setting, it only creates in interactive settings.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
+
+  (setq org-id-link-to-org-use-id 'create-if-interactive)
+
+#+end_src
+
 *** The =jw-emacs-org.el= section for bullets
 
 Customize the heading bullets to make it consistent and nicer.
