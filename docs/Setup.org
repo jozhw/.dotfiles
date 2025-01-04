@@ -1,0 +1,65 @@
+#+title: Setup
+
+This org file is meant to detail my setups for packages, tools, and etc. that are related to my workflow.
+
+* Setting up GPG
+
+*** Signing for Github
+
+After creating the =gpg-key= make sure the follow the directions on =github= to upload the key on your account. After that is done follow the instructions below.
+
+*** Signing on Local Machine
+
+Make sure the =.gitconfig= is configured to have the =signingkey= ready. To do so you can simply run:
+
+#+begin_src shell
+
+  git config --global user.signingkey <YOUR_KEY_ID>
+
+#+end_src
+
+Trust the key (can skip, however may be necessary).
+
+#+begin_src shell
+
+  gpg --edit-key <YOUR_KEY_ID>
+
+#+end_src
+
+Start the =gpg-agent=.
+
+#+begin_src shell
+
+  gpgconf --launch gpg-agent
+
+#+end_src
+
+Use =pinentry=. Depending on your os, there are different versions of =pinentry=. For example for =macos= there is =pinentry-mac=.
+
+For =pinentry= create a =~/.gnupg/gpg-agent.conf= file and add:
+
+#+begin_src shell
+
+  # if not sure of path run `which pinentry` for the case of macos
+  # run `which pinentry-mac`
+
+  pinentry-program <PATH_TO_PINENTRY>
+
+#+end_src
+
+Restart the =gpg-agent=.
+
+#+begin_src shell
+
+  gpgconf --kill gpg-agent
+  gpgconf --launch gpg-agent
+  
+#+end_src
+
+Make sure the =GPG_TTY= environment variable is set and then source the configuration.
+
+#+begin_src shell
+
+  export GPG_TTY=$(tty)
+
+#+end_src
