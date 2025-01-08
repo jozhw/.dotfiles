@@ -21,7 +21,7 @@ brew install --cask inkscape
 brew install --cask gnucash
 
 # Install mullvadvpn
-brew install --cask mullvadvpn
+# brew install --cask mullvadvpn # sticking with tailscale mullvadvpn for convenience
 
 # Install rstudio
 brew install --cask rstudio
