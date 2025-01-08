@@ -43,3 +43,6 @@ brew install --cask docker
 
 # Install mkv editor
 brew install --cask mkvtoolnix
+
+# Install audacity audio recording:::Avoid due to privacy concerns and controversies
+#brew install --cask audacity
