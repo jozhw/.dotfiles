@@ -33,7 +33,6 @@ Font face that I currently do not use, but I use Prot's updated version of the I
 Font face that I use for *Emacs*.
   
 
-
 * Setup
 
 ** brew
@@ -70,6 +69,9 @@ Please see the =ConfigInfo.org= file for more detailing of particular configurat
 
 All emacs configurations are written via a literate configuration in =org-mode= named =Emacs.org=. Each section in =Emacs.org= is modularized via =tangle= upon saving the file. All of the modularized configs are stored within the =.emacs.d= directory.
 
+** elpa
+
+The elpa directory contains all of the emacs packages that I use for my configuration. The reason why this is seperate and vc'd is to preserve the configuration for emacs, and to decrease the liklihood of errors in setting up. Furthermore, certain packages may have breaking changes that will be in need for fixes, which could be a major hassle. Thus, if a package is accidently updated, then it can be revered to the previous version.
 
 ** .profile
 
