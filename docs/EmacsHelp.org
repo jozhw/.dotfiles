@@ -81,3 +81,15 @@ Useful commands
 ** Org-transclude
 
 Link to the docs: [[https://nobiot.github.io/org-transclusion/][org-transclude]]
+
+* Pdf-tools
+
+** Troubleshooting
+
+If you receive the option to rebuild the =epdfserver= and you agree to building on Emacs, there are instances where the build fails. When running =M-x pdf-tools-install= you will rebuild within Emacs and will obtain more information. If the error consists of not being able to find poppler, copy and paste the command used to run the installation and run it in the command line outside of emacs.
+
+This solution seems to work currently as of 2025-01-14.
+
+
+
+
