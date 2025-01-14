@@ -46,3 +46,9 @@ brew install --cask mkvtoolnix
 
 # Install audacity audio recording:::Avoid due to privacy concerns and controversies
 #brew install --cask audacity
+
+# Install Frappe Books an accounting software
+brew install --cask frappe-books
+
+# Install Ghostty a native terminal emulator
+brew install --cask ghostty
