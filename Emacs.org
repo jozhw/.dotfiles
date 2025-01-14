@@ -1345,7 +1345,7 @@ Customize the heading bullets to make it consistent and nicer.
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for structured templates (=org-tempo=)
+*** The =jw-emacs-org.el= section for structured templates (=org-tempo=) --native
 
 These structured templates are used to auto generate code blocks for org mode. In order
 to use the template simply type =<= followed by the abbreviation of the language and
