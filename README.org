@@ -4,6 +4,16 @@
 
 ** Version Control
 
+*** Commit Syntax
+
+To keep all of the commits organized, I suggest for my own reference to use the following commit syntax. The first is the action (i.e. fix, add, rm) and then the functionality that was changed (i.e. emacs, readme, stow) followed by the commit message.
+
+#+begin_src 
+
+  <ACTION>/<FUNCTIONALITY_CHANGED>: "MESSAGE HERE"
+
+#+end_src
+
 *** Git lfs
 
 The repo uses =git= and =git lfs= to keep versioning control. Make sure that you have =git lfs= installed (should be installed by the setup scripts). To see which files are being tracked by =git lfs=, check the =.gitattributes= file.
