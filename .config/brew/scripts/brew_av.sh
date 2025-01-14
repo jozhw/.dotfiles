@@ -11,3 +11,6 @@ brew install mkvpropedit
 
 # flac editor known as metaflac but flac on brew
 brew install flac
+
+# sound player that contains aplay
+brew install sox
