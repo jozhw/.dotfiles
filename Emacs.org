@@ -1287,6 +1287,14 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 #+end_src
 
+*** The =jw-emacs-org.el= section for org pomodoro timer --native
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
+
+  (setq org-clock-sound "~/.dotfiles/.assets/sounds/mixkit-alert-quick-chime-766.wav")
+
+#+end_src
+
 *** The =jw-emacs-org.el= section for org-links
 
 As recommended by the official =org= manual to have these keys bound.

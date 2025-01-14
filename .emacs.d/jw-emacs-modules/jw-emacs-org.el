@@ -9,6 +9,8 @@
   (setq org-ellipsis " ▾") ;; when org headings closed down arrow instead of ellipsis
   )
 
+(setq org-clock-sound "~/.dotfiles/.assets/sounds/mixkit-alert-quick-chime-766.wav")
+
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c C-l") 'org-insert-link)
 
