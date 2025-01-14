@@ -1289,6 +1289,35 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 *** The =jw-emacs-org.el= section for org pomodoro timer --native
 
+Configure for macos to play sound:
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
+
+  ;; on macos, fix "This Emacs binary lacks sound support" 
+  ;; - https://github.com/leoliu/play-sound-osx/blob/master/play-sound.el
+  ;; - update according to https://github.com/leoliu/play-sound-osx/issues/2#issuecomment-1088360638
+  (when (eq system-type 'darwin)
+    (unless (and (fboundp 'play-sound-internal)
+                 (subrp (symbol-function 'play-sound-internal)))
+      (defun play-sound-internal (sound)
+        "Internal function for `play-sound' (which see)."
+        (or (eq (car-safe sound) 'sound)
+            (signal 'wrong-type-argument (list sound)))
+ 
+        (cl-destructuring-bind (&key file data volume device)
+            (cdr sound)
+ 
+          (and (or data device)
+               (error "DATA and DEVICE arg not supported"))
+ 
+          (apply #'start-process "afplay" nil
+                 "afplay" (append (and volume (list "-v" volume))
+                                  (list (expand-file-name file data-directory))))))))
+
+
+#+end_src
+
+
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
   (setq org-clock-sound "~/.dotfiles/.assets/sounds/mixkit-alert-quick-chime-766.wav")
