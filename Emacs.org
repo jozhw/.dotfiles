@@ -1988,16 +1988,17 @@ Add to =eglot= server list and setup hook after eglot is loaded.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-    (with-eval-after-load 'eglot
-      (setq eglot-prefer-local-server t)
-      ;; undo elgot modifications of completion-category-defaults
-      (setq completion-category-defaults nil)
-      (setq eglot-connect-timeout 120)
-      (add-to-list 'eglot-server-programs
+  (with-eval-after-load 'eglot
+    (setq eglot-prefer-local-server t)
+    ;; undo elgot modifications of completion-category-defaults
+    (setq completion-category-defaults nil)
+    (setq eglot-connect-timeout 120)
+    (add-to-list 'eglot-server-programs
                  `(python-mode . ,(jw/local-pyright-command)))
-      (add-to-list 'eglot-server-programs
+    (add-to-list 'eglot-server-programs
                  `(rust-mode . (,(jw/find-rust-analyzer))))
-      )
+    (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+    )
 
 #+end_src
 
@@ -2007,7 +2008,9 @@ Function to start eglot.
 
   (defun jw/maybe-start-eglot ()
     (when (or (derived-mode-p 'python-mode)
-              (derived-mode-p 'rust-mode))
+              (derived-mode-p 'rust-mode)
+              (derived-mode-p 'c-mode)
+              (derived-mode-p 'c++-mode))
       (eglot-ensure)))
 
 #+end_src
@@ -2018,6 +2021,8 @@ Add the hook to auto start =eglot= depending on configured language.
 
   (add-hook 'python-mode-hook #'jw/maybe-start-eglot)
   (add-hook 'rust-mode-hook #'jw/maybe-start-eglot)
+  (add-hook 'c-mode-hook #'jw/maybe-start-eglot)
+  (add-hook 'c++-mode-hook #'jw/maybe-start-eglot)
 
 #+end_src
 
@@ -2030,6 +2035,7 @@ Add the hook to auto start =eglot= depending on configured language.
     (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 #+end_src
+
 *** The =jw-emacs-langs.el= call to provide
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes

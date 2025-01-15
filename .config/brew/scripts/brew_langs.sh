@@ -13,3 +13,6 @@ brew install r
 
 # Install texlive for latex
 brew install texlive
+
+# Install clang support
+brew install llvm
