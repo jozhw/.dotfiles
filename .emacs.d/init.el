@@ -202,3 +202,33 @@ before all other modules of my setup."
 (require 'jw-emacs-langs)
 
 (require 'jw-copy)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(which-key visual-fill-column vertico theme-buffet spacious-padding rust-mode rainbow-delimiters python-black pulsar org-transclusion org-noter-pdftools org-bullets orderless nov no-littering modus-themes marginalia lin ledger-mode general forge fontaine evil-surround evil-collection ef-themes doom-modeline djvu denote cursory corfu conda company-box command-log-mode cape)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(fringe ((t :background "#fff2f3")))
+ '(header-line ((t :box (:line-width 4 :color "#f2e4ea" :style nil))))
+ '(header-line-highlight ((t :box (:color "#4f4073"))))
+ '(keycast-key ((t)))
+ '(line-number ((t :background "#fff2f3")))
+ '(mode-line ((t :background "#fff2f3" :overline "#d50f7f" :box (:line-width 6 :color "#fff2f3" :style nil))))
+ '(mode-line-active ((t :background "#fff2f3" :overline "#d50f7f" :box (:line-width 6 :color "#fff2f3" :style nil))))
+ '(mode-line-highlight ((t :box (:color "#4f4073"))))
+ '(mode-line-inactive ((t :background "#fff2f3" :overline "#c6bbc6" :box (:line-width 6 :color "#fff2f3" :style nil))))
+ '(tab-bar-tab ((t :box (:line-width 4 :color "#fff2f3" :style nil))))
+ '(tab-bar-tab-inactive ((t :box (:line-width 4 :color "#cfb3c4" :style nil))))
+ '(tab-line-tab ((t)))
+ '(tab-line-tab-active ((t)))
+ '(tab-line-tab-inactive ((t)))
+ '(vertical-border ((t :background "#fff2f3" :foreground "#fff2f3")))
+ '(window-divider ((t nil)))
+ '(window-divider-first-pixel ((t nil)))
+ '(window-divider-last-pixel ((t nil))))
