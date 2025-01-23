@@ -35,6 +35,20 @@
   (or (executable-find "rust-analyzer")
       (expand-file-name "~/.cargo/bin/rust-analyzer")))
 
+(use-package typescript-mode
+:ensure t
+:mode "\\.ts\\'")
+
+(use-package json-mode
+:ensure t
+:mode "\\.json\\'")
+
+(use-package apheleia
+:ensure t
+:config
+(add-to-list 'apheleia-mode-alist '(typescript-mode . prettier))
+(apheleia-global-mode +1))
+
 (with-eval-after-load 'eglot
   (setq eglot-prefer-local-server t)
   ;; undo elgot modifications of completion-category-defaults
@@ -45,19 +59,23 @@
   (add-to-list 'eglot-server-programs
                `(rust-mode . (,(jw/find-rust-analyzer))))
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+  (add-to-list 'eglot-server-programs
+           '(typescript-mode . ("typescript-language-server" "--stdio")))
   )
 
 (defun jw/maybe-start-eglot ()
   (when (or (derived-mode-p 'python-mode)
             (derived-mode-p 'rust-mode)
             (derived-mode-p 'c-mode)
-            (derived-mode-p 'c++-mode))
+            (derived-mode-p 'c++-mode)
+            (derived-mode-p 'typescript-mode))
     (eglot-ensure)))
 
 (add-hook 'python-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'rust-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'c-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'c++-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'typescript-mode-hook 'eglot-ensure)
 
 (with-eval-after-load 'tramp
   (require 'tramp-sh)
