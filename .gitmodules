@@ -1,8 +1,8 @@
 [submodule "fonts/iosevka-comfy"]
-	path = fonts/iosevka-comfy
+	path = .assets/fonts/iosevka-comfy
 	url = https://git.sr.ht/~protesilaos/iosevka-comfy
 [submodule "fonts/Iosevka"]
-	path = fonts/Iosevka
+	path = .assets/fonts/Iosevka
 	url = https://github.com/be5invis/Iosevka.git
 [submodule ".emacs.d/elpa"]
 	path = .emacs.d/elpa
