@@ -82,6 +82,10 @@ Useful commands
 
 Link to the docs: [[https://nobiot.github.io/org-transclusion/][org-transclude]]
 
+** Org-todo and Org-agenda
+
+To create a percentage completion rate simply add =[/][%]= and then do the command =C-c C-c=
+
 * Pdf-tools
 
 ** Troubleshooting
