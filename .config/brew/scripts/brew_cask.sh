@@ -52,3 +52,9 @@ brew install --cask frappe-books
 
 # Install Ghostty a native terminal emulator
 brew install --cask ghostty
+
+# Install email client
+brew install --cask thunderbird
+
+# Install LM Studio for locally hosted lms
+brew install --cask lm-studio
