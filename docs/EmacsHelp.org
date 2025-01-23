@@ -2,6 +2,11 @@
 
 The purpose of =EmacsHelp.org= is to keep documentation on setups and configurations that are beyond the scope of =Emacs.org=. Any help with identifying key commands for Emacs or its packages will be in the =EmacsCommands.org= file 
 
+
+* Package Installation
+
+If you are having trouble with package installation such as a package cannot be found but it is on melpa, then you will have to run =package-refresh-contents=.
+
 * Magit
 
 ** GPG Signing
