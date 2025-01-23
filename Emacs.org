@@ -1982,6 +1982,41 @@ Custom function to find rust analyzer.
 
 #+end_src
 
+*** The =jw-emacs-langs.el= section for =typescript= support
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (use-package typescript-mode
+  :ensure t
+  :mode "\\.ts\\'")
+
+#+end_src
+
+Install =json-mode=
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (use-package json-mode
+  :ensure t
+  :mode "\\.json\\'")
+
+#+end_src
+
+*** The =jw-emacs-langs.el= section for automating code formatting with =apheleia=
+
+Make sure you have the necessary packages installed.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (use-package apheleia
+  :ensure t
+  :config
+  (add-to-list 'apheleia-mode-alist '(typescript-mode . prettier))
+  (apheleia-global-mode +1))
+
+#+end_src
+
+
 *** The =jw-emacs-langs.el= section for language server configuration (=eglot=) --native
 
 Add to =eglot= server list and setup hook after eglot is loaded.
@@ -1998,6 +2033,8 @@ Add to =eglot= server list and setup hook after eglot is loaded.
     (add-to-list 'eglot-server-programs
                  `(rust-mode . (,(jw/find-rust-analyzer))))
     (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+    (add-to-list 'eglot-server-programs
+             '(typescript-mode . ("typescript-language-server" "--stdio")))
     )
 
 #+end_src
@@ -2006,12 +2043,13 @@ Function to start eglot.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-  (defun jw/maybe-start-eglot ()
-    (when (or (derived-mode-p 'python-mode)
-              (derived-mode-p 'rust-mode)
-              (derived-mode-p 'c-mode)
-              (derived-mode-p 'c++-mode))
-      (eglot-ensure)))
+    (defun jw/maybe-start-eglot ()
+      (when (or (derived-mode-p 'python-mode)
+                (derived-mode-p 'rust-mode)
+                (derived-mode-p 'c-mode)
+                (derived-mode-p 'c++-mode)
+                (derived-mode-p 'typescript-mode))
+        (eglot-ensure)))
 
 #+end_src
 
@@ -2023,6 +2061,7 @@ Add the hook to auto start =eglot= depending on configured language.
   (add-hook 'rust-mode-hook #'jw/maybe-start-eglot)
   (add-hook 'c-mode-hook #'jw/maybe-start-eglot)
   (add-hook 'c++-mode-hook #'jw/maybe-start-eglot)
+  (add-hook 'typescript-mode-hook 'eglot-ensure)
 
 #+end_src
 
