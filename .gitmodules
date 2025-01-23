@@ -7,3 +7,4 @@
 [submodule ".emacs.d/elpa"]
 	path = .emacs.d/elpa
 	url = https://github.com/jozhw/elpa.git
+        branch = main
