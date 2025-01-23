@@ -1282,6 +1282,16 @@ Set up Org Mode with a baseline configuration. The following sections will add m
     :hook (org-mode . jw/org-mode-setup)
     :config
     (setq org-ellipsis " ▾") ;; when org headings closed down arrow instead of ellipsis
+    (setq org-M-RET-may-split-line '((default . nil))) ;; when auto generating subsequent headings, avoid splitting the line
+    (setq org-insert-heading-respect-content t) ;; when creating new heading respects the content of which heading it was originally
+    (setq org-log-done 'time)
+    (setq org-log-into-drawer t) ;; task change is in drawer instead of content
+    ;; keywords for org task states
+
+    ;; setting dir of tasks
+    (setq org-agenda-files (directory-files-recursively "~/Otzar/Docs/tasks/" "\\.org$"))
+    (setq org-todo-keywords
+        '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)"))) 
     )
 
 
