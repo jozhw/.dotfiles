@@ -208,10 +208,27 @@ before all other modules of my setup."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(apheleia typescript-mode which-key visual-fill-column vertico theme-buffet spacious-padding rust-mode rainbow-delimiters python-black pulsar org-transclusion org-noter-pdftools org-bullets orderless nov no-littering modus-themes marginalia lin ledger-mode json-mode general forge fontaine evil-surround evil-collection ef-themes doom-modeline djvu denote cursory corfu conda company-box command-log-mode cape)))
+   '(which-key web-mode visual-fill-column vertico theme-buffet spacious-padding rust-mode rainbow-delimiters python-black pulsar org-transclusion org-noter-pdftools org-bullets orderless nov no-littering modus-themes marginalia lin ledger-mode general forge fontaine evil-surround evil-collection ef-themes doom-modeline djvu denote cursory corfu conda company-box command-log-mode cape apheleia)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(fringe ((t :background "#edf4f8")))
+ '(header-line ((t :box (:line-width 4 :color "#e0e7ef" :style nil))))
+ '(header-line-highlight ((t :box (:color "#151a27"))))
+ '(keycast-key ((t)))
+ '(line-number ((t :background "#edf4f8")))
+ '(mode-line ((t :background "#edf4f8" :overline "#003faf" :box (:line-width 6 :color "#edf4f8" :style nil))))
+ '(mode-line-active ((t :background "#edf4f8" :overline "#003faf" :box (:line-width 6 :color "#edf4f8" :style nil))))
+ '(mode-line-highlight ((t :box (:color "#151a27"))))
+ '(mode-line-inactive ((t :background "#edf4f8" :overline "#a2a6af" :box (:line-width 6 :color "#edf4f8" :style nil))))
+ '(tab-bar-tab ((t :box (:line-width 4 :color "#edf4f8" :style nil))))
+ '(tab-bar-tab-inactive ((t :box (:line-width 4 :color "#afb8c3" :style nil))))
+ '(tab-line-tab ((t)))
+ '(tab-line-tab-active ((t)))
+ '(tab-line-tab-inactive ((t)))
+ '(vertical-border ((t :background "#edf4f8" :foreground "#edf4f8")))
+ '(window-divider ((t nil)))
+ '(window-divider-first-pixel ((t nil)))
+ '(window-divider-last-pixel ((t nil))))

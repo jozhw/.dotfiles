@@ -1,3 +1,13 @@
+(use-package treesit-auto
+  :ensure t
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
+
+(setq treesit-auto-install 'prompt)
+
 (unless (package-installed-p 'conda)
   (package-refresh-contents)
   (package-install 'conda))
@@ -35,19 +45,20 @@
   (or (executable-find "rust-analyzer")
       (expand-file-name "~/.cargo/bin/rust-analyzer")))
 
-(use-package typescript-mode
-:ensure t
-:mode "\\.ts\\'")
+;; (use-package typescript-mode
+;; :ensure t
+;; :mode "\\.ts\\'")
 
-(use-package json-mode
-:ensure t
-:mode "\\.json\\'")
+;; (use-package json-mode
+;; :ensure t
+;; :mode "\\.json\\'")
 
 (use-package apheleia
-:ensure t
-:config
-(add-to-list 'apheleia-mode-alist '(typescript-mode . prettier))
-(apheleia-global-mode +1))
+  :ensure t
+  :config
+  (add-to-list 'apheleia-mode-alist '(tsx-ts-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(typescript-ts-mode . prettier))
+  (apheleia-global-mode +1))
 
 (with-eval-after-load 'eglot
   (setq eglot-prefer-local-server t)
@@ -60,7 +71,9 @@
                `(rust-mode . (,(jw/find-rust-analyzer))))
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
   (add-to-list 'eglot-server-programs
-           '(typescript-mode . ("typescript-language-server" "--stdio")))
+               `(typescript-ts-mode . ("typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs
+               `(tsx-ts-mode . ("typescript-language-server" "--stdio")))
   )
 
 (defun jw/maybe-start-eglot ()
@@ -68,14 +81,17 @@
             (derived-mode-p 'rust-mode)
             (derived-mode-p 'c-mode)
             (derived-mode-p 'c++-mode)
-            (derived-mode-p 'typescript-mode))
+            (derived-mode-p 'typescript-ts-mode)
+            (derived-mode-p 'tsx-ts-mode)
+            )
     (eglot-ensure)))
 
 (add-hook 'python-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'rust-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'c-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'c++-mode-hook #'jw/maybe-start-eglot)
-(add-hook 'typescript-mode-hook 'eglot-ensure)
+(add-hook 'typescript-ts-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'tsx-ts-mode-hook #'jw/maybe-start-eglot)
 
 (with-eval-after-load 'tramp
   (require 'tramp-sh)
