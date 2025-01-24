@@ -1909,6 +1909,31 @@ When the =which-key-mode= is enabled, any incomplete key sequence will produce a
 #+end_src
 ** The =jw-emacs-langs.el= module
 
+*** The =jw-emacs-langs.el= section for =treesit-auto=
+
+The issue with the built in =treesit.el= is that it does not auto default to which language server. In addition if you need to install you will have to input the url yourself. This package is here to automate the process.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (use-package treesit-auto
+    :ensure t
+    :custom
+    (treesit-auto-install 'prompt)
+    :config
+    (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode))
+
+#+end_src
+
+Auto install grammars when missing
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (setq treesit-auto-install 'prompt)
+
+#+end_src
+
+
 *** The =jw-emacs-langs.el= section for =python= support
 
 Configuring pythone envs with =conda=.
@@ -1994,11 +2019,15 @@ Custom function to find rust analyzer.
 
 *** The =jw-emacs-langs.el= section for =typescript= support
 
+Typescript support is done through =treesit.el=, which is now native to emacs as of v29.
+
+Therefore all of the typescript will be using the tree-sitter equivalent.
+
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-  (use-package typescript-mode
-  :ensure t
-  :mode "\\.ts\\'")
+  ;; (use-package typescript-mode
+  ;; :ensure t
+  ;; :mode "\\.ts\\'")
 
 #+end_src
 
@@ -2006,9 +2035,9 @@ Install =json-mode=
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-  (use-package json-mode
-  :ensure t
-  :mode "\\.json\\'")
+  ;; (use-package json-mode
+  ;; :ensure t
+  ;; :mode "\\.json\\'")
 
 #+end_src
 
@@ -2019,10 +2048,11 @@ Make sure you have the necessary packages installed.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
   (use-package apheleia
-  :ensure t
-  :config
-  (add-to-list 'apheleia-mode-alist '(typescript-mode . prettier))
-  (apheleia-global-mode +1))
+    :ensure t
+    :config
+    (add-to-list 'apheleia-mode-alist '(tsx-ts-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(typescript-ts-mode . prettier))
+    (apheleia-global-mode +1))
 
 #+end_src
 
@@ -2044,7 +2074,9 @@ Add to =eglot= server list and setup hook after eglot is loaded.
                  `(rust-mode . (,(jw/find-rust-analyzer))))
     (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
     (add-to-list 'eglot-server-programs
-             '(typescript-mode . ("typescript-language-server" "--stdio")))
+                 `(typescript-ts-mode . ("typescript-language-server" "--stdio")))
+    (add-to-list 'eglot-server-programs
+                 `(tsx-ts-mode . ("typescript-language-server" "--stdio")))
     )
 
 #+end_src
@@ -2053,13 +2085,15 @@ Function to start eglot.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-    (defun jw/maybe-start-eglot ()
-      (when (or (derived-mode-p 'python-mode)
-                (derived-mode-p 'rust-mode)
-                (derived-mode-p 'c-mode)
-                (derived-mode-p 'c++-mode)
-                (derived-mode-p 'typescript-mode))
-        (eglot-ensure)))
+        (defun jw/maybe-start-eglot ()
+          (when (or (derived-mode-p 'python-mode)
+                    (derived-mode-p 'rust-mode)
+                    (derived-mode-p 'c-mode)
+                    (derived-mode-p 'c++-mode)
+                    (derived-mode-p 'typescript-ts-mode)
+                    (derived-mode-p 'tsx-ts-mode)
+                    )
+            (eglot-ensure)))
 
 #+end_src
 
@@ -2071,7 +2105,8 @@ Add the hook to auto start =eglot= depending on configured language.
   (add-hook 'rust-mode-hook #'jw/maybe-start-eglot)
   (add-hook 'c-mode-hook #'jw/maybe-start-eglot)
   (add-hook 'c++-mode-hook #'jw/maybe-start-eglot)
-  (add-hook 'typescript-mode-hook 'eglot-ensure)
+  (add-hook 'typescript-ts-mode-hook #'jw/maybe-start-eglot)
+  (add-hook 'tsx-ts-mode-hook #'jw/maybe-start-eglot)
 
 #+end_src
 
