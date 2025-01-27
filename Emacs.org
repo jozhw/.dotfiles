@@ -1289,7 +1289,7 @@ Set up Org Mode with a baseline configuration. The following sections will add m
     ;; keywords for org task states
 
     ;; setting dir of tasks
-    (setq org-agenda-files (directory-files-recursively "~/Otzar/Docs/tasks/" "\\.org$"))
+    (setq org-agenda-files (directory-files-recursively "~/Otzar/Docs/agenda/" "\\.org$"))
     (setq org-todo-keywords
         '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)"))) 
     )
@@ -1909,6 +1909,26 @@ When the =which-key-mode= is enabled, any incomplete key sequence will produce a
 #+end_src
 ** The =jw-emacs-langs.el= module
 
+*** The =jw-emacs-langs.el= section for =treesit= --native
+
+Set language sources for treesit
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (setq treesit-language-source-alist
+        '((typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+          (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+          (python . ("https://github.com/tree-sitter/tree-sitter-python"))))
+
+  (dolist (source treesit-language-source-alist)
+    (unless (treesit-ready-p (car source))
+      (treesit-install-language-grammar (car source))))
+
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+#+end_src
+
 *** The =jw-emacs-langs.el= section for =treesit-auto=
 
 The issue with the built in =treesit.el= is that it does not auto default to which language server. In addition if you need to install you will have to input the url yourself. This package is here to automate the process.
@@ -1940,14 +1960,14 @@ Configuring pythone envs with =conda=.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-    (unless (package-installed-p 'conda)
-      (package-refresh-contents)
-      (package-install 'conda))
+  (unless (package-installed-p 'conda)
+    (package-refresh-contents)
+    (package-install 'conda))
 
-    (require 'conda)
-    (setq conda-anaconda-home (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver"))
-    (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver"))
-      (conda-env-autoactivate-mode t)
+  (require 'conda)
+  (setq conda-anaconda-home (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/"))
+   (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
+    (conda-env-autoactivate-mode t)
 
 
 #+end_src

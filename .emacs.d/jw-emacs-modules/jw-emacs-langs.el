@@ -1,3 +1,16 @@
+(setq treesit-language-source-alist
+      '((typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+        (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+        (python . ("https://github.com/tree-sitter/tree-sitter-python"))))
+
+(dolist (source treesit-language-source-alist)
+  (unless (treesit-ready-p (car source))
+    (treesit-install-language-grammar (car source))))
+
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+
 (use-package treesit-auto
   :ensure t
   :custom
@@ -13,8 +26,8 @@
   (package-install 'conda))
 
 (require 'conda)
-(setq conda-anaconda-home (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver"))
-(setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver"))
+(setq conda-anaconda-home (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/"))
+ (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
   (conda-env-autoactivate-mode t)
 
 (defun jw/find-pyright-langserver ()

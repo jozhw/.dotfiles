@@ -207,28 +207,27 @@ before all other modules of my setup."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(which-key web-mode visual-fill-column vertico theme-buffet spacious-padding rust-mode rainbow-delimiters python-black pulsar org-transclusion org-noter-pdftools org-bullets orderless nov no-littering modus-themes marginalia lin ledger-mode general forge fontaine evil-surround evil-collection ef-themes doom-modeline djvu denote cursory corfu conda company-box command-log-mode cape apheleia)))
+ '(org-agenda-files nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(fringe ((t :background "#edf4f8")))
- '(header-line ((t :box (:line-width 4 :color "#e0e7ef" :style nil))))
- '(header-line-highlight ((t :box (:color "#151a27"))))
+ '(fringe ((t :background "#f6fff9")))
+ '(header-line ((t :box (:line-width 4 :color "#e8f0f0" :style nil))))
+ '(header-line-highlight ((t :box (:color "#34494a"))))
  '(keycast-key ((t)))
- '(line-number ((t :background "#edf4f8")))
- '(mode-line ((t :background "#edf4f8" :overline "#003faf" :box (:line-width 6 :color "#edf4f8" :style nil))))
- '(mode-line-active ((t :background "#edf4f8" :overline "#003faf" :box (:line-width 6 :color "#edf4f8" :style nil))))
- '(mode-line-highlight ((t :box (:color "#151a27"))))
- '(mode-line-inactive ((t :background "#edf4f8" :overline "#a2a6af" :box (:line-width 6 :color "#edf4f8" :style nil))))
- '(tab-bar-tab ((t :box (:line-width 4 :color "#edf4f8" :style nil))))
- '(tab-bar-tab-inactive ((t :box (:line-width 4 :color "#afb8c3" :style nil))))
+ '(line-number ((t :background "#f6fff9")))
+ '(mode-line ((t :background "#f6fff9" :overline "#cb26a0" :box (:line-width 6 :color "#f6fff9" :style nil))))
+ '(mode-line-active ((t :background "#f6fff9" :overline "#cb26a0" :box (:line-width 6 :color "#f6fff9" :style nil))))
+ '(mode-line-highlight ((t :box (:color "#34494a"))))
+ '(mode-line-inactive ((t :background "#f6fff9" :overline "#b4c4c0" :box (:line-width 6 :color "#f6fff9" :style nil))))
+ '(tab-bar-tab ((t :box (:line-width 4 :color "#f6fff9" :style nil))))
+ '(tab-bar-tab-inactive ((t :box (:line-width 4 :color "#c0c6c3" :style nil))))
  '(tab-line-tab ((t)))
  '(tab-line-tab-active ((t)))
  '(tab-line-tab-inactive ((t)))
- '(vertical-border ((t :background "#edf4f8" :foreground "#edf4f8")))
+ '(vertical-border ((t :background "#f6fff9" :foreground "#f6fff9")))
  '(window-divider ((t nil)))
  '(window-divider-first-pixel ((t nil)))
  '(window-divider-last-pixel ((t nil))))
