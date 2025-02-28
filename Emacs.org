@@ -1936,6 +1936,7 @@ Set language sources for treesit
   (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 #+end_src
 
+
 *** The =jw-emacs-langs.el= section for =treesit-auto=
 
 The issue with the built in =treesit.el= is that it does not auto default to which language server. In addition if you need to install you will have to input the url yourself. This package is here to automate the process.
@@ -2068,6 +2069,7 @@ Install =json-mode=
 
 #+end_src
 
+
 *** The =jw-emacs-langs.el= section for automating code formatting with =apheleia=
 
 Make sure you have the necessary packages installed.
@@ -2137,6 +2139,7 @@ Add the hook to auto start =eglot= depending on configured language.
 
 #+end_src
 
+
 *** The =jw-emacs-langs.el= for =tramp-sh.el= and remote configs
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
@@ -2146,6 +2149,7 @@ Add the hook to auto start =eglot= depending on configured language.
     (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 #+end_src
+
 
 *** The =jw-emacs-langs.el= call to provide
 
