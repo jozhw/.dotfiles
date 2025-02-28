@@ -1288,12 +1288,19 @@ Set up Org Mode with a baseline configuration. The following sections will add m
     (setq org-log-into-drawer t) ;; task change is in drawer instead of content
     ;; keywords for org task states
 
-    ;; setting dir of tasks
-    (setq org-agenda-files (directory-files-recursively "~/Otzar/Docs/agenda/" "\\.org$"))
-    (setq org-todo-keywords
-        '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)"))) 
     )
 
+
+#+end_src
+
+*** the =jw-emacs-org.el= section for =org-agenda= --native
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
+
+  ;; setting dir of tasks
+  (setq org-agenda-files (directory-files-recursively "~/Otzar/Docs/agenda/" "\\.org$"))
+  (setq org-todo-keywords
+      '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)"))) 
 
 #+end_src
 

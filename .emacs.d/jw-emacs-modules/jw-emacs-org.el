@@ -13,11 +13,12 @@
   (setq org-log-into-drawer t) ;; task change is in drawer instead of content
   ;; keywords for org task states
 
-  ;; setting dir of tasks
-  (setq org-agenda-files (directory-files-recursively "~/Otzar/Docs/agenda/" "\\.org$"))
-  (setq org-todo-keywords
-      '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)"))) 
   )
+
+;; setting dir of tasks
+(setq org-agenda-files (directory-files-recursively "~/Otzar/Docs/agenda/" "\\.org$"))
+(setq org-todo-keywords
+    '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)")))
 
 ;; on macos, fix "This Emacs binary lacks sound support" 
 ;; - https://github.com/leoliu/play-sound-osx/blob/master/play-sound.el
