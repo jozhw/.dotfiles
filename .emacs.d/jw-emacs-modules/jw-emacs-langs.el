@@ -79,7 +79,7 @@
   (setq completion-category-defaults nil)
   (setq eglot-connect-timeout 120)
   (add-to-list 'eglot-server-programs
-               `(python-mode . ,(jw/local-pyright-command)))
+               `(python-mode python-ts-mode . ,(jw/local-pyright-command)))
   (add-to-list 'eglot-server-programs
                `(rust-mode . (,(jw/find-rust-analyzer))))
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
@@ -91,6 +91,7 @@
 
 (defun jw/maybe-start-eglot ()
   (when (or (derived-mode-p 'python-mode)
+            (derived-mode-p 'python-ts-mode)
             (derived-mode-p 'rust-mode)
             (derived-mode-p 'c-mode)
             (derived-mode-p 'c++-mode)

@@ -2098,7 +2098,7 @@ Add to =eglot= server list and setup hook after eglot is loaded.
     (setq completion-category-defaults nil)
     (setq eglot-connect-timeout 120)
     (add-to-list 'eglot-server-programs
-                 `(python-mode . ,(jw/local-pyright-command)))
+                 `(python-mode python-ts-mode . ,(jw/local-pyright-command)))
     (add-to-list 'eglot-server-programs
                  `(rust-mode . (,(jw/find-rust-analyzer))))
     (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
@@ -2114,15 +2114,16 @@ Function to start eglot.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-        (defun jw/maybe-start-eglot ()
-          (when (or (derived-mode-p 'python-mode)
-                    (derived-mode-p 'rust-mode)
-                    (derived-mode-p 'c-mode)
-                    (derived-mode-p 'c++-mode)
-                    (derived-mode-p 'typescript-ts-mode)
-                    (derived-mode-p 'tsx-ts-mode)
-                    )
-            (eglot-ensure)))
+  (defun jw/maybe-start-eglot ()
+    (when (or (derived-mode-p 'python-mode)
+              (derived-mode-p 'python-ts-mode)
+              (derived-mode-p 'rust-mode)
+              (derived-mode-p 'c-mode)
+              (derived-mode-p 'c++-mode)
+              (derived-mode-p 'typescript-ts-mode)
+              (derived-mode-p 'tsx-ts-mode)
+              )
+      (eglot-ensure)))
 
 #+end_src
 
