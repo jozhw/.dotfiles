@@ -45,7 +45,7 @@
 (use-package python-black
   :demand t
   :after python
-  :hook (python-mode . python-black-on-save-mode-enable-dwim))
+  :hook (python-ts-mode . python-black-on-save-mode-enable-dwim))
 
 (unless (package-installed-p 'rust-mode)
   (package-refresh-contents)
@@ -79,7 +79,7 @@
   (setq completion-category-defaults nil)
   (setq eglot-connect-timeout 120)
   (add-to-list 'eglot-server-programs
-               `(python-mode python-ts-mode . ,(jw/local-pyright-command)))
+               `(python-ts-mode . ,(jw/local-pyright-command)))
   (add-to-list 'eglot-server-programs
                `(rust-mode . (,(jw/find-rust-analyzer))))
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
@@ -100,7 +100,7 @@
             )
     (eglot-ensure)))
 
-(add-hook 'python-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'python-ts-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'rust-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'c-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'c++-mode-hook #'jw/maybe-start-eglot)
