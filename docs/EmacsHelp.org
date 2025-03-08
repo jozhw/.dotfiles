@@ -106,6 +106,24 @@ This solution seems to work currently as of 2025-01-14.
 *** Troubleshooting 2025-01-15: Works
 The issue with [[id:A127FEE8-7868-4EF3-9D84-8F3EDF8117A0][Troubleshooting 2025-01-14: Does Not Work]] is that if the installation works within the command line, when opening up a pdf file on Emacs would lead to the epdfserver crashing. This issue I found had to do with confict with =macports= being installed. If you uninstall macports, then the issue is resolved. 
 
+* Vertico
+:PROPERTIES:
+:ID:       38FF44F7-287D-4807-9F06-084A23590A20
+:END:
+
+If in the Emacs buffer if you get a "Error in post-command-hook (vertico--exhibit): (void-function compat--completion-metadata-get)" error then you either delete vertico and recomplile or recompile
+
+#+begin_src
+
+  M-x package-recompile
+  vertico
+
+#+end_src
+
+The reason this issue is observed is due to updating Emacs.
+
+A link to the issue where I found the solution is [[https://github.com/minad/vertico/discussions/501#discussioncomment-12390155][here]]. 
+
 * Sound Support
 
 Usually this is a problem for macos and I found a snippet of code that enables sound support. The way to tell is by running =M-x play-sound-file= and navigating to the =.wav= file will ouput "This Emacs binary lacks sound support."
