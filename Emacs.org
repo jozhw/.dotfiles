@@ -2020,7 +2020,7 @@ Python formatter configuration.
   (use-package python-black
     :demand t
     :after python
-    :hook (python-ts-mode . python-black-on-save-mode-enable-dwim))
+    :hook (python-ts-mode . python-black-on-save-mode))
 
 #+end_src
 

@@ -45,7 +45,7 @@
 (use-package python-black
   :demand t
   :after python
-  :hook (python-ts-mode . python-black-on-save-mode-enable-dwim))
+  :hook (python-ts-mode . python-black-on-save-mode))
 
 (unless (package-installed-p 'rust-mode)
   (package-refresh-contents)

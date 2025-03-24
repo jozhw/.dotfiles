@@ -12,6 +12,7 @@ conda install conda-forge::pyright
 
 which pyright
 
-# install black-macchiato for python partial formatting with python-black
+# for formatting does not work with conda for some reason
+brew install black
 
-pip install black-macchiato
+# install black-macchiato for python partial formatting with python-black
