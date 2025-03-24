@@ -1824,7 +1824,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
    (defun jw/project-prompter ()
         (read-file-name "Select a project folder:"
-                        "~/Projects/Code/"
+                        "~/Otzar/Projects/Code/"
                         nil
                         nil
                         nil
