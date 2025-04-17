@@ -1,7 +1,18 @@
 (setq treesit-language-source-alist
-      '((typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+      '((typescript .        ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
         (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
-        (python . ("https://github.com/tree-sitter/tree-sitter-python"))))
+        (python . ("https://github.com/tree-sitter/tree-sitter-python"))
+        (json "https://github.com/tree-sitter/tree-sitter-json")
+        (css "https://github.com/tree-sitter/tree-sitter-css")
+        (html "https://github.com/tree-sitter/tree-sitter-html")
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml")
+        (toml "https://github.com/tree-sitter/tree-sitter-toml")
+        (make "https://github.com/alemuller/tree-sitter-make")
+        (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+        (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+        (cmake "https://github.com/uyha/tree-sitter-cmake")
+        (bash "https://github.com/tree-sitter/tree-sitter-bash")
+        ))
 
 (dolist (source treesit-language-source-alist)
   (unless (treesit-ready-p (car source))
@@ -9,7 +20,13 @@
 
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+(add-to-list 'major-mode-remap-alist '(
+                                       (python-mode . python-ts-mode)
+                                       (json-mode . json-ts-mode)
+                                       (css-mode . css-ts-mode)
+                                       (bash-mode . bash-ts-mode)
+                                       (yaml-mode . yaml-ts-mode)
+                                       ))
 
 (use-package treesit-auto
   :ensure t
@@ -69,6 +86,11 @@
 (use-package apheleia
   :ensure t
   :config
+  (setf (alist-get 'prettier-json apheleia-formatters)
+      '("prettier" "--stdin-filepath" filepath))
+  ;; Map json-ts-mode to the prettier-json formatter
+  (setf (alist-get 'json-ts-mode apheleia-mode-alist)
+      '(prettier-json))
   (add-to-list 'apheleia-mode-alist '(tsx-ts-mode . prettier))
   (add-to-list 'apheleia-mode-alist '(typescript-ts-mode . prettier))
   (apheleia-global-mode +1))
