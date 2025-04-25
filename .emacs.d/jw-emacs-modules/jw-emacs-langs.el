@@ -11,6 +11,8 @@
         (markdown "https://github.com/ikatyang/tree-sitter-markdown")
         (elisp "https://github.com/Wilfred/tree-sitter-elisp")
         (cmake "https://github.com/uyha/tree-sitter-cmake")
+        (c "https://github.com/tree-sitter/tree-sitter-c")
+        (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
         (bash "https://github.com/tree-sitter/tree-sitter-bash")
         ))
 
@@ -20,12 +22,16 @@
 
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.cpp\\'" . c++-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.c\\'" . c-ts-mode))
 (add-to-list 'major-mode-remap-alist '(
                                        (python-mode . python-ts-mode)
                                        (json-mode . json-ts-mode)
                                        (css-mode . css-ts-mode)
                                        (bash-mode . bash-ts-mode)
                                        (yaml-mode . yaml-ts-mode)
+                                       (c++-mode . c++-ts-mode)
+                                       (c-mode . c-ts-mode)
                                        ))
 
 (use-package treesit-auto
@@ -93,6 +99,8 @@
       '(prettier-json))
   (add-to-list 'apheleia-mode-alist '(tsx-ts-mode . prettier))
   (add-to-list 'apheleia-mode-alist '(typescript-ts-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(c++-ts-mode . clang-format))
+  (add-to-list 'apheleia-mode-alist '(c-ts-mode . clang-format))
   (apheleia-global-mode +1))
 
 (with-eval-after-load 'eglot
@@ -104,7 +112,7 @@
                `(python-ts-mode . ,(jw/local-pyright-command)))
   (add-to-list 'eglot-server-programs
                `(rust-mode . (,(jw/find-rust-analyzer))))
-  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+  (add-to-list 'eglot-server-programs '((c++-ts-mode c-ts-mode) "clangd"))
   (add-to-list 'eglot-server-programs
                `(typescript-ts-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
@@ -115,8 +123,8 @@
   (when (or (derived-mode-p 'python-mode)
             (derived-mode-p 'python-ts-mode)
             (derived-mode-p 'rust-mode)
-            (derived-mode-p 'c-mode)
-            (derived-mode-p 'c++-mode)
+            (derived-mode-p 'c-ts-mode)
+            (derived-mode-p 'c++-ts-mode)
             (derived-mode-p 'typescript-ts-mode)
             (derived-mode-p 'tsx-ts-mode)
             )
@@ -124,8 +132,8 @@
 
 (add-hook 'python-ts-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'rust-mode-hook #'jw/maybe-start-eglot)
-(add-hook 'c-mode-hook #'jw/maybe-start-eglot)
-(add-hook 'c++-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'c-ts-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'c++-ts-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'typescript-ts-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'tsx-ts-mode-hook #'jw/maybe-start-eglot)
 
