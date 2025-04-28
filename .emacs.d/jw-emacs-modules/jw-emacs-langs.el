@@ -13,6 +13,7 @@
         (cmake "https://github.com/uyha/tree-sitter-cmake")
         (c "https://github.com/tree-sitter/tree-sitter-c")
         (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+        (r "https://github.com/r-lib/tree-sitter-r")
         (bash "https://github.com/tree-sitter/tree-sitter-bash")
         ))
 
