@@ -5,8 +5,8 @@
 # Install miniconda for python envs.
 brew install --cask miniconda
 
-# Install fastmail client
-brew install --cask fmail2
+# Install fastmail client -- as of 20250515 migrated fully to protonmail
+# brew install --cask fmail2
 
 # Install emacs with GUI
 brew install --cask emacs
