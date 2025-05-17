@@ -2,9 +2,6 @@
 
 # Install command-line tools using Homebrew with --cask.
 
-# Install miniconda for python envs.
-brew install --cask miniconda
-
 # Install fastmail client -- as of 20250515 migrated fully to protonmail
 # brew install --cask fmail2
 
@@ -18,7 +15,7 @@ brew install --cask macfuse
 brew install --cask inkscape
 
 # Install gnucash for financial management
-brew install --cask gnucash
+# brew install --cask gnucash # dont really use
 
 # Install mullvadvpn
 # brew install --cask mullvadvpn # sticking with tailscale mullvadvpn for convenience
@@ -54,7 +51,7 @@ brew install --cask frappe-books
 brew install --cask ghostty
 
 # Install email client
-brew install --cask thunderbird
+# brew install --cask thunderbird # just sticking with protonmail
 
 # Install LM Studio for locally hosted lms
 brew install --cask lm-studio
