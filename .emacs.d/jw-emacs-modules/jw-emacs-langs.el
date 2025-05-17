@@ -118,6 +118,7 @@
                `(typescript-ts-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
                `(tsx-ts-mode . ("typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs '(markdown-mode . ("marksman")))
   )
 
 (defun jw/maybe-start-eglot ()
@@ -128,6 +129,7 @@
             (derived-mode-p 'c++-ts-mode)
             (derived-mode-p 'typescript-ts-mode)
             (derived-mode-p 'tsx-ts-mode)
+            (derived-mode-p 'markdown-mode)
             )
     (eglot-ensure)))
 
@@ -137,6 +139,7 @@
 (add-hook 'c++-ts-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'typescript-ts-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'tsx-ts-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'markdown-mode-hook #'jw/maybe-start-eglot)
 
 (use-package dape
   :preface
