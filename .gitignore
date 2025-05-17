@@ -8,6 +8,7 @@
 .emacs.d/*.eld
 .emacs.d/transient/*
 .emacs.d/tree-sitter/*
+.emacs.d/dape-breakpoints/*
 
 # ignore sensitve signed files
 *.signed
