@@ -1,10 +1,10 @@
-#+title: Emacs Archive: Deprecated Emacs Configurations (=archive/emacs/=)
+#+title: Emacs Archive: Deprecated Emacs Configurations (=.archive/emacs/=)
 
 The following code consists of legacy code that is no longer used in this emacs configuration. However, it is recommended to keep a history of the previous configurations that I used for packages no longer used as references, which on rare occasion be reinstated.
 
 * =org-roam.el= Configurations
 
-#+begin_src emacs-lisp :tangle "archive/emacs/org-roam.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/org-roam.el" :mkdirp yes
 
   (use-package org-roam
     :ensure t
@@ -32,7 +32,7 @@ The idea of this switching is to maximize the utility of =org-roam=. In some cas
 
 In order to maintain these various usecases, the content of each should be stored outside the =org-roam= directory (to avoid duplication). 
 
-#+begin_src emacs-lisp :tangle "archive/emacs/org-roam.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/org-roam.el" :mkdirp yes
 
   (setq zettlekasten-paths-alist '(("Main" . "~/Trove/Epektasi/")
                                    ("Zettlekasten" . "~/Trove/Zettlekasten/")
@@ -54,7 +54,7 @@ In order to maintain these various usecases, the content of each should be store
 
 =org-roam-ui= is used to visualize =org-roam= web. 
 
-#+begin_src emacs-lisp :tangle "archive/emacs/org-roam-ui.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/org-roam-ui.el" :mkdirp yes
 
   (use-package org-roam-ui
     :ensure t)
@@ -65,7 +65,7 @@ In order to maintain these various usecases, the content of each should be store
 
 [[https://github.com/justbur/emacs-which-key][which-key]] is a useful UI panel that appears when you start pressing any key binding in Emacs to offer you all possible completions for the prefix. For example, if you press =C-c= (hold control and press the letter =c=), a panel will appear at the bottom of the frame displaying all of the bindings under that prefix and which command they run. This is very useful for learning the possible key bindings in the mode of your current buffer.
 
-#+begin_src emacs-lisp :tangle "archive/emacs/which-key.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/which-key.el" :mkdirp yes
 
   (use-package which-key
     :init (which-key-mode)
@@ -78,7 +78,7 @@ In order to maintain these various usecases, the content of each should be store
 
 [[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to have it installed even if you don't use its commands directly.
 
-#+begin_src emacs-lisp :tangle "archive/emacs/projectile.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/projectile.el" :mkdirp yes
 
   (use-package projectile
     :diminish projectile-mode
@@ -97,7 +97,7 @@ In order to maintain these various usecases, the content of each should be store
 
 #+end_src
 
-#+begin_src emacs-lisp :tangle "archive/emacs/projectile.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/projectile.el" :mkdirp yes
 
   (jw/leader-key-def
     "pf"  'projectile-find-file
@@ -122,7 +122,7 @@ The following line =#+PROPERTY: header-args:emacs-lisp :tangle .emacs.d/init.el 
 
 I currently am using the [[https://github.com/hlissner/emacs-doom-themes][DOOM Themes]], specifically =doom-dracula=.
 
-#+begin_src emacs-lisp :tangle "archive/emacs/doom-themes.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/doom-themes.el" :mkdirp yes
 
   (use-package doom-themes
     :init (load-theme 'doom-dracula t))
@@ -143,7 +143,7 @@ If you are running in the =macos= terminal, then you have to make sure that you 
 - Select the appropriate font
 
 
-#+begin_src emacs-lisp :tangle "archive/emacs/doom-modeline.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/doom-modeline.el" :mkdirp yes
 
   (use-package doom-modeline
     :ensure t
@@ -155,7 +155,7 @@ If you are running in the =macos= terminal, then you have to make sure that you 
 
 =doom-modeline= icons rely on =nerd-icons=. Thus, you must install the =nerd-icons= if you want to use the icons on the modeline.
 
-#+begin_src emacs-lisp :tangle "archive/emacs/doom-modeline.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/doom-modeline.el" :mkdirp yes
 
   (use-package nerd-icons
     ;; :custom
@@ -170,7 +170,7 @@ If you are running in the =macos= terminal, then you have to make sure that you 
 
 To turn off icons uncomment the following:
 
-#+begin_src emacs-lisp :tangle "archive/emacs/doom-modeline.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/doom-modeline.el" :mkdirp yes
 
   ;; (setq doom-modeline-icon nil)
 
@@ -180,7 +180,7 @@ To turn off icons uncomment the following:
 The following contains configurations of the =doom-modeline=. All the configurations here use the =setq=.
 
 
-#+begin_src emacs-lisp :tangle "archive/emacs/doom-modeline.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/doom-modeline.el" :mkdirp yes
 
   ;; If non-nil, a word count will be added to the selection-info modeline segment.
   (setq doom-modeline-enable-word-count t)
@@ -196,7 +196,7 @@ The following contains configurations of the =doom-modeline=. All the configurat
 
 Display the virtual environment version.
 
-#+begin_src emacs-lisp :tangle "archive/emacs/doom-modeline.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/doom-modeline.el" :mkdirp yes
 
   (setq doom-modeline-env-version t)
 
@@ -206,7 +206,7 @@ Display the virtual environment version.
 
 This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to design a transient key binding for quickly adjusting the scale of the text on screen.  We define a hydra that is bound to =C-s t s= and, once activated, =j= and =k= increase and decrease the text scale.  You can press any other key (or =f= specifically) to exit the transient key map.
 
-#+begin_src emacs-lisp :tangle "archive/emacs/hydra.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle ".archive/emacs/hydra.el" :mkdirp yes
 
   (use-package hydra)
 
