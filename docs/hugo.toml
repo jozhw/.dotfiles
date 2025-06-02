@@ -1,4 +1,4 @@
-baseURL = 'https://example.org/'
+baseURL = "https://dotfiles.jozhw.com/"
 languageCode = 'en-us'
 title = '.dotfiles'
 
