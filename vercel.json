@@ -1,6 +1,5 @@
 {
   "framework": "hugo",
-  "root": "docs",
   "build": {
     "env": {
       "HUGO_VERSION": "0.135.0",
