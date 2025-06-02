@@ -4,3 +4,4 @@
 
 [build.environment]
   HUGO_VERSION = "0.135.0"
+  HUGO_ENABLEGITINFO = "true"
