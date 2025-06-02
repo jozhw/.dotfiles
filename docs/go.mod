@@ -1,4 +1,4 @@
-module github.com/jozhw/.dotfiles/docs
+module github.com/jozhw/.dotfiles
 
 go 1.23
 
