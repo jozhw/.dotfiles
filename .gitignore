@@ -19,3 +19,7 @@
 
 # Include only files and directories matching the pattern
 !.emacs.d/elpa/[a-zA-Z0-9_@+-]*-[0-9]*.**
+
+# ignore artifacts for docs
+docs/resources/
+docs/public/
