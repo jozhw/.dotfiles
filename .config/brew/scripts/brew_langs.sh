@@ -3,7 +3,6 @@
 ######################################################################################
 ### Install programming languages
 
-
 brew install lua 
 
 # brew install php  # PHP programming language
@@ -12,6 +11,9 @@ brew install r
 
 # for latex
 brew install texlive
+
+# golang
+brew install go
 
 
 
@@ -41,4 +43,11 @@ which pyright
 # for formatting does not work with conda for some reason
 brew install black
 # install black-macchiato for python partial formatting with python-black
+
+
+#####################################################################################
+### frameworks
+
+# install hugo for static site generation
+brew install hugo
 
