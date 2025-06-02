@@ -1,0 +1,12 @@
+{
+  "framework": "hugo",
+  "root": "docs",
+  "build": {
+    "env": {
+      "HUGO_VERSION": "0.135.0",
+      "GO_VERSION": "1.23"
+    }
+  },
+  "buildCommand": "cd docs && hugo --gc --minify",
+  "outputDirectory": "docs/public"
+}
