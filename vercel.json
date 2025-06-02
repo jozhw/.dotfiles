@@ -6,7 +6,7 @@
       "GO_VERSION": "1.23"
     }
   },
-  "buildCommand": "cd docs && hugo --gc --minify",
-  "installCommand": "yum install golang && cd docs && hugo mod get -u && go mod download",
+  "buildCommand": "cd docs && hugo mod get -u && hugo --gc --minify",
+  "installCommand": "yum install golang",
   "outputDirectory": "docs/public"
 }
