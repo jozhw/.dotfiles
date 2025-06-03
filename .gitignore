@@ -23,3 +23,7 @@
 # ignore artifacts for docs
 docs/resources/
 docs/public/
+
+# ignore env and keys
+.env
+.authinfo

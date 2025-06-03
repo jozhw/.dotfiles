@@ -7,7 +7,7 @@
 README.*
 LICENSE.*
 COPYING
-archive
+\.archive
 CHANGELOG.md
 stow
 atzlan
