@@ -199,6 +199,7 @@ before all other modules of my setup."
 (require 'jw-emacs-productivity)
 (require 'jw-emacs-development)
 (require 'jw-emacs-which-key)
+(require 'jw-emacs-ai)
 (require 'jw-emacs-langs)
 
 (require 'jw-copy)
