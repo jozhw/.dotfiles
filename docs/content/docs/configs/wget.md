@@ -26,9 +26,9 @@ This `.wgetrc` file contains various configuration options for the wget command-
 
 7. `follow_ftp = on`: Enables wget to follow FTP links from HTML documents by default.
 
-8. `adjust_extension = on`: Adds a .html extension to text/html or application/xhtml+xml files and a .css extension to text/css files if they lack one. This ensures proper file extensions for downloaded files.
+8. `adjust_extension = on`: Adds a `.html` extension to `text/html` or `application/xhtml+xml` files and a `.css` extension to `text/css` files if they lack one. This ensures proper file extensions for downloaded files.
 
-9. `robots = off`: Disables wget from obeying the robots.txt file or <meta name`robots content`nofollow> tag, which specifies rules for web crawlers.
+9. `robots = off`: Disables wget from obeying the `robots.txt` file or `<meta name=robots content=nofollow>` tag, which specifies rules for web crawlers.
 
 10. `server_response = on`: Instructs wget to print the HTTP and FTP server responses. This can be helpful for debugging and understanding server behavior.
 

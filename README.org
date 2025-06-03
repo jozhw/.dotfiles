@@ -97,4 +97,6 @@ The =.macos= file is used to configure macs. The template was taken from [[https
 
 * Docs
 
-Refer to the =docs= directory and find the specific =.org= file for specific guidance on setup, commands, and etc.
+Please see the provided link to the documentation - [[dotfiles.jozhw.com][dotifles.jozhw.com]].
+
+Note that the documentation is what I use to keep track of any details/information that I find useful, hence the purpose is not for others to use, meaning you will not find the documentation to be "organized" nor "intuitive".
