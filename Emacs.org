@@ -496,6 +496,7 @@ Load the =jw-emacs-modules=.
   (require 'jw-emacs-productivity)
   (require 'jw-emacs-development)
   (require 'jw-emacs-which-key)
+  (require 'jw-emacs-ai)
   (require 'jw-emacs-langs)
 
 #+end_src
@@ -1001,6 +1002,15 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
     :bind
     ([remap describe-command] . helpful-command)
     ([remap describe-key] . helpful-key))
+
+#+end_src
+
+*** The =jw-emacs-essentials.el= for =auth-sources.el= -- native
+
+
+#+begin_src emacs-lisp ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el" :mkdirp yes
+
+  (setq auth-sources '("~/.authinfo" "~/.netrc"))
 
 #+end_src
 
@@ -1927,6 +1937,46 @@ When the =which-key-mode= is enabled, any incomplete key sequence will produce a
   (provide 'jw-emacs-which-key)
 
 #+end_src
+** The =jw-emacs-ai.el= module
+
+The purpose of this module is to have my integrations with llms or other ai models.
+
+
+*** The =jw-emacs-ai.el= section for =gptel=
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-ai.el" :mkdirp yes
+
+  (use-package gptel
+    :ensure t
+    :after auth-source
+    :init
+    ;; Ensure auth-source is configured to find ~/.authinfo or ~/.authinfo.gpg
+    (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo" "~/.netrc"))
+    :config
+    ;; Set OpenAI API key using gptel-api-key-from-auth-source
+    (setq gptel-api-key (lambda ()
+                          (auth-source-forget-all-cached)
+                          (gptel-api-key-from-auth-source)))
+    ;; Configure Anthropic (Claude) backend
+    (gptel-make-anthropic "Claude"
+      :stream t
+      :key (lambda ()
+             (auth-source-forget-all-cached)
+             (gptel-api-key-from-auth-source "console.anthropic.com")))
+    ;; Optional: Enable debugging for auth-source issues
+    ;; (setq auth-source-debug t)
+  )
+
+#+end_src
+
+*** The =jw-emacs-ai.el= call to provide
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-ai.el" :mkdirp yes
+
+  (provide 'jw-emacs-ai)
+
+#+end_src
+
 ** The =jw-emacs-langs.el= module
 
 *** The =jw-emacs-langs.el= section for =treesit= --native
