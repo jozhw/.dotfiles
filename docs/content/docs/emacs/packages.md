@@ -9,7 +9,14 @@ title: "Packages"
 
 This document serves to aide with setting up any packages along with addressing any issues faced when implementing the `emacs` packages.
 
+# `gptel.el`
+
+Incorporates the use of llms in the emacs client. For a great summary of the features please see [Ben Simon's video](https://www.blogbyben.com/2024/08/gptel-mindblowing-integration-between.html). For accessing the source code please see [karthink's repo](https://github.com/karthink/gptel).
+
 # `magit.el`
+
+Git client.
+
 ## Commands
 
 **Global Commands**
@@ -71,6 +78,8 @@ When on the commit buffer, the argument for `gpg-signing` or `-S` may not be dis
 
 
 # `org-mode`
+
+Probs the most versatile file type/system.
 
 ## Commands
 
