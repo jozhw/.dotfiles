@@ -53,6 +53,55 @@
 ;; `context-menu-mode'.
 (add-hook 'context-menu-functions #'denote-context-menu)
 
+;; Ensure denote.el is loaded
+(require 'denote)
+
+(defun jw-denote-weekly-tasks-filename ()
+"Generate a Denote filename for a weekly tasks Org file in a custom directory and ensure the file exists.
+The title is in the format 'YYYY: MONTH DD to DD', where DD to DD represents
+the start and end days of the current week. The filename follows the Denote
+convention with the '__tasks' tag."
+(let* ((custom-directory "~/Otzar/Docs/agenda/")  ; Specify your custom directory here
+        (today (current-time))
+        ;; Calculate the start of the week (assuming Monday as the first day)
+        (start-of-week (time-subtract today (days-to-time (mod (nth 6 (decode-time today)) 7))))
+        ;; Calculate the end of the week (Sunday)
+        (end-of-week (time-add start-of-week (days-to-time 6)))
+        ;; Format the year and month from the start of the week
+        (year (format-time-string "%Y" start-of-week))
+        (month (format-time-string "%B" start-of-week))
+        (day-start (format-time-string "%d" start-of-week))
+        (day-end (format-time-string "%d" end-of-week))
+        ;; Create the title in the format "YYYY MONTH DD to DD"
+        (title (format "%s: %s %s to %s" year month day-start day-end))
+        ;; Generate the slug for the title
+        (slug (denote-sluggify-title title))
+        ;; Generate the timestamp for the Denote filename
+        (timestamp (format-time-string "%Y%m%dT%H%M%S" start-of-week))
+        ;; Construct the full filename with Denote convention
+        (filename (format "%s--%s__tasks.org" timestamp slug)))
+    ;; Ensure the custom directory exists
+    (make-directory custom-directory t)
+    ;; Generate the full file path
+    (let ((full-path (expand-file-name filename custom-directory)))
+    ;; Create an empty file with Denote metadata if it doesn't exist
+    (unless (file-exists-p full-path)
+        (with-temp-buffer
+          (insert (format "#+title:      %s\n#+date:       %s\n#+filetags:   :tasks:\n#+identifier: %s\n\n"
+                        title
+                        (format-time-string "[%Y-%m-%d %a %H:%M]" today)
+                        timestamp))
+        (write-file full-path)))
+    full-path)))
+
+;; Define the Org capture template
+(setq org-capture-templates
+    '(("w" "Weekly Tasks" entry
+        (file jw-denote-weekly-tasks-filename)
+        ""
+        :empty-lines 1
+        )))
+
 (use-package ledger-mode
   :ensure t
   :mode (
