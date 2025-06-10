@@ -25,6 +25,7 @@
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.cpp\\'" . c++-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.c\\'" . c-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.mdx\\'" . markdown-mode))
 (add-to-list 'major-mode-remap-alist '(
                                        (python-mode . python-ts-mode)
                                        (json-mode . json-ts-mode)
@@ -70,6 +71,17 @@
   :demand t
   :after python
   :hook (python-ts-mode . python-black-on-save-mode))
+
+;; WEB MODE
+(use-package web-mode
+:ensure t)
+
+;; astro
+;; ASTRO
+(define-derived-mode astro-mode web-mode "astro")
+(setq auto-mode-alist
+    (append '((".*\\.astro\\'" . astro-mode))
+            auto-mode-alist))
 
 (unless (package-installed-p 'rust-mode)
   (package-refresh-contents)
@@ -119,6 +131,7 @@
   (add-to-list 'eglot-server-programs
                `(tsx-ts-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs '(markdown-mode . ("marksman")))
+  (add-to-list 'eglot-server-programs '(astro-mode . ("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib")))))
   )
 
 (defun jw/maybe-start-eglot ()
@@ -130,6 +143,7 @@
             (derived-mode-p 'typescript-ts-mode)
             (derived-mode-p 'tsx-ts-mode)
             (derived-mode-p 'markdown-mode)
+            (derived-mode-p 'astro-mode)
             )
     (eglot-ensure)))
 
@@ -140,6 +154,7 @@
 (add-hook 'typescript-ts-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'tsx-ts-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'markdown-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'astro-mode-hook #'jw/maybe-start-eglot)
 
 (use-package dape
   :ensure t

@@ -2074,6 +2074,7 @@ Set language sources for treesit
   (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.cpp\\'" . c++-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.c\\'" . c-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.mdx\\'" . markdown-mode))
   (add-to-list 'major-mode-remap-alist '(
                                          (python-mode . python-ts-mode)
                                          (json-mode . json-ts-mode)
@@ -2163,6 +2164,28 @@ Python formatter configuration.
 #+end_src
 
 
+*** The =jw-emacs-langs.el= section for =astro= support
+
+I used the [[https://medium.com/@jrmjrm/configuring-emacs-and-eglot-to-work-with-astro-language-server-9408eb709ab0][following guide]] from medium for this configuration.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+    ;; WEB MODE
+    (use-package web-mode
+    :ensure t)
+
+    ;; astro
+    ;; ASTRO
+    (define-derived-mode astro-mode web-mode "astro")
+    (setq auto-mode-alist
+        (append '((".*\\.astro\\'" . astro-mode))
+                auto-mode-alist))
+  
+
+#+end_src
+
+Now set the config in [[id:F9D087EE-895F-4DBC-BBCF-3056A2A5266E][eglot]].  
+
 *** The =jw-emacs-langs.el= section for =rust= support
 
 Download =rust-mode=.
@@ -2244,6 +2267,9 @@ Make sure you have the necessary packages installed.
 
 
 *** The =jw-emacs-langs.el= section for language server configuration (=eglot=) --native
+:PROPERTIES:
+:ID:       F9D087EE-895F-4DBC-BBCF-3056A2A5266E
+:END:
 
 Add to =eglot= server list and setup hook after eglot is loaded.
 
@@ -2264,6 +2290,7 @@ Add to =eglot= server list and setup hook after eglot is loaded.
     (add-to-list 'eglot-server-programs
                  `(tsx-ts-mode . ("typescript-language-server" "--stdio")))
     (add-to-list 'eglot-server-programs '(markdown-mode . ("marksman")))
+    (add-to-list 'eglot-server-programs '(astro-mode . ("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib")))))
     )
 
 #+end_src
@@ -2281,6 +2308,7 @@ Function to start eglot.
               (derived-mode-p 'typescript-ts-mode)
               (derived-mode-p 'tsx-ts-mode)
               (derived-mode-p 'markdown-mode)
+              (derived-mode-p 'astro-mode)
               )
       (eglot-ensure)))
 
