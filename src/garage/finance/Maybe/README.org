@@ -1,0 +1,13 @@
+#+title: Maybe
+
+Maybe is an open source app that is used for personal financial management and wealth management. You can find the link to the repository [[https://github.com/maybe-finance/maybe][here.]]
+
+* Value Proposition
+
+Integration with Plaid for the paid version is really nice in that it can automate the process of syncing all my financial data. This makes me very interested in using the hosted version, however I am not fond of my sensitive data placed on third parties.
+
+I will keep this self-hosted server running and in the future keep an eye on if there is a way to obtain an API key for Plaid that has seemless integration and support via being a donor. As mentioned previously I am not fond of sharing my financial information with third-parties.
+
+* Docker
+
+Instructions to setting up for self-hosting with docker can be found [[https://github.com/maybe-finance/maybe/blob/main/docs/hosting/docker.md][here.]]

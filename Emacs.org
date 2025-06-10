@@ -2325,6 +2325,7 @@ Add the hook to auto start =eglot= depending on configured language.
   (add-hook 'typescript-ts-mode-hook #'jw/maybe-start-eglot)
   (add-hook 'tsx-ts-mode-hook #'jw/maybe-start-eglot)
   (add-hook 'markdown-mode-hook #'jw/maybe-start-eglot)
+  (add-hook 'astro-mode-hook #'jw/maybe-start-eglot)
 
 #+end_src
 

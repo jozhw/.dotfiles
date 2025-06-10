@@ -9,3 +9,5 @@ npm install typescript-eslint-language-service -D
 # install prettier for ts code formatting
 npm install prettier
 
+# install astro lang server
+npm i -g @astrojs/language-server

@@ -1,0 +1,15 @@
+services:
+  tsdproxy:
+    image: almeidapaulopt/tsdproxy:latest
+    container_name: tsdproxy
+    env_file:
+      - .env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PATH_DATA}:/data
+      - ${PATH_CONFIG}:/config
+      - ${PATH_SECRETS}:/secrets
+    restart: unless-stopped
+volumes:
+  tsdproxydata: # This defines the named volume
+    external: true # This is optional, only needed if the volume already exists outside of Composee

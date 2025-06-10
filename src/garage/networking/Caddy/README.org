@@ -1,0 +1,9 @@
+#+title: Caddy
+
+* Setup
+
+** Synology
+
+Ports =80= and =433= need to be freed on synology nas since these ports are used by default.
+
+If they cannot be freed avoid using Caddy on synology.

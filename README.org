@@ -95,6 +95,25 @@ To switch default shells, enter the command =chsh -s <PATH_TO_SHELL>=. The =<PAT
 
 The =.macos= file is used to configure macs. The template was taken from [[https://github.com/mathiasbynens/dotfiles/blob/main/.macos][@mathiasbynens]] and adjusted for my needs.
 
+* Src
+
+Consists of scripts and "repos" that are part of my overall setup, not just on my local machine. The rationale behind this is because monorepos may be better suited for this.
+
+** Garage
+
+This repo serves as a place that consolidates all of my services that I run in my home laboratory along with all of the instructions and config files necessary to get these applications up and running. 
+
+*** Structure
+
+Each service has its own directory and within each service directory contains subdirectories that specify the major services used for setup. This is done so that replicating would be easy — minimal changes needed to get things working.
+
+
+*** Docker
+
+To be consistent with the philosophy of reproducibility, =docker-compose.yaml= files are used if possible. 
+
+It is important to note that the docker compose files may have a =.env= file that must be created within the same directory as the =docker-compose.yaml=. 
+
 * Docs
 
 Please see the provided link to the documentation - [[https://dotfiles.jozhw.com][dotfiles.jozhw.com]].

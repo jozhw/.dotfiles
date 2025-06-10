@@ -10,8 +10,11 @@ COPYING
 \.archive
 CHANGELOG.md
 stow
-atzlan
 fonts
 docs
 \.DS_Store
 ^.*\.org$
+
+# src
+src
+

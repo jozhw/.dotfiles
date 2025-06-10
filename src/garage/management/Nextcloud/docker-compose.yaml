@@ -1,0 +1,41 @@
+---
+services:
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    env_file:
+      - .env
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "nextcloud"
+    environment:
+      - PUID=${ENV_PUID}
+      - PGID=${ENV_PGID}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ${NC_PATH_CONFIG}:/config
+      - ${NC_PATH_DATA}:/data
+    ports:
+      - ${HOST_PORT_1}:443
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+  mariadb:
+    image: lscr.io/linuxserver/mariadb:latest
+    container_name: nc-mariadb
+    env_file:
+      - .env
+    environment:
+      - PUID=${ENV_PUID}
+      - PGID=${ENV_PGID}
+      - TZ=${TIMEZONE}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_ACCESS_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME} #optional
+      - MYSQL_USER=${DB_USER} #optional
+      - MYSQL_PASSWORD=${DB_PASSWORD} #optional
+#      - REMOTE_SQL=http://URL1/your.sql,https://URL2/your.sql #optional
+    volumes:
+      - ${DB_PATH_CONFIG}:/config
+    ports:
+      - ${HOST_PORT_2}:3306
+    restart: unless-stopped
