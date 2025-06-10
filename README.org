@@ -114,6 +114,39 @@ To be consistent with the philosophy of reproducibility, =docker-compose.yaml= f
 
 It is important to note that the docker compose files may have a =.env= file that must be created within the same directory as the =docker-compose.yaml=. 
 
+
+** Atzlan
+
+Atzlan a Repository to be Lazy
+
+*** IMPORTANT
+
+All the scripts, unless otherwise noted, are geared towards macos users using bash shell.
+Linux users may benefit depending on their shell configurations.
+
+*** What is Atzlan?
+
+"Atzlan" is the English translation of the Hebrew word for lazy, indolent, or sluggish.
+As the name implies, this repository is for those who seek to be "lazy" or are "lazy."
+Joking aside, the purpose of this respository is to house scripts that can make you life
+easier.
+
+*** Developers
+
+**** Executable Scripts
+
+Make sure that the scripts are executable and according to your operating system.
+
+To make a script executable, for unix users just do the following:
+
+#+begin_src shell
+
+  chmod +x <NAME_OF_EXECUTABLE_SCRIPT>
+
+#+end_src
+
+Make sure that you read the documentation for each of the scripts in order that you have the right dependencies installed in order for the script to work
+
 * Docs
 
 Please see the provided link to the documentation - [[https://dotfiles.jozhw.com][dotfiles.jozhw.com]].
