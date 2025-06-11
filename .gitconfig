@@ -1,0 +1,11 @@
+[user]
+        email = j_zhw@proton.me
+	name = jozhw
+	signingkey = 071C36230EAD784F
+[commit]
+	gpgSign = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
