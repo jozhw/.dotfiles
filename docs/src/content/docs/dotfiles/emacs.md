@@ -96,7 +96,7 @@ To create a percentage completion rate simply add `[/][%]` and then do the comma
 
 **Troubleshooting 2025-01-14: Does Not Work**
 
-If you receive the option to rebuild the =epdfserver= and you agree to building on Emacs, there are instances where the build fails. When running =M-x pdf-tools-install= you will rebuild within Emacs and will obtain more information. If the error consists of not being able to find poppler, copy and paste the command used to run the installation and run it in the command line outside of emacs.
+If you receive the option to rebuild the `epdfserver` and you agree to building on Emacs, there are instances where the build fails. When running `M-x pdf-tools-install` you will rebuild within Emacs and will obtain more information. If the error consists of not being able to find poppler, copy and paste the command used to run the installation and run it in the command line outside of emacs.
 
 This solution seems to work currently as of 2025-01-14.
 
@@ -140,7 +140,7 @@ These commands consists of third-party and native commands. Since it is my confi
 
 `C-x C-;` (*comment*), comment or uncomment the current line (comment-line). If the region is active, comment or uncomment the lines in the region instead.                                                                                            
 
-`C-x TAB` (*indent*), Use the arrow keys (← or →) to indent interactively and then press =esc= three times to finish indenting.
+`C-x TAB` (*indent*), Use the arrow keys (← or →) to indent interactively and then press `esc` three times to finish indenting.
 
 
 **Navigation**
