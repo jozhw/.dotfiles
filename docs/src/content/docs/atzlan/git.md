@@ -1,4 +1,9 @@
-# pull.sh
+---
+title: git
+description: Documentation of the scripts related to git version control.
+---
+
+## pull.sh
 
 The following script is self-explanatory. It runs a git pull origin for each
 repository listed in the **directories** variable.
@@ -6,7 +11,7 @@ repository listed in the **directories** variable.
 Note: make sure that the the directory of interest has its relative path from
 where the pull.sh script is as an item in the driectories array.
 
-## Improved Usecase
+### Improved Usecase
 
 For the pull.sh, I usually keep the pull.sh script as superfical as possible
 to the **User** directory. That way I can keep track of where all of the pull

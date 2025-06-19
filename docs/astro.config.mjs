@@ -8,7 +8,15 @@ export default defineConfig({
 		starlight({
 			title: 'Dotfiles',
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/jozhw/.dotfiles' }],
-			sidebar: [
+			sidebar: [{
+					label: 'Overview',
+					autogenerate: { directory: 'overview' },
+				},
+				{
+					label: 'Atzlan',
+					autogenerate: { directory: 'atzlan' },
+				},
+
 				{
 					label: 'Starlight',
 					items: [
