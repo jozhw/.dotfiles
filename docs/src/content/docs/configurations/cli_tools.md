@@ -1,9 +1,9 @@
 ---
-title: Configs
+title: CLI Tools
 description: Summary of configs for cli tools used
 ---
 
-This file contains the configs, if not already specifed in the configuration file, for quick reference.
+This file contains the configurations of cli tools used, if not already specifed in the configuration file, for quick reference.
 
 ## Wget
 

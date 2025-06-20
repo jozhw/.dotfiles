@@ -13,21 +13,18 @@ export default defineConfig({
 					autogenerate: { directory: 'overview' },
 				},
 				{
+					label: 'Development',
+					autogenerate: { directory: 'development' },
+				},
+				{
+					label: 'Configurations',
+					autogenerate: { directory: 'configurations' },
+				},
+				{
 					label: 'Atzlan',
-					autogenerate: { directory: 'atzlan' },
+                                        autogenerate: { directory: 'atzlan' },
 				},
 
-				{
-					label: 'Starlight',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Starlight Guide', slug: 'starlight/guide' },
-					],
-				},
-				{
-					label: 'Dotfiles',
-					autogenerate: { directory: 'dotfiles' },
-				},
 				{
 					label: 'Garage',
 					autogenerate: { directory: 'garage' },

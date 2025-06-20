@@ -22,7 +22,7 @@ When on the commit buffer, the argument for `gpg-signing` or `-S` may not be dis
 
 
 
-### org.el
+### `org.el`
 
 #### org-latex
 
@@ -79,7 +79,7 @@ If you enable `org-latex-listings` but don’t include the `listings` package in
 
 - `org-latex-preview`: Toggles preview LaTeX math at point
 
-#### org-transclude.el
+#### `org-transclude.el`
 
 Link to the docs: [org-transclude](https://nobiot.github.io/org-transclusion/)
 
