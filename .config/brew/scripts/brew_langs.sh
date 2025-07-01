@@ -43,7 +43,8 @@ which pyright
 # for formatting does not work with conda for some reason
 brew install black
 # install black-macchiato for python partial formatting with python-black
-
+# install jupyter notebook
+brew install jupyterlab
 
 #####################################################################################
 ### frameworks
