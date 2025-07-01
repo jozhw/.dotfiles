@@ -966,6 +966,7 @@ In addition to line numbers, the column number will also be displayed.
 
   ;; Disable line numbers for some modes
   (dolist (mode '(org-mode-hook
+                  markdown-mode-hook
                   term-mode-hook
                   shell-mode-hook
                   eshell-mode-hook))
@@ -1490,7 +1491,8 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
     (visual-fill-column-mode 1))
 
   (use-package visual-fill-column
-    :hook (org-mode . jw/org-mode-visual-fill))
+    :hook (org-mode . jw/org-mode-visual-fill)
+    (markdown-mode . jw/org-mode-visual-fill))
 
 #+end_src
 *** The =jw-emacs-org.el= section for org-latex
@@ -2186,6 +2188,7 @@ I used the [[https://medium.com/@jrmjrm/configuring-emacs-and-eglot-to-work-with
 
 Now set the config in [[id:F9D087EE-895F-4DBC-BBCF-3056A2A5266E][eglot]].  
 
+
 *** The =jw-emacs-langs.el= section for =rust= support
 
 Download =rust-mode=.
@@ -2289,8 +2292,8 @@ Add to =eglot= server list and setup hook after eglot is loaded.
                  `(typescript-ts-mode . ("typescript-language-server" "--stdio")))
     (add-to-list 'eglot-server-programs
                  `(tsx-ts-mode . ("typescript-language-server" "--stdio")))
-    (add-to-list 'eglot-server-programs '(markdown-mode . ("marksman")))
-    (add-to-list 'eglot-server-programs '(astro-mode . ("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib")))))
+    (add-to-list 'eglot-server-programs `(markdown-mode . ("marksman")))
+    (add-to-list 'eglot-server-programs `(astro-mode . ("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib")))))
     )
 
 #+end_src

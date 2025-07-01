@@ -96,7 +96,8 @@
   (visual-fill-column-mode 1))
 
 (use-package visual-fill-column
-  :hook (org-mode . jw/org-mode-visual-fill))
+  :hook (org-mode . jw/org-mode-visual-fill)
+  (markdown-mode . jw/org-mode-visual-fill))
 
 (with-eval-after-load 'ox-latex
   (add-to-list 'org-latex-classes

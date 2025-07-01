@@ -130,8 +130,8 @@
                `(typescript-ts-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
                `(tsx-ts-mode . ("typescript-language-server" "--stdio")))
-  (add-to-list 'eglot-server-programs '(markdown-mode . ("marksman")))
-  (add-to-list 'eglot-server-programs '(astro-mode . ("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib")))))
+  (add-to-list 'eglot-server-programs `(markdown-mode . ("marksman")))
+  (add-to-list 'eglot-server-programs `(astro-mode . ("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib")))))
   )
 
 (defun jw/maybe-start-eglot ()

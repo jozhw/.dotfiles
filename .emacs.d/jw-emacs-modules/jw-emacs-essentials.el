@@ -7,6 +7,7 @@
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
+                markdown-mode-hook
                 term-mode-hook
                 shell-mode-hook
                 eshell-mode-hook))
