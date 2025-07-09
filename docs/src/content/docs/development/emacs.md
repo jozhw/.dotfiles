@@ -13,6 +13,12 @@ The vast majority of configuration help and troublshooting should be in the lite
 
 Incorporates the use of llms in the emacs client. For a great summary of the features please see [Ben Simon's video](https://www.blogbyben.com/2024/08/gptel-mindblowing-integration-between.html). For accessing the source code please see [karthink's repo](https://github.com/karthink/gptel).
 
+#### Troubleshooting
+
+**NOTE: 2025-07-09**
+
+For Gemini the naming does not work for `gptel-save-response`, but works for ChatGPT. Hence for Gemini it defaults to `fall-back.md`.
+
 
 ### `magit.el`
 
