@@ -1,5 +1,5 @@
 ---
-title: Starlight Guide
+title: Starlight
 description: Using Starlight for this site.
 ---
 
