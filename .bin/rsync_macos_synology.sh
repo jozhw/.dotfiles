@@ -15,10 +15,10 @@ if [ "$input" -eq 0 ]; then
     rsync -anPv --exclude='**/.DS_Store' --delete Otzar jozhw@ds1522p.wu.ventures:/volume1/johnz.wu
     rsync -anPv --exclude='**/.DS_Store' --delete Downloads/books jozhw@ds1522p.wu.ventures:/volume1/Downloads/books/
 
-    rsync -anPv --exclude='**/.DS_Store' myOtzar__archive jozhw@ds1522p.wu.ventures:/volume1/johnz.wu
     rsync -anPv --exclude='**/.DS_Store' wu/* jozhw@ds1522p.wu.ventures:/volume1/wu
 
-    rsync -anPv --exclude='**/.DS_Store' Archival-Library jozhw@ds1522p.wu.ventures:/volume2/Archival-Library/
+    # exclude for now because might as well drag and drop to be the most safe
+    # rsync -anPv --exclude='**/.DS_Store' Archival-Library jozhw@ds1522p.wu.ventures:/volume2/Archival-Library/
 
 
 
@@ -27,10 +27,9 @@ elif [ "$input" -eq 1 ]; then
     rsync -aPv --exclude='**/.DS_Store' --delete Otzar jozhw@ds1522p.wu.ventures:/volume1/johnz.wu   
     rsync -aPv --exclude='**/.DS_Store' --delete Downloads/books jozhw@ds1522p.wu.ventures:/volume1/Downloads/books/
 
-    rsync -aPv --exclude='**/.DS_Store' myOtzar__archive jozhw@ds1522p.wu.ventures:/volume1/johnz.wu
     rsync -aPv --exclude='**/.DS_Store' wu/* jozhw@ds1522p.wu.ventures:/volume1/wu
 
-    rsync -aPv --exclude='**/.DS_Store' Archival-Library jozhw@ds1522p.wu.ventures:/volume2/Archival-Library/
+    # rsync -aPv --exclude='**/.DS_Store' Archival-Library jozhw@ds1522p.wu.ventures:/volume2/Archival-Library/
 else
     echo "No command selected"
 fi
