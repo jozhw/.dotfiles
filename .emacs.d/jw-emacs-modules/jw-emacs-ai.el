@@ -60,36 +60,26 @@
 )
 
 (defun gptel-save-response ()
-  "Save the entire gptel buffer to a file with an LLM-generated name."
-  (interactive)
-  (unless (bound-and-true-p gptel-mode)
+"Save the entire gptel buffer to a file with a user-provided name."
+(interactive)
+(unless (bound-and-true-p gptel-mode)
     (user-error "This command must be run in a gptel-mode buffer"))
-  (let* ((response (buffer-string))
-         (name-prompt "Generate a concise (2-5 words) filename-friendly description of the following content (use hyphens instead of spaces): \n\n%s"))
+(let* ((response (buffer-string))
+        (user-input (read-string "Enter a concise (2-5 words) filename description: ")))
     (if (string-empty-p response)
-        (message "Error: Buffer is empty, cannot generate filename")
-      (let ((name-query (format name-prompt response)))
-        (gptel-request name-query
-                       :system "You are a naming assistant. Provide a concise, filename-friendly description (2-5 words, hyphen-separated)."
-                       :callback (lambda (response error)
-                                   (message "Raw response: %s, Raw error: %s" response error) ; Debug raw inputs
-                                   (cond
-                                    ((and error (stringp error) (not (string-empty-p error)))
-                                     (message "Error generating name: %s" error))
-                                    (t
-                                     (let* ((clean-name (if (and response (stringp response) (not (string-empty-p response)))
-                                                            (string-trim (replace-regexp-in-string "[^a-zA-Z0-9-]" "" response))
-                                                          "fallback-name"))
-                                            (timestamp (format-time-string "%Y%m%dT%H%M%S"))
-                                            (base-dir "~/Otzar/llm-outputs/")
-                                            (filename (concat (file-name-as-directory (expand-file-name base-dir)) timestamp "--" clean-name ".md")))
-                                       (condition-case err
-                                           (progn
-                                             (make-directory base-dir t)
-                                             (write-region (point-min) (point-max) filename nil 'silent)
-                                             (message "Saved buffer to %s" filename))
-                                         (error
-                                          (message "Error saving file: %s" err)))))))))
-      (message "Querying LLM for filename..."))))
+        (message "Error: Buffer is empty, cannot save file")
+    (let* ((clean-name (if (and user-input (stringp user-input) (not (string-empty-p user-input)))
+                            (string-trim (replace-regexp-in-string "[^a-zA-Z0-9-]" "" (replace-regexp-in-string "\\s+" "-" user-input)))
+                        "fallback-name"))
+            (timestamp (format-time-string "%Y%m%dT%H%M%S"))
+            (base-dir "~/Otzar/llm-outputs/")
+            (filename (concat (file-name-as-directory (expand-file-name base-dir)) timestamp "--" clean-name ".md")))
+        (condition-case err
+            (progn
+            (make-directory base-dir t)
+            (write-region (point-min) (point-max) filename nil 'silent)
+            (message "Saved buffer to %s" filename))
+        (error
+        (message "Error saving file: %s" err)))))))
 
 (provide 'jw-emacs-ai)
