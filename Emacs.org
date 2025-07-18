@@ -2380,8 +2380,15 @@ Function to start eglot.
               (derived-mode-p 'typescript-ts-mode)
               (derived-mode-p 'tsx-ts-mode)
               (derived-mode-p 'markdown-mode)
-              (derived-mode-p 'astro-mode)
-              )
+              (derived-mode-p 'astro-mode))
+      (eglot-ensure)))
+
+  ;; Helper function to restart eglot in current buffer
+  (defun jw/restart-eglot ()
+    "Restart eglot in current buffer."
+    (interactive)
+    (when (eglot-current-server)
+      (eglot-shutdown (eglot-current-server))
       (eglot-ensure)))
 
 #+end_src

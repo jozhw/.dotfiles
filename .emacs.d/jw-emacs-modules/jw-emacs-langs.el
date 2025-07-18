@@ -116,25 +116,57 @@
   (add-to-list 'apheleia-mode-alist '(c-ts-mode . clang-format))
   (apheleia-global-mode +1))
 
-(with-eval-after-load 'eglot
-  (setq eglot-prefer-local-server t)
-  ;; undo elgot modifications of completion-category-defaults
-  (setq completion-category-defaults nil)
-  (setq eglot-connect-timeout 120)
-  (add-to-list 'eglot-server-programs
-               `(python-ts-mode . ,(jw/local-pyright-command)))
-  (add-to-list 'eglot-server-programs
-               `(rust-mode . (,(jw/find-rust-analyzer))))
-  (add-to-list 'eglot-server-programs '((c++-ts-mode c-ts-mode) "clangd"))
-  (add-to-list 'eglot-server-programs
-               `(typescript-ts-mode . ("typescript-language-server" "--stdio")))
-  (add-to-list 'eglot-server-programs
-               `(tsx-ts-mode . ("typescript-language-server" "--stdio")))
-  (add-to-list 'eglot-server-programs `(markdown-mode . ("marksman")))
-  (add-to-list 'eglot-server-programs `(astro-mode . ("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib")))))
-  )
+;; Dynamic server program functions
+(defun jw/python-lsp-program (&optional interactive)
+"Get Python LSP program."
+(jw/local-pyright-command))
 
+(defun jw/rust-lsp-program (&optional interactive)
+"Get Rust LSP program."
+(list (jw/find-rust-analyzer)))
+
+(defun jw/clangd-lsp-program (&optional interactive)
+"Get clangd LSP program."
+'("clangd"))
+
+(defun jw/typescript-lsp-program (&optional interactive)
+"Get TypeScript LSP program."
+'("typescript-language-server" "--stdio"))
+
+(defun jw/marksman-lsp-program (&optional interactive)
+"Get Marksman LSP program."
+'("marksman"))
+
+(defun jw/astro-lsp-program (&optional interactive)
+"Get Astro LSP program."
+'("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
+
+;; Enhanced eglot configuration
+(with-eval-after-load 'eglot
+(setq eglot-prefer-local-server t)
+;; undo elgot modifications of completion-category-defaults
+(setq completion-category-defaults nil)
+(setq eglot-connect-timeout 120)
+
+;; Use function symbols - eglot will call these functions to get the command
+(add-to-list 'eglot-server-programs
+            '(python-ts-mode . jw/python-lsp-program))
+(add-to-list 'eglot-server-programs
+            '(rust-mode . jw/rust-lsp-program))
+(add-to-list 'eglot-server-programs 
+            '((c++-ts-mode c-ts-mode) . jw/clangd-lsp-program))
+(add-to-list 'eglot-server-programs
+            '(typescript-ts-mode . jw/typescript-lsp-program))
+(add-to-list 'eglot-server-programs
+            '(tsx-ts-mode . jw/typescript-lsp-program))
+(add-to-list 'eglot-server-programs 
+            '(markdown-mode . jw/marksman-lsp-program))
+(add-to-list 'eglot-server-programs 
+            '(astro-mode . jw/astro-lsp-program)))
+
+;; Function to start eglot
 (defun jw/maybe-start-eglot ()
+  "Start eglot if current mode is supported."
   (when (or (derived-mode-p 'python-mode)
             (derived-mode-p 'python-ts-mode)
             (derived-mode-p 'rust-mode)
@@ -143,8 +175,15 @@
             (derived-mode-p 'typescript-ts-mode)
             (derived-mode-p 'tsx-ts-mode)
             (derived-mode-p 'markdown-mode)
-            (derived-mode-p 'astro-mode)
-            )
+            (derived-mode-p 'astro-mode))
+    (eglot-ensure)))
+
+;; Helper function to restart eglot in current buffer
+(defun jw/restart-eglot ()
+  "Restart eglot in current buffer."
+  (interactive)
+  (when (eglot-current-server)
+    (eglot-shutdown (eglot-current-server))
     (eglot-ensure)))
 
 (add-hook 'python-ts-mode-hook #'jw/maybe-start-eglot)
