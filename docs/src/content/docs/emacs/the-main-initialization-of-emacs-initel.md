@@ -108,8 +108,11 @@ To remove packages that are not used run `M-x use-package-autoremove`. However, 
 
 ```
 
-If you get a package not found error and the package exists, then you can try
-refreshing the package contents by running `M-x package-refresh-contents`.
+#### Troubleshooting
+
+If you get a package not found error and the package exists, then you can try refreshing the package contents by running `M-x package-refresh-contents`.
+
+
 
 ## The `init.el` for keeping `.emacs.d` clean
 
