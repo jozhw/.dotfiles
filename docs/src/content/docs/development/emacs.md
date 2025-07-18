@@ -3,34 +3,11 @@ title: Emacs
 description: Emacs information for quick reference
 ---
 
-The vast majority of configuration help and troublshooting should be in the literate configuration file `Emacs.org`. The purpose of this document is for quick reference for troubleshooting (especially if not in the configuration file) and general help such as Emacs commands that I have trouble remembering or is not that intuitive.
+The vast majority of configuration help and troublshooting should be in the literate configuration file `Emacs.org`. The purpose of this document is help with usage of the configuration.
 
 ## Packages
 
-
-
-### `gptel.el`
-
-Incorporates the use of llms in the emacs client. For a great summary of the features please see [Ben Simon's video](https://www.blogbyben.com/2024/08/gptel-mindblowing-integration-between.html). For accessing the source code please see [karthink's repo](https://github.com/karthink/gptel).
-
-#### Troubleshooting
-
-**NOTE: 2025-07-09**
-
-For Gemini the naming does not work for `gptel-save-response`, but works for ChatGPT. Hence for Gemini it defaults to `fall-back.md`.
-
-
-### `magit.el`
-
-**GPG Signing**
-
-When on the commit buffer, the argument for `gpg-signing` or `-S` may not be displayed. To resolve this issue manually, on the commit buffer menu, you must enter transient mode with `C-x l` and follow the prompting from there by typing the argument that you want to change the layering and then set the layering.
-
-
-
-### `org.el`
-
-#### org-latex
+### org-latex
 
 [Straightforward Emacs guide](https://jakebox.github.io/youtube/org_latex_video.html). The following is copied from that guide.
 
@@ -85,56 +62,6 @@ If you enable `org-latex-listings` but don’t include the `listings` package in
 
 - `org-latex-preview`: Toggles preview LaTeX math at point
 
-#### `org-transclude.el`
-
-Link to the docs: [org-transclude](https://nobiot.github.io/org-transclusion/)
-
-#### `org-todo.el` and `org-agenda.el`
-
-To create a percentage completion rate simply add `[/][%]` and then do the command `C-c C-c`.
-
-
-
-
-### `pdf-tools.el`
-
-#### Troubleshooting
-
-**Troubleshooting 2025-01-14: Does Not Work**
-
-If you receive the option to rebuild the `epdfserver` and you agree to building on Emacs, there are instances where the build fails. When running `M-x pdf-tools-install` you will rebuild within Emacs and will obtain more information. If the error consists of not being able to find poppler, copy and paste the command used to run the installation and run it in the command line outside of emacs.
-
-This solution seems to work currently as of 2025-01-14.
-
-**Troubleshooting 2025-01-15: Works**
-
-The issue with the **2025-01-14** is that if the installation works within the command line, when opening up a pdf file on Emacs would lead to the epdfserver crashing. This issue I found had to do with confict with `macports` being installed. If you uninstall macports, then the issue is resolved. 
-
-
-### `use-package.el`
-
-#### Troubleshooting
-
-If you are having trouble with package installation such as a package cannot be found but it is on melpa, then you will have to run `package-refresh-contents`.
-
-### `vertico.el`
-
-#### Troubleshooting
-
-If in the Emacs buffer if you get a `Error in post-command-hook (vertico--exhibit): (void-function compat--completion-metadata-get)` error then you either delete vertico and recomplile or recompile
-
-```
-  M-x package-recompile
-  vertico
-
-```
-
-The reason this issue is observed is due to updating Emacs.
-
-A link to the github issue where I found the solution is [here](https://github.com/minad/vertico/discussions/501#discussioncomment-12390155).
-
-
-
 
 ## Useful Commands
 
@@ -163,35 +90,7 @@ These commands consists of third-party and native commands. Since it is my confi
 
 `C-x 8 RET` (*special symbols*), to access special symbols.
 
-## Features
+### `org-todo.el` and `org-agenda.el`
 
-The features are implementations on top of the native emacs packages and not third-party packages.
-
-### Sound Support
-
-Usually this is a problem for macos and I found a snippet of code that enables sound support. The way to tell is by running `M-x play-sound-file` and navigating to the `.wav` file will ouput "This Emacs binary lacks sound support."
-
-```emacs-lisp
-  ;; on macos, fix "This Emacs binary lacks sound support" 
-  ;; - https://github.com/leoliu/play-sound-osx/blob/master/play-sound.el
-  ;; - update according to https://github.com/leoliu/play-sound-osx/issues/2#issuecomment-1088360638
-  (when (eq system-type 'darwin)
-    (unless (and (fboundp 'play-sound-internal)
-                 (subrp (symbol-function 'play-sound-internal)))
-      (defun play-sound-internal (sound)
-        "Internal function for `play-sound' (which see)."
-        (or (eq (car-safe sound) 'sound)
-            (signal 'wrong-type-argument (list sound)))
-      
-        (cl-destructuring-bind (&key file data volume device)
-            (cdr sound)
-        
-          (and (or data device)
-               (error "DATA and DEVICE arg not supported"))
-        
-          (apply #'start-process "afplay" nil
-                 "afplay" (append (and volume (list "-v" volume))
-                                  (list (expand-file-name file data-directory))))))))
-
-```
+To create a percentage completion rate simply add `[/][%]` and then do the command `C-c C-c`.
 

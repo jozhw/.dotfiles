@@ -1,6 +1,6 @@
 #+title: .dotfiles
 
-* Repo Info
+* Informational
 
 ** Version Control
 
@@ -14,7 +14,7 @@ To keep all of the commits organized, I suggest for my own reference to use the 
 
 #+end_src
 
-*** Git lfs
+*** Git LFS
 
 The repo uses =git= and =git lfs= to keep versioning control. Make sure that you have =git lfs= installed (should be installed by the setup scripts). To see which files are being tracked by =git lfs=, check the =.gitattributes= file.
 
@@ -43,7 +43,7 @@ Font face that I currently do not use, but I use Prot's updated version of the I
 Font face that I use for *Emacs*.
   
 
-* Setup
+* Setting Up
 
 ** brew
 
@@ -95,7 +95,7 @@ To switch default shells, enter the command =chsh -s <PATH_TO_SHELL>=. The =<PAT
 
 The =.macos= file is used to configure macs. The template was taken from [[https://github.com/mathiasbynens/dotfiles/blob/main/.macos][@mathiasbynens]] and adjusted for my needs.
 
-* Src
+* Source Code 
 
 Consists of scripts and "repos" that are part of my overall setup, not just on my local machine. The rationale behind this is because monorepos may be better suited for this.
 
@@ -147,7 +147,7 @@ To make a script executable, for unix users just do the following:
 
 Make sure that you read the documentation for each of the scripts in order that you have the right dependencies installed in order for the script to work
 
-* Docs
+* Documentation
 
 Please see the provided link to the documentation - [[https://dotfiles.jozhw.com][dotfiles.jozhw.com]].
 
