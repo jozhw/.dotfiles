@@ -108,8 +108,10 @@
   (setq evil-want-C-i-jump nil)
   :config
   (evil-mode 1)
+  (evil-set-undo-system 'undo-redo)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+  (define-key evil-normal-state-map (kbd "C-r") 'evil-redo)
 
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
