@@ -389,6 +389,19 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+end_src
 
+*** The =init.el= essential key configuration for smooth scrolling 
+
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+  ;; Enable smooth scrolling with a margin
+  (setq scroll-margin 5)          ; Start scrolling when cursor is 5 lines from top/bottom
+  (setq scroll-conservatively 100) ; Scroll line by line, not by half-screen jumps
+  (setq scroll-step 1)            ; Scroll one line at a time when needed
+
+
+#+end_src
+
 ** The =init.el= setting to always start with the *scratch* buffer
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes

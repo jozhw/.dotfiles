@@ -128,6 +128,11 @@
   (with-eval-after-load 'forge
   (evil-collection-forge-setup)))
 
+;; Enable smooth scrolling with a margin
+(setq scroll-margin 5)          ; Start scrolling when cursor is 5 lines from top/bottom
+(setq scroll-conservatively 100) ; Scroll line by line, not by half-screen jumps
+(setq scroll-step 1)            ; Scroll one line at a time when needed
+
 ;; Always start with *scratch*
 (setq initial-buffer-choice t)
 
