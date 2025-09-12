@@ -214,18 +214,19 @@
             '(astro-mode . jw/astro-lsp-program)))
 
 ;; Function to start eglot
-(defun jw/maybe-start-eglot ()
-  "Start eglot if current mode is supported."
-  (when (or (derived-mode-p 'python-mode)
-            (derived-mode-p 'python-ts-mode)
-            (derived-mode-p 'rust-mode)
-            (derived-mode-p 'c-ts-mode)
-            (derived-mode-p 'c++-ts-mode)
-            (derived-mode-p 'typescript-ts-mode)
-            (derived-mode-p 'tsx-ts-mode)
-            (derived-mode-p 'markdown-mode)
-            (derived-mode-p 'astro-mode))
-    (eglot-ensure)))
+  (defun jw/maybe-start-eglot ()
+  "Start eglot if current mode is supported and file is not remote."
+  (when (and (not (file-remote-p default-directory))
+              (or (derived-mode-p 'python-mode)
+                  (derived-mode-p 'python-ts-mode)
+                  (derived-mode-p 'rust-mode)
+                  (derived-mode-p 'c-ts-mode)
+                  (derived-mode-p 'c++-ts-mode)
+                  (derived-mode-p 'typescript-ts-mode)
+                  (derived-mode-p 'tsx-ts-mode)
+                  (derived-mode-p 'markdown-mode)
+                  (derived-mode-p 'astro-mode)))
+      (eglot-ensure)))
 
 ;; Helper function to restart eglot in current buffer
 (defun jw/restart-eglot ()
