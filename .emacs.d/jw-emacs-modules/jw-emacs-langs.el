@@ -46,6 +46,55 @@
 
 (setq treesit-auto-install 'prompt)
 
+(use-package auctex
+  :ensure t
+  :defer t
+  :init
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq TeX-PDF-mode t) ; Enable PDF output by default
+  :config
+  ;; Set the default engine
+  (setq TeX-engine 'default)
+  
+  ;; Put auxiliary files in a tmp subdirectory
+  (setq TeX-output-dir "tmp/")
+  (setq LaTeX-output-directory "tmp/")
+  
+  ;; Simplified PDF viewer configuration for macOS
+  (when (eq system-type 'darwin) ; macOS only
+    (setq TeX-view-program-list '(("Preview" "open -a Preview %o")))
+    (setq TeX-view-program-selection '((output-pdf "Preview"))))
+  
+  ;; For non-macOS systems, use default viewer
+  (unless (eq system-type 'darwin)
+    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
+  
+  ;; Ensure we have a default command
+  (setq TeX-command-default "LaTeX")
+  
+  ;; Auto-revert PDF files when they change
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer)
+  
+  ;; LaTeX mode hooks
+  (add-hook 'LaTeX-mode-hook 'visual-line-mode) ; Enable word wrap
+  (add-hook 'LaTeX-mode-hook 'flyspell-mode)    ; Enable spell checking
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)  ; Enable math mode
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; Enable RefTeX
+  
+  ;; Ensure TeX-command-run-all works properly
+  (add-hook 'LaTeX-mode-hook 
+            (lambda ()
+              ;; Make sure the master file is set
+              (when (and (buffer-file-name)
+                         (not TeX-master))
+                (setq-local TeX-master (file-name-sans-extension
+                                       (file-name-nondirectory (buffer-file-name)))))))
+  
+  ;; RefTeX configuration
+  (setq reftex-plug-into-AUCTeX t))
+
 (unless (package-installed-p 'conda)
   (package-refresh-contents)
   (package-install 'conda))
