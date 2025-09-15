@@ -1,3 +1,4 @@
+;; for preserving minibuffer history
 (use-package savehist
   :straight t
   :config

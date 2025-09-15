@@ -11,15 +11,22 @@ This literate configuration has a script that will convert this file into an =as
 This org file is used to set up my emacs configuration. The code blocks of this org file
 will be executed using =org-babel-tangle=. Thus, to initiate you must use =M-x ^org-babel-tangle= or use the key-binding =C-c C-v t=.
 
-* Dependencies
+** Dependencies
 
-** Fonts
+*** aporetic typeface
 
-This emacs configuration, if running the GUI version requires the font type called [[https://github.com/protesilaos/iosevka-comfy][iosevka-comfy]]. I have a copy of the git repo attached as a submodule in the fonts directory of this repository. Make sure that have that font style installed.
+The GUI version of Emacs uses this typeface, so make sure to have aporetic installed. Here is the [[https://github.com/protesilaos/aporetic][repo]] for the install instructions.
 
-* Running Emacs
+For macos users, you can simply run
 
-** CLI
+#+begin_src bash
+
+  brew install font-aporetic
+
+#+end_src
+
+
+** Running Emacs
 
 To run emacs in the command-line/terminal simply use the following command while in your command-line/terminal: =emacs -nw=.
 
@@ -155,11 +162,11 @@ Also, turn on =lexical-binding= for the init file!
 
 ** The =early-init.el= gives a name to the default frame
 
-The following configuration is taken from [[https://protesilaos.com/emacs/dotemacs#h:ad227f7e-b0a7-43f8-91d6-b50db82da9ad][prot's configuration]].
+The following configuration is taken from [[https://protesilaos.com/emacs/dotemacs#h:ad227f7e-b0a7-43f8-91d6-b50db82da9ad][prot's configuration]], with the description from Prot,
 
-Finally, I like to call my default frame =home=. This is because I use my =beframe= package to group the list of buffers on a per-frame basis ([[https://protesilaos.com/emacs/dotemacs#h:77e4f174-0c86-460d-8a54-47545f922ae9][The prot-emacs-window.el section about beframe]]). The multi-frame arrangement is the best thing I ever did to boost my productivity: bonus points when used in tandem with a tiling window manager.
+"Finally, I like to call my default frame =home=. This is because I use my =beframe= package to group the list of buffers on a per-frame basis ([[https://protesilaos.com/emacs/dotemacs#h:77e4f174-0c86-460d-8a54-47545f922ae9][The prot-emacs-window.el section about beframe]]). The multi-frame arrangement is the best thing I ever did to boost my productivity: bonus points when used in tandem with a tiling window manager.
 
-Naming frames allows you to select them using completion. Emacs can do this (=M-x select-frame-by-name=), though it is not always reliable as it depends on the window manager (it works fine on GNOME, from what I can tell). For minimalist window managers on Linux, something like the =rofi= program can select system windows based on their name.
+Naming frames allows you to select them using completion. Emacs can do this (=M-x select-frame-by-name=), though it is not always reliable as it depends on the window manager (it works fine on GNOME, from what I can tell). For minimalist window managers on Linux, something like the =rofi= program can select system windows based on their name."
 
 #+begin_src emacs-lisp :tangle ".emacs.d/early-init.el" :mkdirp yes
 
@@ -174,7 +181,6 @@ Naming frames allows you to select them using completion. Emacs can do this (=M-
   (add-to-list 'load-path (expand-file-name "jw-emacs-modules" user-emacs-directory))
   (add-to-list 'load-path (expand-file-name "jw-lisp" user-emacs-directory))
 
-
 #+end_src
 
 * The main initialization of Emacs (=init.el=)
@@ -183,7 +189,7 @@ Naming frames allows you to select them using completion. Emacs can do this (=M-
 
 These installations do not require the package manager to be configured and are also essential for the functioning of the rest of this configuration.
 
-*** straight.el installation
+*** straight.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
@@ -319,7 +325,7 @@ in conjunction with Evil modes.
 
 #+end_src
 
-*** The =init.el= essential key configuration for =evil-mode=
+*** evil-mode
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
   (use-package evil
@@ -354,8 +360,7 @@ in conjunction with Evil modes.
 
 #+end_src
 
-*** The =init.el= essential key configuration for smooth scrolling 
-
+***  smooth scrolling
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
@@ -462,6 +467,7 @@ Also check the [[https://protesilaos.com/emacs/dotemacs#h:ddb1070d-2f91-4224-ad4
                    (const :tag "Do not load a theme module" nil)))
 
 #+end_src
+
 ** The =init.el= final part to load the individual modules
 
 Load the =jw-emacs-modules=.
@@ -492,8 +498,10 @@ Load =jw-lisp=.
 
 #+end_src
 * The modules of my Emacs configuration (=jw-emacs-modules/=)
+
 ** The =jw-emacs-theme.el= module
-*** The =jw-emacs-theme.el= section to load a theme (=jw-emacs-load-theme-family=)
+
+*** jw-emacs-load-theme-family
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
@@ -511,7 +519,7 @@ Load =jw-lisp=.
 
 #+end_src
 
-**** The =jw-emacs-modus-themes.el= module -- native
+**** jw-emacs-modus-themes.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modus-themes.el" :mkdirp yes
 
@@ -549,7 +557,7 @@ Load =jw-lisp=.
 
 #+end_src
 
-**** The =jw-emacs-ef-themes.el= module
+**** jw-emacs-ef-themes.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-ef-themes.el" :mkdirp yes
 
@@ -587,7 +595,8 @@ Load =jw-lisp=.
       (ef-themes-load-random 'light)))
 (provide 'jw-emacs-ef-themes)
 #+end_src
-*** The =jw-emacs-theme.el= section for =pulsar=
+
+*** pulsar.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
@@ -617,7 +626,7 @@ Load =jw-lisp=.
      ("C-x L" . pulsar-highlight-dwim))) ; or use `pulsar-highlight-line'
 #+end_src
 
-*** The =jw-emacs-theme.el= section for =lin=
+*** lin.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
@@ -637,7 +646,8 @@ Load =jw-lisp=.
     (setq lin-face 'lin-magenta))
 
 #+end_src
-*** The =jw-emacs-theme.el= section for =spacious-padding=
+
+*** spacious-padding.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
@@ -671,7 +681,8 @@ Load =jw-lisp=.
              :mode-line-inactive window-divider)))
 
 #+end_src
-*** The =jw-emacs-theme.el= section for =cursory=
+
+*** cursory.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
@@ -732,7 +743,7 @@ Load =jw-lisp=.
     ("C-c p" . cursory-set-preset))
 #+end_src
 
-*** The =jw-emacs-theme.el= section for =theme-buffet=
+*** theme-buffet.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
@@ -767,7 +778,8 @@ Load =jw-lisp=.
         (theme-buffet-timer-hours 1))))
 
 #+end_src
-*** The =jw-emacs-theme.el= section for =fontaine=
+
+*** fontaine.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
@@ -892,7 +904,8 @@ Load =jw-lisp=.
 
 
 #+end_src
-*** The =jw-emacs-theme.el= section for font resizing and =variable-pitch-mode= --native
+
+*** variable-pitch-mode.el --native 
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
@@ -930,7 +943,8 @@ Load =jw-lisp=.
 #+end_src
 
 ** The =jw-emacs-essentials.el= module
-*** The =jw-emacs-essentials.el= section for gui configurations
+
+*** gui configurations
 
 Enable line numbers globally, but not in the following modes: org, term, shell, and eshell.
 
@@ -961,7 +975,7 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
 
 #+end_src
 
-*** The =jw-emacs-essentials.el= section for =helpful.el=
+*** helpful.el
 
 [[https://github.com/Wilfred/helpful][Helpful]] adds a lot of very helpful (get it?) information to Emacs' =describe-= command buffers.  For example, if you use =describe-function=, you will not only get the documentation about the function, you will also see the source code of the function and where it gets used in other places in the Emacs configuration.  It is very useful for figuring out how things work in Emacs.
 
@@ -974,7 +988,7 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
 
 #+end_src
 
-*** The =jw-emacs-essentials.el= for =auth-sources.el= -- native
+*** auth-sources.el -- native
 
 
 #+begin_src emacs-lisp ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el" :mkdirp yes
@@ -992,7 +1006,9 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
 #+end_src
 
 ** The =jw-emacs-modeline.el= module
-*** The =jw-emacs-modeline.el= to enable the mode-line
+
+*** enable the mode-line
+
 The mode-line was disabled earlier ([[*The =init.el= conditional to remove display of mode-line][The =init.el= conditional to remove display of mode-line]]) so that the startup UI would look smooth
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
@@ -1001,7 +1017,7 @@ The mode-line was disabled earlier ([[*The =init.el= conditional to remove displ
 
 #+end_src
 
-*** The =jw-emacs-modeline.el= basic user interface configuration
+*** basic user interface
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
@@ -1010,7 +1026,7 @@ The mode-line was disabled earlier ([[*The =init.el= conditional to remove displ
 
 #+end_src
 
-*** The =jw-emacs-modeline.el= customization with =doom-modeline=
+*** doom-modeline.el
 
 [[https://github.com/seagle0128/doom-modeline][doom-modeline]] is a very attractive and rich (yet still minimal) mode line configuration for Emacs.  The default configuration is quite good but you can check out the [[https://github.com/seagle0128/doom-modeline#customize][configuration options]] for more things you can enable or disable.
 
@@ -1061,7 +1077,6 @@ To turn off icons uncomment the following:
 
 The following contains configurations of the =doom-modeline=. All the configurations here use the =setq=.
 
-
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
   ;; If non-nil, a word count will be added to the selection-info modeline segment.
@@ -1074,7 +1089,6 @@ The following contains configurations of the =doom-modeline=. All the configurat
   (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
 
 #+end_src
-
 
 Display the virtual environment version.
 
@@ -1093,10 +1107,11 @@ Display the virtual environment version.
 #+end_src
 
 ** The =jw-emacs-completion.el= module
-*** The =jw-emacs-completion.el= section for preserving minibuffer history (=savehist.el=)
+*** savehist.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
+  ;; for preserving minibuffer history
   (use-package savehist
     :straight t
     :config
@@ -1110,7 +1125,9 @@ Display the virtual environment version.
 
 #+end_src
 
-*** The =jw-emacs-completion.el= section for completions (=vertico.el=)
+*** vertico.el
+
+Completions with =vertico.el=
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
@@ -1141,8 +1158,9 @@ Display the virtual environment version.
 #+end_src
 
 
-*** The =jw-emacs-completion.el= section for completions in region (=corfu.el=)
+*** corfu.el
 
+Completions in region with =corfu.el=.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
   (use-package corfu
     :straight t
@@ -1178,7 +1196,8 @@ Display the virtual environment version.
     (global-corfu-mode))
 
 #+end_src
-*** The =jw-emacs-completion.el= section for completions in region on terminal
+
+*** company.el
 
 Since =corfu.el= does not support running emacs in the terminal, I will just stick with =company.el= instead of =corfu-terminal=.
 
@@ -1211,7 +1230,9 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-*** The =jw-emacs-completion.el= section for additional completions in region (=cape.el=)
+*** cape.el
+
+Additional completions in region with =cape.el=.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
@@ -1223,7 +1244,9 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-*** The =jw-emacs-completion.el= section for candidate filtering (=orderless.el=)
+*** orderless.el
+
+For candidate filtering.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
@@ -1235,7 +1258,9 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-*** The =jw-emacs-completion.el= section for completion annotations (=marginalia.el=)
+*** marginalia.el
+
+For completion notations.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
@@ -1260,7 +1285,8 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 :PROPERTIES:
 :ID:       77434357-7761-4049-9F64-1808E10E549D
 :END:
-*** The =jw-emacs-org.el= section for org-mode setup --native
+
+*** org-mode setup
 
 Set up Org Mode with a baseline configuration. The following sections will add more things to it.
 
@@ -1286,7 +1312,7 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 #+end_src
 
-*** the =jw-emacs-org.el= section for =org-agenda= --native
+*** org-agenda
 :PROPERTIES:
 :ID:       43652950-B9D2-4FAF-8F0C-75D1496E85FE
 :END:
@@ -1300,7 +1326,7 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for org pomodoro timer --native
+*** org-pomodoro
 
 Configure for macos to play sound:
 
@@ -1337,7 +1363,8 @@ Configure for macos to play sound:
 
 #+end_src
 
-**** Sound Support
+
+The following is for sound support,
 
 Usually this is a problem for macos and I found a snippet of code that enables sound support. The way to tell is by running =M-x play-sound-file= and navigating to the =.wav= file will ouput "This Emacs binary lacks sound support."
 
@@ -1365,7 +1392,7 @@ Usually this is a problem for macos and I found a snippet of code that enables s
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for org-links
+*** org-links
 
 As recommended by the official =org= manual to have these keys bound.
 
@@ -1386,7 +1413,7 @@ With the =create-if-interactive= setting, it only creates in interactive setting
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for bullets
+*** bullet aesthetics
 
 Customize the heading bullets to make it consistent and nicer.
 
@@ -1400,7 +1427,7 @@ Customize the heading bullets to make it consistent and nicer.
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for inline images
+*** inline images
 
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
@@ -1412,7 +1439,7 @@ Customize the heading bullets to make it consistent and nicer.
 #+end_src
 
 
-*** The =jw-emacs-org.el= section for structured templates (=org-tempo=) --native
+*** org-tempo.el --native
 
 These structured templates are used to auto generate code blocks for org mode. In order
 to use the template simply type =<= followed by the abbreviation of the language and
@@ -1431,7 +1458,7 @@ hit the =TAB= button. For example, the python snippit would be =<py TAB=.
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for auto-tangle
+*** org-babel.el
 
 This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-config= gets executed each time such a buffer gets saved.  This function checks to see if the file being saved is the Emacs.org file you're looking at right now, and if so, automatically exports the configuration here to the associated output files.
 
@@ -1449,8 +1476,6 @@ This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-conf
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for executing code (=org-babel=)
-
 To execute or export code in =org-mode= code blocks, you'll need to set up =org-babel-load-languages= for each language you'd like to use. [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
@@ -1464,7 +1489,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for text display (=visual-fill-column.el=)
+*** visual-fill-column.el
 
 =visual-fill-column= will create a document looking display with the extra padding on the left and on the right.
 
@@ -1480,7 +1505,8 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
     (markdown-mode . jw/org-mode-visual-fill))
 
 #+end_src
-*** The =jw-emacs-org.el= section for org-latex
+
+*** org-latex
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
@@ -1520,9 +1546,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 #+end_src
 
 ** The =jw-emacs-git.el= module
-*** The =jw-emacs-git.el= section for =magit.el=
-
-[[https://magit.vc/][Magit]] is the best Git interface I've ever used.  Common Git operations are easy to execute quickly using Magit's command panel system.
+*** magit.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-git.el" :mkdirp yes
 
@@ -1550,7 +1574,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 
 #+end_src
 
-**** GPG Signing
+**** gpg signing
 
 When on the commit buffer, the argument for `gpg-signing` or `-S` may not be displayed. To resolve this issue manually, on the commit buffer menu, you must enter transient mode with `C-x l` and follow the prompting from there by typing the argument that you want to change the layering and then set the layering.
 
@@ -1563,7 +1587,7 @@ When on the commit buffer, the argument for `gpg-signing` or `-S` may not be dis
 #+end_src
 
 ** The =jw-emacs-dired.el= module
-*** The =jw-emacs-dired.el= section for dired display
+*** dired display
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-dired.el" :mkdirp yes
 
@@ -1571,7 +1595,7 @@ When on the commit buffer, the argument for `gpg-signing` or `-S` may not be dis
 
 #+end_src
 
-*** The =jw-emacs-dired.el= section for gnu =gls=
+*** gnu gls
 
 For macos, make sure to have =coreutils= installed. To install run, =brew install coreutils=
 
@@ -1591,7 +1615,7 @@ For macos, make sure to have =coreutils= installed. To install run, =brew instal
 #+end_src
 
 ** The =jw-emacs-information-management.el= module
-*** The =jw-emacs-information-management.el= section for =denote=
+*** denote.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
@@ -1724,7 +1748,7 @@ Create [[id:43652950-B9D2-4FAF-8F0C-75D1496E85FE][the =jw-emacs-org.el= section 
 #+end_src
 
 
-*** The =jw-emacs-information-management.el= section for clean directories
+*** clean directories
 
 Move the =#<FILE>#= to a temporary directory instead of root directory.
 
@@ -1747,7 +1771,7 @@ Move the =#<FILE>#= to a temporary directory instead of root directory.
 
 ** The =jw-emacs-productivity.el= module
 
-*** The =jw-emacs-productivity.el= section for =pdf-tools=
+*** pdf-tools.el
 
 Make sure to run =M-x pdf-tools-install= after installation.
 
@@ -1764,18 +1788,18 @@ Make sure to run =M-x pdf-tools-install= after installation.
 
 #+end_src
 
-**** Issues
+**** issues
 
-***** 2025-01-15: Works
+***** 2025-01-15: works
 
 The issue with the **2025-01-14** is that if the installation works within the command line, when opening up a pdf file on Emacs would lead to the epdfserver crashing. This issue I found had to do with confict with =macports= being installed. If you uninstall macports, then the issue is resolved. 
 
-***** 2025-01-14: Does Not Work
+***** 2025-01-14: !working
 
 If you receive the option to rebuild the =epdfserver= and you agree to building on Emacs, there are instances where the build fails. When running =M-x pdf-tools-install= you will rebuild within Emacs and will obtain more information. If the error consists of not being able to find poppler, copy and paste the command used to run the installation and run it in the command line outside of emacs.
 
 
-*** The =jw-emacs-productivity.el= section for =org-noter= and =org-pdftools=
+*** org-noter.el and org-pdftools.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-productivity.el" :mkdirp yes
 
@@ -1849,7 +1873,7 @@ If you receive the option to rebuild the =epdfserver= and you agree to building 
 
 
 ** The =jw-emacs-development.el= module
-*** The =jw-emacs-development.el= section for =tramp.el= --native
+*** tramp.el --native
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
 
@@ -1870,7 +1894,7 @@ If you receive the option to rebuild the =epdfserver= and you agree to building 
 #+end_src
 
 
-**** Using Direct Async
+**** direct async
 
 Guide by [[https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./][this blog post]]. 
 
@@ -1889,7 +1913,7 @@ Guide by [[https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./][this blog 
 
 #+end_src
 
-**** Fixing Remote Compile
+**** fixing remote compile
 
 =compile= command disables remote ssh connection sharing, which will require you to reenter your password each time you connect. Want to enable this for convienence.
 
@@ -1901,7 +1925,7 @@ Guide by [[https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./][this blog 
 
 #+end_src
 
-**** Caching
+**** caching
 
 Cache passwords until the end of the emacs session, which is default.
 
@@ -1992,7 +2016,7 @@ Cache passwords until the end of the emacs session, which is default.
 
 #+end_src
 
-*** The =jw-emacs-development.el= section for =project.el=  --native
+*** project.el  --native
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
 
@@ -2015,7 +2039,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 
 #+end_src
 
-*** The =jw-emacs-development.el= section for visualizing parent delimiters --native
+*** visualizing delimiters
 
 =show-paren-mode= allows one to see matching pairs of parentheses and other characters. When point is on the opening character of one of the paired characters, the other is highlighted. When the point is after the closing character of one of the paired characters, the other is highlighted. 
 
@@ -2025,7 +2049,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 
 #+end_src
 
-*** The =jw-emacs-development.el= section for visualizing all delimiters 
+To visualize all delimiters,
 
 [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] is useful in programming modes because it colorizes nested parentheses and brackets according to their nesting depth.  This makes it a lot easier to visually match parentheses in Emacs Lisp code without having to count them yourself.
 
@@ -2036,7 +2060,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 
 #+end_src
 
-*** The =jw-emacs-development.el= section for pairing delimiters (=electric-pair-mode=) --native
+*** electric-pair-mode.el --native
 
 =electric-pair-mode= will auto pair delimiters for you. One issue with the auto pairing is the =<= character in =org-mode=. The following hook to the enabling of =electric-pair-mode= aims to solve the issue when in =org-mode=.
 
@@ -2051,7 +2075,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 
 #+end_src
 
-*** The =jw-emacs-development.el= section for pairing delimiters (=evil-surround=)
+*** evil-surround.el
 
 =evil-surround= emulates [[https://github.com/tpope/vim-surround][surround.vim]]. For usage instructions visit [[https://github.com/emacs-evil/evil-surround][evil-surround]]
 
@@ -2064,7 +2088,9 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 
 #+end_src
 
-*** The =jw-emacs-development.el= section for logging keys (=command-log-mode=)
+*** command-log-mode.el
+
+For logging keys,
 
 [[https://github.com/lewang/command-log-mode][command-log-mode]] is useful for displaying a panel showing each key binding you use in a panel on the right side of the frame. Great for live streams and screencasts!
 
@@ -2076,6 +2102,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 #+end_src
 
 To activate =command-log-mode= you must first run =M-x global-command-log-mode= to have =command-log-mode= in every buffer and then run =M-x clm/toggle-command-log-buffer= to have the buffer be displayed.
+
 *** The =jw-emacs-development.el= call to provide
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
@@ -2107,12 +2134,13 @@ When the =which-key-mode= is enabled, any incomplete key sequence will produce a
   (provide 'jw-emacs-which-key)
 
 #+end_src
+
 ** The =jw-emacs-ai.el= module
 
 The purpose of this module is to have my integrations with llms or other ai models.
 
 
-*** The =jw-emacs-ai.el= section for =gptel=
+*** gptel.el
 
 Incorporates the use of llms in the emacs client. For a great summary of the features please see [[https://www.blogbyben.com/2024/08/gptel-mindblowing-integration-between.html][Ben Simon's video]]. For accessing the source code please see [[https://github.com/karthink/gptel][karthink's repo]].
 
@@ -2225,7 +2253,7 @@ Incorporates the use of llms in the emacs client. For a great summary of the fea
 
 ** The =jw-emacs-langs.el= module
 
-*** The =jw-emacs-langs.el= section for =treesit= --native
+*** treesitter
 
 Set language sources for treesit
 
@@ -2271,8 +2299,6 @@ Set language sources for treesit
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for =treesit-auto=
-
 The issue with the built in =treesit.el= is that it does not auto default to which language server. In addition if you need to install you will have to input the url yourself. This package is here to automate the process.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
@@ -2296,7 +2322,7 @@ Auto install grammars when missing
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for =latex=
+*** latex
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
@@ -2351,7 +2377,8 @@ Auto install grammars when missing
 
 
 #+end_src
-*** The =jw-emacs-langs.el= section for =python= support
+
+*** python
 
 Configuring pythone envs with =conda=.
 
@@ -2380,7 +2407,7 @@ Python formatter configuration.
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for =astro= support
+*** astro.js
 
 I used the [[https://medium.com/@jrmjrm/configuring-emacs-and-eglot-to-work-with-astro-language-server-9408eb709ab0][following guide]] from medium for this configuration.
 
@@ -2403,7 +2430,7 @@ I used the [[https://medium.com/@jrmjrm/configuring-emacs-and-eglot-to-work-with
 Now set the config in [[id:F9D087EE-895F-4DBC-BBCF-3056A2A5266E][eglot]].  
 
 
-*** The =jw-emacs-langs.el= section for =rust= support
+*** rust
 
 Download =rust-mode=.
 
@@ -2419,7 +2446,6 @@ Download =rust-mode=.
 
 Setting up =rust-mode=.
 
-
 Custom function to find rust analyzer.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
@@ -2431,7 +2457,7 @@ Custom function to find rust analyzer.
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for =typescript= support
+*** typescript
 
 Typescript support is done through =treesit.el=, which is now native to emacs as of v29.
 
@@ -2456,7 +2482,7 @@ Install =json-mode=
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for automating code formatting with =apheleia=
+*** apheleia.el
 
 Make sure you have the necessary packages installed.
 
@@ -2479,45 +2505,42 @@ Make sure you have the necessary packages installed.
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for language server configuration (=eglot=) --native
+*** eglot.el --native
 :PROPERTIES:
 :ID:       F9D087EE-895F-4DBC-BBCF-3056A2A5266E
 :END:
 
-
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
     ;; Dynamic server program functions
-(defun jw/python-lsp-program (&optional interactive)
-  "Get Python LSP program."
-  (if (file-remote-p default-directory)
-      '("/home/jozhw/bin/pylsp-wrapper")
-    '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
+    (defun jw/python-lsp-program (&optional interactive)
+    "Get Python LSP program."
+    (if (file-remote-p default-directory)
+        '("/home/jozhw/bin/pylsp-wrapper")
+        '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
 
-    (defun jw/rust-lsp-program (&optional interactive)
-    "Get Rust LSP program."
-    (list (jw/find-rust-analyzer)))
+        (defun jw/rust-lsp-program (&optional interactive)
+        "Get Rust LSP program."
+        (list (jw/find-rust-analyzer)))
 
-    (defun jw/clangd-lsp-program (&optional interactive)
-    "Get clangd LSP program."
-    '("clangd"))
+        (defun jw/clangd-lsp-program (&optional interactive)
+        "Get clangd LSP program."
+        '("clangd"))
 
-    (defun jw/typescript-lsp-program (&optional interactive)
-    "Get TypeScript LSP program."
-    '("typescript-language-server" "--stdio"))
+        (defun jw/typescript-lsp-program (&optional interactive)
+        "Get TypeScript LSP program."
+        '("typescript-language-server" "--stdio"))
 
-    (defun jw/marksman-lsp-program (&optional interactive)
-    "Get Marksman LSP program."
-    '("marksman"))
+        (defun jw/marksman-lsp-program (&optional interactive)
+        "Get Marksman LSP program."
+        '("marksman"))
 
-    (defun jw/astro-lsp-program (&optional interactive)
-    "Get Astro LSP program."
-    '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
+        (defun jw/astro-lsp-program (&optional interactive)
+        "Get Astro LSP program."
+        '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
 
 
 #+end_src
-
-
 
 Add to =eglot= server list and setup hook after eglot is loaded.
 
@@ -2593,7 +2616,9 @@ Add the hook to auto start =eglot= depending on configured language.
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for debugging (=dape=)
+*** dape.el
+
+For debuggin,
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
@@ -2645,10 +2670,11 @@ Add the hook to auto start =eglot= depending on configured language.
 #+end_src
 
 
-*** The =jw-emacs-langs.el= for =tramp-sh.el= and remote configs
+*** tramp-sh.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
+  ;; for remote configs
   (with-eval-after-load 'tramp
     (require 'tramp-sh)
     (setq tramp-own-remote-path '("/bin" "/usr/bin" "/usr/local/bin"))
@@ -2668,7 +2694,9 @@ Add the hook to auto start =eglot= depending on configured language.
 * The custom libraries of my Emacs configuration (=jw-lisp/=)
 ** The =jw-copy.el= library
 
-*** The =jw-copy.el= for copying file path
+*** jw-dired-get-file-path
+
+Copy file path.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-lisp/jw-copy.el" :mkdirp yes
   (defun jw-dired-get-file-path ()
@@ -2682,7 +2710,9 @@ Add the hook to auto start =eglot= depending on configured language.
 
 #+end_src
 
-*** The =jw-copy.el= for copying a file
+*** jw-copy-file
+
+Copy a file.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-lisp/jw-copy.el" :mkdirp yes
 

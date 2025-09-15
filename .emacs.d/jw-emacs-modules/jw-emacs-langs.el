@@ -152,9 +152,9 @@
 
 ;; Dynamic server program functions
 (defun jw/python-lsp-program (&optional interactive)
-  "Get Python LSP program."
-  (if (file-remote-p default-directory)
-      '("/home/jozhw/bin/pylsp-wrapper")
+"Get Python LSP program."
+(if (file-remote-p default-directory)
+    '("/home/jozhw/bin/pylsp-wrapper")
     '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
 
     (defun jw/rust-lsp-program (&optional interactive)
@@ -277,6 +277,7 @@
   :config
   (repeat-mode))
 
+;; for remote configs
 (with-eval-after-load 'tramp
   (require 'tramp-sh)
   (setq tramp-own-remote-path '("/bin" "/usr/bin" "/usr/local/bin"))
