@@ -55,3 +55,5 @@ brew install --cask ghostty
 
 # Install LM Studio for locally hosted lms
 brew install --cask lm-studio
+
+brew install --cask skim

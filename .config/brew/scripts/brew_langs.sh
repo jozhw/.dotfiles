@@ -19,6 +19,9 @@ brew install libgit2
 
 brew install texlive
 
+# install latex lsp
+brew install texlab
+
 ######################################################################################
 ### golang
 

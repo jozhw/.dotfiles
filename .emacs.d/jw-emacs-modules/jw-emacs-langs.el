@@ -63,8 +63,11 @@
   
   ;; Simplified PDF viewer configuration for macOS
   (when (eq system-type 'darwin) ; macOS only
-    (setq TeX-view-program-list '(("Preview" "open -a Preview %o")))
-    (setq TeX-view-program-selection '((output-pdf "Preview"))))
+    (setq TeX-view-program-list '(("Preview.app" "open -a Preview.app %o")
+      ("Skim" "open -a Skim.app %o")
+      ("displayline" "displayline -g -b %n %o %b")
+      ("open" "open %o")))
+    (setq TeX-view-program-selection '((output-pdf "Skim"))))
   
   ;; For non-macOS systems, use default viewer
   (unless (eq system-type 'darwin)
@@ -91,7 +94,12 @@
                          (not TeX-master))
                 (setq-local TeX-master (file-name-sans-extension
                                        (file-name-nondirectory (buffer-file-name)))))))
-  
+    ;; Auto-compile on save
+  (add-hook 'LaTeX-mode-hook
+            (lambda ()
+                (add-hook 'after-save-hook 
+                        (lambda () (TeX-command-run-all nil)) 
+                        nil 'make-it-local)))
   ;; RefTeX configuration
   (setq reftex-plug-into-AUCTeX t))
 
@@ -177,6 +185,11 @@
     "Get Astro LSP program."
     '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
 
+    (defun jw/tex-lsp-program (&optional interactive)
+     "Get latex lsp program"
+     '("texlab")
+     )
+
 ;; Enhanced eglot configuration
 (with-eval-after-load 'eglot
 (setq eglot-prefer-local-server t)
@@ -198,6 +211,8 @@
 (add-to-list 'eglot-server-programs 
             '(markdown-mode . jw/marksman-lsp-program))
 (add-to-list 'eglot-server-programs 
+            '((latex-mode tex-mode LaTex-mode) . jw/tex-lsp-program))
+(add-to-list 'eglot-server-programs 
             '(astro-mode . jw/astro-lsp-program)))
 
 ;; Function to start eglot
@@ -207,6 +222,7 @@
               (or (derived-mode-p 'python-mode)
                   (derived-mode-p 'python-ts-mode)
                   (derived-mode-p 'rust-mode)
+                  (derived-mode-p 'tex-mode)
                   (derived-mode-p 'c-ts-mode)
                   (derived-mode-p 'c++-ts-mode)
                   (derived-mode-p 'typescript-ts-mode)
@@ -231,6 +247,7 @@
 (add-hook 'tsx-ts-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'markdown-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'astro-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'tex-mode-hook #'jw/maybe-start-eglot)
 
 (use-package dape
   :straight t

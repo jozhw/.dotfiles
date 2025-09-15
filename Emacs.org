@@ -2326,57 +2326,71 @@ Auto install grammars when missing
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-(use-package auctex
-  :straight t
-  :defer t
-  :init
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t)
-  (setq TeX-PDF-mode t) ; Enable PDF output by default
-  :config
-  ;; Set the default engine
-  (setq TeX-engine 'default)
-  
-  ;; Put auxiliary files in a tmp subdirectory
-  (setq TeX-output-dir "tmp/")
-  (setq LaTeX-output-directory "tmp/")
-  
-  ;; Simplified PDF viewer configuration for macOS
-  (when (eq system-type 'darwin) ; macOS only
-    (setq TeX-view-program-list '(("Preview" "open -a Preview %o")))
-    (setq TeX-view-program-selection '((output-pdf "Preview"))))
-  
-  ;; For non-macOS systems, use default viewer
-  (unless (eq system-type 'darwin)
-    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
-  
-  ;; Ensure we have a default command
-  (setq TeX-command-default "LaTeX")
-  
-  ;; Auto-revert PDF files when they change
-  (add-hook 'TeX-after-compilation-finished-functions
-            #'TeX-revert-document-buffer)
-  
-  ;; LaTeX mode hooks
-  (add-hook 'LaTeX-mode-hook 'visual-line-mode) ; Enable word wrap
-  (add-hook 'LaTeX-mode-hook 'flyspell-mode)    ; Enable spell checking
-  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)  ; Enable math mode
-  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; Enable RefTeX
-  
-  ;; Ensure TeX-command-run-all works properly
-  (add-hook 'LaTeX-mode-hook 
-            (lambda ()
-              ;; Make sure the master file is set
-              (when (and (buffer-file-name)
-                         (not TeX-master))
-                (setq-local TeX-master (file-name-sans-extension
-                                       (file-name-nondirectory (buffer-file-name)))))))
-  
-  ;; RefTeX configuration
-  (setq reftex-plug-into-AUCTeX t))
+  (use-package auctex
+    :straight t
+    :defer t
+    :init
+    (setq TeX-auto-save t)
+    (setq TeX-parse-self t)
+    (setq TeX-PDF-mode t) ; Enable PDF output by default
+    :config
+    ;; Set the default engine
+    (setq TeX-engine 'default)
+    
+    ;; Put auxiliary files in a tmp subdirectory
+    (setq TeX-output-dir "tmp/")
+    (setq LaTeX-output-directory "tmp/")
+    
+    ;; Simplified PDF viewer configuration for macOS
+    (when (eq system-type 'darwin) ; macOS only
+      (setq TeX-view-program-list '(("Preview.app" "open -a Preview.app %o")
+        ("Skim" "open -a Skim.app %o")
+        ("displayline" "displayline -g -b %n %o %b")
+        ("open" "open %o")))
+      (setq TeX-view-program-selection '((output-pdf "Skim"))))
+    
+    ;; For non-macOS systems, use default viewer
+    (unless (eq system-type 'darwin)
+      (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
+    
+    ;; Ensure we have a default command
+    (setq TeX-command-default "LaTeX")
+    
+    ;; Auto-revert PDF files when they change
+    (add-hook 'TeX-after-compilation-finished-functions
+              #'TeX-revert-document-buffer)
+    
+    ;; LaTeX mode hooks
+    (add-hook 'LaTeX-mode-hook 'visual-line-mode) ; Enable word wrap
+    (add-hook 'LaTeX-mode-hook 'flyspell-mode)    ; Enable spell checking
+    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)  ; Enable math mode
+    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; Enable RefTeX
+    
+    ;; Ensure TeX-command-run-all works properly
+    (add-hook 'LaTeX-mode-hook 
+              (lambda ()
+                ;; Make sure the master file is set
+                (when (and (buffer-file-name)
+                           (not TeX-master))
+                  (setq-local TeX-master (file-name-sans-extension
+                                         (file-name-nondirectory (buffer-file-name)))))))
+      ;; Auto-compile on save
+    (add-hook 'LaTeX-mode-hook
+              (lambda ()
+                  (add-hook 'after-save-hook 
+                          (lambda () (TeX-command-run-all nil)) 
+                          nil 'make-it-local)))
+    ;; RefTeX configuration
+    (setq reftex-plug-into-AUCTeX t))
 
 
 #+end_src
+
+
+**** commands
+
+=C-c C-a= (=TeX-command-run-all=): compiles tex document and auto opens in the pdf viewer
+
 
 *** python
 
@@ -2512,32 +2526,37 @@ Make sure you have the necessary packages installed.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-    ;; Dynamic server program functions
-    (defun jw/python-lsp-program (&optional interactive)
-    "Get Python LSP program."
-    (if (file-remote-p default-directory)
-        '("/home/jozhw/bin/pylsp-wrapper")
-        '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
+  ;; Dynamic server program functions
+  (defun jw/python-lsp-program (&optional interactive)
+  "Get Python LSP program."
+  (if (file-remote-p default-directory)
+      '("/home/jozhw/bin/pylsp-wrapper")
+      '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
 
-        (defun jw/rust-lsp-program (&optional interactive)
-        "Get Rust LSP program."
-        (list (jw/find-rust-analyzer)))
+      (defun jw/rust-lsp-program (&optional interactive)
+      "Get Rust LSP program."
+      (list (jw/find-rust-analyzer)))
 
-        (defun jw/clangd-lsp-program (&optional interactive)
-        "Get clangd LSP program."
-        '("clangd"))
+      (defun jw/clangd-lsp-program (&optional interactive)
+      "Get clangd LSP program."
+      '("clangd"))
 
-        (defun jw/typescript-lsp-program (&optional interactive)
-        "Get TypeScript LSP program."
-        '("typescript-language-server" "--stdio"))
+      (defun jw/typescript-lsp-program (&optional interactive)
+      "Get TypeScript LSP program."
+      '("typescript-language-server" "--stdio"))
 
-        (defun jw/marksman-lsp-program (&optional interactive)
-        "Get Marksman LSP program."
-        '("marksman"))
+      (defun jw/marksman-lsp-program (&optional interactive)
+      "Get Marksman LSP program."
+      '("marksman"))
 
-        (defun jw/astro-lsp-program (&optional interactive)
-        "Get Astro LSP program."
-        '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
+      (defun jw/astro-lsp-program (&optional interactive)
+      "Get Astro LSP program."
+      '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
+
+      (defun jw/tex-lsp-program (&optional interactive)
+       "Get latex lsp program"
+       '("texlab")
+       )
 
 
 #+end_src
@@ -2567,6 +2586,8 @@ Add to =eglot= server list and setup hook after eglot is loaded.
     (add-to-list 'eglot-server-programs 
                 '(markdown-mode . jw/marksman-lsp-program))
     (add-to-list 'eglot-server-programs 
+                '((latex-mode tex-mode LaTex-mode) . jw/tex-lsp-program))
+    (add-to-list 'eglot-server-programs 
                 '(astro-mode . jw/astro-lsp-program)))
 
 #+end_src
@@ -2582,6 +2603,7 @@ Function to start eglot.
                 (or (derived-mode-p 'python-mode)
                     (derived-mode-p 'python-ts-mode)
                     (derived-mode-p 'rust-mode)
+                    (derived-mode-p 'tex-mode)
                     (derived-mode-p 'c-ts-mode)
                     (derived-mode-p 'c++-ts-mode)
                     (derived-mode-p 'typescript-ts-mode)
@@ -2612,6 +2634,7 @@ Add the hook to auto start =eglot= depending on configured language.
   (add-hook 'tsx-ts-mode-hook #'jw/maybe-start-eglot)
   (add-hook 'markdown-mode-hook #'jw/maybe-start-eglot)
   (add-hook 'astro-mode-hook #'jw/maybe-start-eglot)
+  (add-hook 'tex-mode-hook #'jw/maybe-start-eglot)
 
 #+end_src
 
