@@ -11,3 +11,6 @@ npm install prettier
 
 # install astro lang server
 npm i -g @astrojs/language-server
+
+# install mdx lang server
+npm install -g @mdx-js/language-server
