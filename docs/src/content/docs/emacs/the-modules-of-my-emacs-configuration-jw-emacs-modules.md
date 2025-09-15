@@ -3,8 +3,10 @@ title: The modules of my Emacs configuration (`jw-emacs-modules/`)
 description: Documentation for The modules of my Emacs configuration (`jw-emacs-modules/`)
 ---
 
+
 ## The `jw-emacs-theme.el` module
-### The `jw-emacs-theme.el` section to load a theme (`jw-emacs-load-theme-family`)
+
+### jw-emacs-load-theme-family
 
 ```emacs-lisp
 
@@ -22,7 +24,7 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
 
 ```
 
-#### The `jw-emacs-modus-themes.el` module -- native
+#### jw-emacs-modus-themes.el
 
 ```emacs-lisp
 
@@ -31,7 +33,7 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
   ;; The themes are highly customisable.  Read the manual:
   ;; <https://protesilaos.com/emacs/modus-themes>.
   (use-package modus-themes
-    :ensure t
+    :straight t
     :demand t
     :bind (("<f5>" . modus-themes-toggle)
            ("C-<f5>" . modus-themes-select))
@@ -60,7 +62,7 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
 
 ```
 
-#### The `jw-emacs-ef-themes.el` module
+#### jw-emacs-ef-themes.el
 
 ```emacs-lisp
 
@@ -69,7 +71,7 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
   ;; The themes are customisable.  Read the manual:
   ;; <https://protesilaos.com/emacs/ef-themes>.
   (use-package ef-themes
-    :ensure t
+    :straight t
     :demand t
     :bind ("<f5>" . ef-themes-select)
     :config
@@ -98,14 +100,15 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
       (ef-themes-load-random 'light)))
 (provide 'jw-emacs-ef-themes)
 ```
-### The `jw-emacs-theme.el` section for `pulsar`
+
+### pulsar.el
 
 ```emacs-lisp
 
   ;;;; Pulsar
   ;; Read the pulsar manual: <https://protesilaos.com/emacs/pulsar>.
   (use-package pulsar
-    :ensure t
+    :straight t
     :config
     (setopt pulsar-pulse t
             pulsar-delay 0.055
@@ -128,14 +131,14 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
      ("C-x L" . pulsar-highlight-dwim))) ; or use `pulsar-highlight-line'
 ```
 
-### The `jw-emacs-theme.el` section for `lin`
+### lin.el
 
 ```emacs-lisp
 
   ;;;; Lin
   ;; Read the lin manual: <https://protesilaos.com/emacs/lin>.
   (use-package lin
-    :ensure t
+    :straight t
     :hook (after-init . lin-global-mode) ; applies to all `lin-mode-hooks'
     :config
     ;; You can use this to live update the face:
@@ -148,7 +151,8 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
     (setq lin-face 'lin-magenta))
 
 ```
-### The `jw-emacs-theme.el` section for `spacious-padding`
+
+### spacious-padding.el
 
 ```emacs-lisp
 
@@ -156,7 +160,7 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
   ;; Yet another one of my packages:
   ;; <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>.
   (use-package spacious-padding
-    :ensure t
+    :straight t
     :if (display-graphic-p)
     :hook (after-init . spacious-padding-mode)
     :bind ("<f8>" . spacious-padding-mode)
@@ -182,14 +186,15 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
              :mode-line-inactive window-divider)))
 
 ```
-### The `jw-emacs-theme.el` section for `cursory`
+
+### cursory.el
 
 ```emacs-lisp
 
   ;;; Cursor appearance (cursory)
   ;; Read the manual: <https://protesilaos.com/emacs/cursory>.
   (use-package cursory
-    :ensure t
+    :straight t
     :demand t
     :if (display-graphic-p)
     :config
@@ -243,13 +248,13 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
     ("C-c p" . cursory-set-preset))
 ```
 
-### The `jw-emacs-theme.el` section for `theme-buffet`
+### theme-buffet.el
 
 ```emacs-lisp
 
    ;;;; Theme buffet
   (use-package theme-buffet
-    :ensure t
+    :straight t
     :after (:any modus-themes ef-themes)
     :defer 1
     :config
@@ -278,27 +283,25 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
         (theme-buffet-timer-hours 1))))
 
 ```
-### The `jw-emacs-theme.el` section for `fontaine`
+
+### fontaine.el
 
 ```emacs-lisp
 
   ;;;; Fontaine (font configurations)
   ;; Read the manual: <https://protesilaos.com/emacs/fontaine>
   (use-package fontaine
-    :ensure t
+    :straight t
     :if (display-graphic-p)
     :hook
-    ;; Persist the latest font preset when closing/starting Emacs and
-    ;; while switching between themes.
+    ;; Persist the latest font preset when closing/starting Emacs.
     ((after-init . fontaine-mode)
      (after-init . (lambda ()
-                          ;; Set last preset or fall back to desired style from `fontaine-presets'.
-                          (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
-    :bind ("C-c f" . fontaine-set-preset)
+                     ;; Set last preset or fall back to desired style from `fontaine-presets'.
+                     (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
+    :bind (("C-c f" . fontaine-set-preset)
+           ("C-c F" . fontaine-toggle-preset))
     :config
-    ;; This is defined in Emacs C code: it belongs to font settings.
-    (setq x-underline-at-descent-line nil)
-
     ;; And this is for Emacs28.
     (setq-default text-scale-remap-header-line t)
 
@@ -306,90 +309,97 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
     ;; completeness.
     (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
 
+    ;; The font family is my design: <https://github.com/protesilaos/aporetic>.
     (setq fontaine-presets
           '((small
-             :default-family "Iosevka Comfy Motion"
-             :default-height 80
-             :variable-pitch-family "Iosevka Comfy Duo")
+             :default-height 80)
             (regular) ; like this it uses all the fallback values and is named `regular'
             (medium
-             :default-weight semilight
+             :default-family "Aporetic Serif Mono"
              :default-height 115
-             :bold-weight extrabold)
+             :fixed-pitch-family "Aporetic Serif Mono"
+             :variable-pitch-family "Aporetic Sans")
             (large
-             :inherit medium
              :default-height 150)
-            (live-stream
-             :default-family "Iosevka Comfy Wide Motion"
-             :default-height 150
-             :default-weight medium
-             :fixed-pitch-family "Iosevka Comfy Wide Motion"
-             :variable-pitch-family "Iosevka Comfy Wide Duo"
-             :bold-weight extrabold)
             (presentation
              :default-height 180)
+            (jumbo
+             :inherit medium
+             :default-height 260)
             (t
              ;; I keep all properties for didactic purposes, but most can be
              ;; omitted.  See the fontaine manual for the technicalities:
              ;; <https://protesilaos.com/emacs/fontaine>.
-             :default-family "Iosevka Comfy"
+             :default-family "Aporetic Sans Mono"
              :default-weight regular
              :default-slant normal
-             :default-height 180
+             :default-width normal
+             :default-height 100
 
-             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight nil
              :fixed-pitch-slant nil
+             :fixed-pitch-width nil
              :fixed-pitch-height 1.0
 
              :fixed-pitch-serif-family nil
              :fixed-pitch-serif-weight nil
              :fixed-pitch-serif-slant nil
+             :fixed-pitch-serif-width nil
              :fixed-pitch-serif-height 1.0
 
-             :variable-pitch-family "Iosevka Comfy Motion Duo"
+             :variable-pitch-family "Aporetic Serif"
              :variable-pitch-weight nil
              :variable-pitch-slant nil
+             :variable-pitch-width nil
              :variable-pitch-height 1.0
 
              :mode-line-active-family nil
              :mode-line-active-weight nil
              :mode-line-active-slant nil
+             :mode-line-active-width nil
              :mode-line-active-height 1.0
 
              :mode-line-inactive-family nil
              :mode-line-inactive-weight nil
              :mode-line-inactive-slant nil
+             :mode-line-inactive-width nil
              :mode-line-inactive-height 1.0
 
              :header-line-family nil
              :header-line-weight nil
              :header-line-slant nil
+             :header-line-width nil
              :header-line-height 1.0
 
              :line-number-family nil
              :line-number-weight nil
              :line-number-slant nil
+             :line-number-width nil
              :line-number-height 1.0
 
              :tab-bar-family nil
              :tab-bar-weight nil
              :tab-bar-slant nil
+             :tab-bar-width nil
              :tab-bar-height 1.0
 
              :tab-line-family nil
              :tab-line-weight nil
              :tab-line-slant nil
+             :tab-line-width nil
              :tab-line-height 1.0
 
              :bold-family nil
-             :bold-weight bold
              :bold-slant nil
+             :bold-weight bold
+             :bold-width nil
              :bold-height 1.0
 
              :italic-family nil
              :italic-weight nil
              :italic-slant italic
+             :italic-width nil
              :italic-height 1.0
 
              :line-spacing nil)))
@@ -399,13 +409,14 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
 
 
 ```
-### The `jw-emacs-theme.el` section for font resizing and `variable-pitch-mode` --native
+
+### variable-pitch-mode.el --native
 
 ```emacs-lisp
 
     ;;;;; `variable-pitch-mode' setup
   (use-package face-remap
-    :ensure nil
+    :straight nil
     :functions jw/enable-variable-pitch
     :bind ( :map ctl-x-x-map
             ("v" . variable-pitch-mode))
@@ -437,15 +448,8 @@ description: Documentation for The modules of my Emacs configuration (`jw-emacs-
 ```
 
 ## The `jw-emacs-essentials.el` module
-### The `jw-emacs-essentials.el` section for gui configurations
 
-Set up the visible bell to be on instead of the beeping. For macos it is best to leave commented below to not have the visual bell because it is distracting.
-```emacs-lisp
-
-  ;; (setq visible-bell t)
-
-```
-
+### gui configurations
 
 Enable line numbers globally, but not in the following modes: org, term, shell, and eshell.
 
@@ -476,18 +480,7 @@ Since `fill-paragraph` wraps `fill-column`, we adjust the size of the `fill-colu
 
 ```
 
-### The `jw-emacs-essentials.el` section for window configurations
-
-```emacs-lisp
-
-  (global-set-key (kbd "C-c <up>")    'windmove-up)
-  (global-set-key (kbd "C-c <down>")  'windmove-down)
-  (global-set-key (kbd "C-c <left>")  'windmove-left)
-  (global-set-key (kbd "C-c <right>") 'windmove-right)
-
-```
-
-### The `jw-emacs-essentials.el` section for `helpful.el`
+### helpful.el
 
 [Helpful](https:/*github.com*Wilfred/helpful) adds a lot of very helpful (get it?) information to Emacs' `describe-` command buffers.  For example, if you use `describe-function`, you will not only get the documentation about the function, you will also see the source code of the function and where it gets used in other places in the Emacs configuration.  It is very useful for figuring out how things work in Emacs.
 
@@ -500,7 +493,7 @@ Since `fill-paragraph` wraps `fill-column`, we adjust the size of the `fill-colu
 
 ```
 
-### The `jw-emacs-essentials.el` for `auth-sources.el` -- native
+### auth-sources.el -- native
 
 
 ```emacs-lisp
@@ -518,7 +511,9 @@ Since `fill-paragraph` wraps `fill-column`, we adjust the size of the `fill-colu
 ```
 
 ## The `jw-emacs-modeline.el` module
-### The `jw-emacs-modeline.el` to enable the mode-line
+
+### enable the mode-line
+
 The mode-line was disabled earlier ([The `init.el` conditional to remove display of mode-line](*The `init.el` conditional to remove display of mode-line)) so that the startup UI would look smooth
 
 ```emacs-lisp
@@ -527,7 +522,7 @@ The mode-line was disabled earlier ([The `init.el` conditional to remove display
 
 ```
 
-### The `jw-emacs-modeline.el` basic user interface configuration
+### basic user interface
 
 ```emacs-lisp
 
@@ -536,7 +531,7 @@ The mode-line was disabled earlier ([The `init.el` conditional to remove display
 
 ```
 
-### The `jw-emacs-modeline.el` customization with `doom-modeline`
+### doom-modeline.el
 
 [doom-modeline](https:/*github.com*seagle0128*doom-modeline) is a very attractive and rich (yet still minimal) mode line configuration for Emacs.  The default configuration is quite good but you can check out the [configuration options](https:**github.com*seagle0128/doom-modeline#customize) for more things you can enable or disable.
 
@@ -552,7 +547,7 @@ If you are running in the `macos` terminal, then you have to make sure that you 
 ```emacs-lisp
 
   (use-package doom-modeline
-    :ensure t
+    :straight t
     :init (doom-modeline-mode 1)
     :custom ((doom-modeline-height 15)))
 
@@ -587,7 +582,6 @@ To turn off icons uncomment the following:
 
 The following contains configurations of the `doom-modeline`. All the configurations here use the `setq`.
 
-
 ```emacs-lisp
 
   ;; If non-nil, a word count will be added to the selection-info modeline segment.
@@ -600,7 +594,6 @@ The following contains configurations of the `doom-modeline`. All the configurat
   (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
 
 ```
-
 
 Display the virtual environment version.
 
@@ -619,11 +612,13 @@ Display the virtual environment version.
 ```
 
 ## The `jw-emacs-completion.el` module
-### The `jw-emacs-completion.el` section for preserving minibuffer history (`savehist.el`)
+### savehist.el
 
 ```emacs-lisp
 
+  ;; for preserving minibuffer history
   (use-package savehist
+    :straight t
     :config
     (setq history-length 25)
     (savehist-mode 1))
@@ -635,7 +630,9 @@ Display the virtual environment version.
 
 ```
 
-### The `jw-emacs-completion.el` section for completions (`vertico.el`)
+### vertico.el
+
+Completions with `vertico.el`
 
 ```emacs-lisp
 
@@ -651,7 +648,7 @@ Display the virtual environment version.
         (delete-word (- arg))))
 
   (use-package vertico
-    :ensure t
+    :straight t
     :bind (:map vertico-map
            ("C-j" . vertico-next)
            ("C-k" . vertico-previous)
@@ -665,26 +662,13 @@ Display the virtual environment version.
 
 ```
 
-#### Troubleshooting
 
-If in the Emacs buffer if you get a `Error in post-command-hook (vertico--exhibit): (void-function compat--completion-metadata-get)` error then you either delete vertico and recomplile or recompile
+### corfu.el
 
-```
-
-  M-x package-recompile
-  vertico
-
-```
-
-The reason this issue is observed is due to updating Emacs.
-
-A link to the github issue where I found the solution is [here](https:/*github.com*minad*vertico*discussions/501#discussioncomment-12390155).
-
-### The `jw-emacs-completion.el` section for completions in region (`corfu.el`)
-
+Completions in region with `corfu.el`.
 ```emacs-lisp
   (use-package corfu
-    :ensure t
+    :straight t
     ;; Optional customizations
     :custom
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
@@ -717,7 +701,8 @@ A link to the github issue where I found the solution is [here](https:/*github.c
     (global-corfu-mode))
 
 ```
-### The `jw-emacs-completion.el` section for completions in region on terminal
+
+### company.el
 
 Since `corfu.el` does not support running emacs in the terminal, I will just stick with `company.el` instead of `corfu-terminal`.
 
@@ -750,19 +735,23 @@ We also use [company-box](https:/*github.com*sebastiencs/company-box) to further
 
 ```
 
-### The `jw-emacs-completion.el` section for additional completions in region (`cape.el`)
+### cape.el
+
+Additional completions in region with `cape.el`.
 
 ```emacs-lisp
 
   (use-package cape
-    :ensure t
+    :straight t
     :init
     (add-to-list 'completion-at-point-functions #'cape-file)
     (add-to-list 'completion-at-point-functions #'cape-dabbrev))
 
 ```
 
-### The `jw-emacs-completion.el` section for candidate filtering (`orderless.el`)
+### orderless.el
+
+For candidate filtering.
 
 ```emacs-lisp
 
@@ -774,19 +763,18 @@ We also use [company-box](https:/*github.com*sebastiencs/company-box) to further
 
 ```
 
-### The `jw-emacs-completion.el` section for completion annotations (`marginalia.el`)
+### marginalia.el
 
-Marginalia provides helpful annotations for various types of minibuffer completions. You can think of it as a replacement of `ivy-rich`.
+For completion notations.
 
 ```emacs-lisp
 
-  (use-package marginalia
-    :after vertico
-    :ensure t
-    :custom
-    (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
-    :init
-    (marginalia-mode))
+;;; Detailed completion annotations (marginalia.el)
+(use-package marginalia
+  :straight t
+  :hook (after-init . marginalia-mode)
+  :config
+  (setq marginalia-max-relative-age 0)) ; absolute time
 
 ```
 
@@ -802,7 +790,8 @@ Marginalia provides helpful annotations for various types of minibuffer completi
 :PROPERTIES:
 :ID:       77434357-7761-4049-9F64-1808E10E549D
 :END:
-### The `jw-emacs-org.el` section for org-mode setup --native
+
+### org-mode setup
 
 Set up Org Mode with a baseline configuration. The following sections will add more things to it.
 
@@ -828,7 +817,7 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 ```
 
-### the `jw-emacs-org.el` section for `org-agenda` --native
+### org-agenda
 :PROPERTIES:
 :ID:       43652950-B9D2-4FAF-8F0C-75D1496E85FE
 :END:
@@ -842,7 +831,7 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 ```
 
-### The `jw-emacs-org.el` section for org pomodoro timer --native
+### org-pomodoro
 
 Configure for macos to play sound:
 
@@ -879,7 +868,8 @@ Configure for macos to play sound:
 
 ```
 
-#### Sound Support
+
+The following is for sound support,
 
 Usually this is a problem for macos and I found a snippet of code that enables sound support. The way to tell is by running `M-x play-sound-file` and navigating to the `.wav` file will ouput "This Emacs binary lacks sound support."
 
@@ -907,7 +897,7 @@ Usually this is a problem for macos and I found a snippet of code that enables s
 
 ```
 
-### The `jw-emacs-org.el` section for org-links
+### org-links
 
 As recommended by the official `org` manual to have these keys bound.
 
@@ -928,7 +918,7 @@ With the `create-if-interactive` setting, it only creates in interactive setting
 
 ```
 
-### The `jw-emacs-org.el` section for bullets
+### bullet aesthetics
 
 Customize the heading bullets to make it consistent and nicer.
 
@@ -942,7 +932,7 @@ Customize the heading bullets to make it consistent and nicer.
 
 ```
 
-### The `jw-emacs-org.el` section for inline images
+### inline images
 
 
 ```emacs-lisp
@@ -953,22 +943,8 @@ Customize the heading bullets to make it consistent and nicer.
 
 ```
 
-### The `jw-emacs-org.el` section for `org-transclusion`
 
-Link to the docs: [org-transclude](https:/*nobiot.github.io*org-transclusion/).
-
-
-```emacs-lisp
-
-  (unless (package-installed-p 'org-transclusion)
-    (package-refresh-contents)
-    (package-install 'org-transclusion))
-
-  (require 'org-transclusion)
-
-```
-
-### The `jw-emacs-org.el` section for structured templates (`org-tempo`) --native
+### org-tempo.el --native
 
 These structured templates are used to auto generate code blocks for org mode. In order
 to use the template simply type `<` followed by the abbreviation of the language and
@@ -987,7 +963,7 @@ hit the `TAB` button. For example, the python snippit would be `<py TAB`.
 
 ```
 
-### The `jw-emacs-org.el` section for auto-tangle
+### org-babel.el
 
 This snippet adds a hook to `org-mode` buffers so that `jw/org-babel-tangle-config` gets executed each time such a buffer gets saved.  This function checks to see if the file being saved is the Emacs.org file you're looking at right now, and if so, automatically exports the configuration here to the associated output files.
 
@@ -1005,8 +981,6 @@ This snippet adds a hook to `org-mode` buffers so that `jw/org-babel-tangle-conf
 
 ```
 
-### The `jw-emacs-org.el` section for executing code (`org-babel`)
-
 To execute or export code in `org-mode` code blocks, you'll need to set up `org-babel-load-languages` for each language you'd like to use. [This page](https:/*orgmode.org*worg*org-contrib*babel/languages.html) documents all of the languages that you can use with `org-babel`.
 
 ```emacs-lisp
@@ -1020,7 +994,7 @@ To execute or export code in `org-mode` code blocks, you'll need to set up `org-
 
 ```
 
-### The `jw-emacs-org.el` section for text display (`visual-fill-column.el`)
+### visual-fill-column.el
 
 `visual-fill-column` will create a document looking display with the extra padding on the left and on the right.
 
@@ -1036,7 +1010,8 @@ To execute or export code in `org-mode` code blocks, you'll need to set up `org-
     (markdown-mode . jw/org-mode-visual-fill))
 
 ```
-### The `jw-emacs-org.el` section for org-latex
+
+### org-latex
 
 ```emacs-lisp
 
@@ -1076,9 +1051,7 @@ To execute or export code in `org-mode` code blocks, you'll need to set up `org-
 ```
 
 ## The `jw-emacs-git.el` module
-### The `jw-emacs-git.el` section for `magit.el`
-
-[Magit](https:/*magit.vc*) is the best Git interface I've ever used.  Common Git operations are easy to execute quickly using Magit's command panel system.
+### magit.el
 
 ```emacs-lisp
 
@@ -1106,7 +1079,7 @@ To execute or export code in `org-mode` code blocks, you'll need to set up `org-
 
 ```
 
-#### GPG Signing
+#### gpg signing
 
 When on the commit buffer, the argument for `gpg-signing` or `-S` may not be displayed. To resolve this issue manually, on the commit buffer menu, you must enter transient mode with `C-x l` and follow the prompting from there by typing the argument that you want to change the layering and then set the layering.
 
@@ -1119,7 +1092,7 @@ When on the commit buffer, the argument for `gpg-signing` or `-S` may not be dis
 ```
 
 ## The `jw-emacs-dired.el` module
-### The `jw-emacs-dired.el` section for dired display
+### dired display
 
 ```emacs-lisp
 
@@ -1127,7 +1100,7 @@ When on the commit buffer, the argument for `gpg-signing` or `-S` may not be dis
 
 ```
 
-### The `jw-emacs-dired.el` section for gnu `gls`
+### gnu gls
 
 For macos, make sure to have `coreutils` installed. To install run, `brew install coreutils`
 
@@ -1147,12 +1120,12 @@ For macos, make sure to have `coreutils` installed. To install run, `brew instal
 ```
 
 ## The `jw-emacs-information-management.el` module
-### The `jw-emacs-information-management.el` section for `denote`
+### denote.el
 
 ```emacs-lisp
 
   (use-package denote
-                   :ensure t)
+                   :straight t)
 
   (setq denote-directory (expand-file-name "~/Otzar/Gnosis/"))
   (setq denote-save-buffer-after-creation nil)
@@ -1279,20 +1252,8 @@ Create [the `jw-emacs-org.el` section for `org-agenda` --native](id:43652950-B9D
 
 ```
 
-### The `jw-emacs-information-management.el` section for `ledger-mode`
 
-```emacs-lisp
-
-  (use-package ledger-mode
-    :ensure t
-    :mode (
-           "\\.ledger\\'")
-    :custom (ledger-clear-whole-transactions t))
-
-
-```
-
-### The `jw-emacs-information-management.el` section for clean directories
+### clean directories
 
 Move the `#<FILE>#` to a temporary directory instead of root directory.
 
@@ -1315,14 +1276,14 @@ Move the `#<FILE>#` to a temporary directory instead of root directory.
 
 ## The `jw-emacs-productivity.el` module
 
-### The `jw-emacs-productivity.el` section for `pdf-tools`
+### pdf-tools.el
 
 Make sure to run `M-x pdf-tools-install` after installation.
 
 ```emacs-lisp
 
   (use-package pdf-tools
-    :ensure t
+    :straight t
     :config
     (pdf-tools-install)
     :hook (pdf-view-mode . (lambda () 
@@ -1332,32 +1293,32 @@ Make sure to run `M-x pdf-tools-install` after installation.
 
 ```
 
-#### Troubleshooting
+#### issues
 
-##### 2025-01-15: Works
+##### 2025-01-15: works
 
 The issue with the ***2025-01-14*** is that if the installation works within the command line, when opening up a pdf file on Emacs would lead to the epdfserver crashing. This issue I found had to do with confict with `macports` being installed. If you uninstall macports, then the issue is resolved. 
 
-##### 2025-01-14: Does Not Work
+##### 2025-01-14: !working
 
 If you receive the option to rebuild the `epdfserver` and you agree to building on Emacs, there are instances where the build fails. When running `M-x pdf-tools-install` you will rebuild within Emacs and will obtain more information. If the error consists of not being able to find poppler, copy and paste the command used to run the installation and run it in the command line outside of emacs.
 
 
-### The `jw-emacs-productivity.el` section for `org-noter` and `org-pdftools`
+### org-noter.el and org-pdftools.el
 
 ```emacs-lisp
 
 
   ;; Ensure org-noter is installed
   (use-package org-noter
-    :ensure t
+    :straight t
     :after (org pdf-tools)
     :config
     (setq org-noter-always-create-frame nil))
 
   ;; Ensure org-pdftools is set up to work with org-mode
   (use-package org-pdftools
-    :ensure t
+    :straight t
     :hook (org-mode . org-pdftools-setup-link))
 
   ;; Configure org-noter-pdftools
@@ -1398,27 +1359,14 @@ If you receive the option to rebuild the `epdfserver` and you agree to building 
 
     ;; If you are working with EPUB files
     (use-package nov
-      :ensure t)
+      :straight t)
 
     ;; If you are working with DJVU files
     (use-package djvu
-      :ensure t))
+      :straight t))
 
 ```
 
-### The `jw-emacs-productivity.el` section for `pdf-viewer` hooks
-
-```emacs-lisp
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;   (defun jw-pdf-view-mode-hook ()                     ;;
-  ;;   "Hook to run when entering pdf-view-mode."          ;;
-  ;;   (display-line-numbers-mode -1))                     ;;
-  ;;                                                       ;;
-  ;; (add-hook 'pdf-view-mode-hook 'jw-pdf-view-mode-hook) ;;
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-```
 
 ### The `jw-emacs-productivity.el` call to provide
 
@@ -1430,24 +1378,28 @@ If you receive the option to rebuild the `epdfserver` and you agree to building 
 
 
 ## The `jw-emacs-development.el` module
-### The `jw-emacs-development.el` section for `tramp.el` --native
+### tramp.el --native
 
 ```emacs-lisp
 
-    (use-package tramp
-      :ensure t)
-    (setq tramp-default-method "ssh")
-    ;; for debugging
-    (setq tramp-verbose 3)
-    ;; some basic performance enhancements
-    (setq remote-file-name-inhibit-locks t
-        tramp-use-scp-direct-remote-copying t
-        remote-file-name-inhibit-auto-save-visited t)
+  (use-package tramp
+    :straight t)
+  (setq tramp-default-method "ssh")
+  ;; for debugging
+  (setq tramp-verbose 3)
+  ;; some basic performance enhancements
+  (setq remote-file-name-inhibit-locks t
+      tramp-use-scp-direct-remote-copying t
+      remote-file-name-inhibit-auto-save-visited t)
+  ;; disable backup files for tramp
+  (add-to-list 'backup-directory-alist
+              (cons tramp-file-name-regexp nil))
 
+  (setq tramp-connection-timeout 10) ;; 10 sec timeout
 ```
 
 
-#### Using Direct Async
+#### direct async
 
 Guide by [this blog post](https:/*coredumped.dev*2025*06*18*making-tramp-go-brrrr.*). 
 
@@ -1466,7 +1418,7 @@ Guide by [this blog post](https:/*coredumped.dev*2025*06*18*making-tramp-go-brrr
 
 ```
 
-#### Fixing Remote Compile
+#### fixing remote compile
 
 `compile` command disables remote ssh connection sharing, which will require you to reenter your password each time you connect. Want to enable this for convienence.
 
@@ -1478,7 +1430,7 @@ Guide by [this blog post](https:/*coredumped.dev*2025*06*18*making-tramp-go-brrr
 
 ```
 
-#### Caching
+#### caching
 
 Cache passwords until the end of the emacs session, which is default.
 
@@ -1569,7 +1521,7 @@ Cache passwords until the end of the emacs session, which is default.
 
 ```
 
-### The `jw-emacs-development.el` section for `project.el`  --native
+### project.el  --native
 
 ```emacs-lisp
 
@@ -1592,7 +1544,7 @@ Set the project paths, but currently the code below only works for `emacs 30+`.
 
 ```
 
-### The `jw-emacs-development.el` section for visualizing parent delimiters --native
+### visualizing delimiters
 
 `show-paren-mode` allows one to see matching pairs of parentheses and other characters. When point is on the opening character of one of the paired characters, the other is highlighted. When the point is after the closing character of one of the paired characters, the other is highlighted. 
 
@@ -1602,7 +1554,7 @@ Set the project paths, but currently the code below only works for `emacs 30+`.
 
 ```
 
-### The `jw-emacs-development.el` section for visualizing all delimiters
+To visualize all delimiters,
 
 [rainbow-delimiters](https:/*github.com*Fanael/rainbow-delimiters) is useful in programming modes because it colorizes nested parentheses and brackets according to their nesting depth.  This makes it a lot easier to visually match parentheses in Emacs Lisp code without having to count them yourself.
 
@@ -1613,7 +1565,7 @@ Set the project paths, but currently the code below only works for `emacs 30+`.
 
 ```
 
-### The `jw-emacs-development.el` section for pairing delimiters (`electric-pair-mode`) --native
+### electric-pair-mode.el --native
 
 `electric-pair-mode` will auto pair delimiters for you. One issue with the auto pairing is the `<` character in `org-mode`. The following hook to the enabling of `electric-pair-mode` aims to solve the issue when in `org-mode`.
 
@@ -1628,20 +1580,22 @@ Set the project paths, but currently the code below only works for `emacs 30+`.
 
 ```
 
-### The `jw-emacs-development.el` section for pairing delimiters (`evil-surround`)
+### evil-surround.el
 
 `evil-surround` emulates [surround.vim](https:/*github.com*tpope*vim-surround). For usage instructions visit [evil-surround](https:**github.com*emacs-evil/evil-surround)
 
 ```emacs-lisp
 
   (use-package evil-surround
-    :ensure t
+    :straight t
     :config
     (global-evil-surround-mode 1))
 
 ```
 
-### The `jw-emacs-development.el` section for logging keys (`command-log-mode`)
+### command-log-mode.el
+
+For logging keys,
 
 [command-log-mode](https:/*github.com*lewang/command-log-mode) is useful for displaying a panel showing each key binding you use in a panel on the right side of the frame. Great for live streams and screencasts!
 
@@ -1653,6 +1607,7 @@ Set the project paths, but currently the code below only works for `emacs 30+`.
 ```
 
 To activate `command-log-mode` you must first run `M-x global-command-log-mode` to have `command-log-mode` in every buffer and then run `M-x clm/toggle-command-log-buffer` to have the buffer be displayed.
+
 ### The `jw-emacs-development.el` call to provide
 
 ```emacs-lisp
@@ -1670,7 +1625,7 @@ When the `which-key-mode` is enabled, any incomplete key sequence will produce a
 ```emacs-lisp
 
   (use-package which-key
-    :ensure t
+    :straight t
     :hook (after-init . which-key-mode)
     :config
     (setq which-key-separator "  ")
@@ -1684,19 +1639,20 @@ When the `which-key-mode` is enabled, any incomplete key sequence will produce a
   (provide 'jw-emacs-which-key)
 
 ```
+
 ## The `jw-emacs-ai.el` module
 
 The purpose of this module is to have my integrations with llms or other ai models.
 
 
-### The `jw-emacs-ai.el` section for `gptel`
+### gptel.el
 
 Incorporates the use of llms in the emacs client. For a great summary of the features please see [Ben Simon's video](https:/*www.blogbyben.com*2024*08*gptel-mindblowing-integration-between.html). For accessing the source code please see [karthink's repo](https:/*github.com*karthink/gptel).
 
 ```emacs-lisp
 
   (use-package gptel
-    :ensure t
+    :straight t
     :after auth-source
     :init
     ;; Ensure auth-source is configured to find ~/.authinfo or ~/.authinfo.gpg
@@ -1756,6 +1712,10 @@ Incorporates the use of llms in the emacs client. For a great summary of the fea
     ;; (setq auth-source-debug t)
   )
 
+(setq gptel-display-buffer-action
+      '(display-buffer-in-side-window
+        (side . right)
+        (window-width . 0.4)))
 
 ```
 
@@ -1798,7 +1758,7 @@ Incorporates the use of llms in the emacs client. For a great summary of the fea
 
 ## The `jw-emacs-langs.el` module
 
-### The `jw-emacs-langs.el` section for `treesit` --native
+### treesitter
 
 Set language sources for treesit
 
@@ -1844,14 +1804,12 @@ Set language sources for treesit
 ```
 
 
-### The `jw-emacs-langs.el` section for `treesit-auto`
-
 The issue with the built in `treesit.el` is that it does not auto default to which language server. In addition if you need to install you will have to input the url yourself. This package is here to automate the process.
 
 ```emacs-lisp
 
   (use-package treesit-auto
-    :ensure t
+    :straight t
     :custom
     (treesit-auto-install 'prompt)
     :config
@@ -1869,45 +1827,78 @@ Auto install grammars when missing
 ```
 
 
-### The `jw-emacs-langs.el` section for `python` support
+### latex
+
+```emacs-lisp
+
+(use-package auctex
+  :straight t
+  :defer t
+  :init
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq TeX-PDF-mode t) ; Enable PDF output by default
+  :config
+  ;; Set the default engine
+  (setq TeX-engine 'default)
+  
+  ;; Put auxiliary files in a tmp subdirectory
+  (setq TeX-output-dir "tmp/")
+  (setq LaTeX-output-directory "tmp/")
+  
+  ;; Simplified PDF viewer configuration for macOS
+  (when (eq system-type 'darwin) ; macOS only
+    (setq TeX-view-program-list '(("Preview" "open -a Preview %o")))
+    (setq TeX-view-program-selection '((output-pdf "Preview"))))
+  
+  ;; For non-macOS systems, use default viewer
+  (unless (eq system-type 'darwin)
+    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
+  
+  ;; Ensure we have a default command
+  (setq TeX-command-default "LaTeX")
+  
+  ;; Auto-revert PDF files when they change
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer)
+  
+  ;; LaTeX mode hooks
+  (add-hook 'LaTeX-mode-hook 'visual-line-mode) ; Enable word wrap
+  (add-hook 'LaTeX-mode-hook 'flyspell-mode)    ; Enable spell checking
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)  ; Enable math mode
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; Enable RefTeX
+  
+  ;; Ensure TeX-command-run-all works properly
+  (add-hook 'LaTeX-mode-hook 
+            (lambda ()
+              ;; Make sure the master file is set
+              (when (and (buffer-file-name)
+                         (not TeX-master))
+                (setq-local TeX-master (file-name-sans-extension
+                                       (file-name-nondirectory (buffer-file-name)))))))
+  
+  ;; RefTeX configuration
+  (setq reftex-plug-into-AUCTeX t))
+
+
+```
+
+### python
 
 Configuring pythone envs with `conda`.
 
 ```emacs-lisp
 
-  (unless (package-installed-p 'conda)
-    (package-refresh-contents)
-    (package-install 'conda))
-
-  (require 'conda)
+(use-package conda
+  :straight t
+  :config
   (setq conda-anaconda-home (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/"))
-   (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
-    (conda-env-autoactivate-mode t)
+  (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
+  (conda-env-autoactivate-mode t))
 
 
 ```
 
-Define `jw/find-python-langserver`
-
-```emacs-lisp
-
-  (defun jw/find-pyright-langserver ()
-    (or (executable-find "pyright-langserver")
-        (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver")
-        ))
-
-```
-
-```emacs-lisp
-
-  (defun jw/local-pyright-command ()
-    "Return the command to run the local Pyright server."
-    (let ((pyright-path (jw/find-pyright-langserver)))
-      (if pyright-path
-          (list pyright-path "--stdio")
-        (error "Could not find pyright-langserver"))))
-
-```
 
 Python formatter configuration.
 
@@ -1921,7 +1912,7 @@ Python formatter configuration.
 ```
 
 
-### The `jw-emacs-langs.el` section for `astro` support
+### astro.js
 
 I used the [following guide](https:/*medium.com*@jrmjrm/configuring-emacs-and-eglot-to-work-with-astro-language-server-9408eb709ab0) from medium for this configuration.
 
@@ -1929,7 +1920,7 @@ I used the [following guide](https:/*medium.com*@jrmjrm/configuring-emacs-and-eg
 
     ;; WEB MODE
     (use-package web-mode
-    :ensure t)
+    :straight t)
 
     ;; astro
     ;; ASTRO
@@ -1944,26 +1935,21 @@ I used the [following guide](https:/*medium.com*@jrmjrm/configuring-emacs-and-eg
 Now set the config in [eglot](id:F9D087EE-895F-4DBC-BBCF-3056A2A5266E).  
 
 
-### The `jw-emacs-langs.el` section for `rust` support
+### rust
 
 Download `rust-mode`.
 
 ```emacs-lisp
 
-  (unless (package-installed-p 'rust-mode)
-    (package-refresh-contents)
-    (package-install 'rust-mode))
+    (use-package rust-mode
+    :straight t
+    :mode "\\.rs\\'"
+    :config
+    (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode)))
 
 ```
 
 Setting up `rust-mode`.
-
-```emacs-lisp
-
-  (require 'rust-mode)
-  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
-
-```
 
 Custom function to find rust analyzer.
 
@@ -1976,7 +1962,7 @@ Custom function to find rust analyzer.
 ```
 
 
-### The `jw-emacs-langs.el` section for `typescript` support
+### typescript
 
 Typescript support is done through `treesit.el`, which is now native to emacs as of v29.
 
@@ -2001,14 +1987,14 @@ Install `json-mode`
 ```
 
 
-### The `jw-emacs-langs.el` section for automating code formatting with `apheleia`
+### apheleia.el
 
 Make sure you have the necessary packages installed.
 
 ```emacs-lisp
 
   (use-package apheleia
-    :ensure t
+    :straight t
     :config
     (setf (alist-get 'prettier-json apheleia-formatters)
         '("prettier" "--stdin-filepath" filepath))
@@ -2024,43 +2010,42 @@ Make sure you have the necessary packages installed.
 ```
 
 
-### The `jw-emacs-langs.el` section for language server configuration (`eglot`) --native
+### eglot.el --native
 :PROPERTIES:
 :ID:       F9D087EE-895F-4DBC-BBCF-3056A2A5266E
 :END:
-
 
 ```emacs-lisp
 
     ;; Dynamic server program functions
     (defun jw/python-lsp-program (&optional interactive)
     "Get Python LSP program."
-    (jw/local-pyright-command))
+    (if (file-remote-p default-directory)
+        '("/home/jozhw/bin/pylsp-wrapper")
+        '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
 
-    (defun jw/rust-lsp-program (&optional interactive)
-    "Get Rust LSP program."
-    (list (jw/find-rust-analyzer)))
+        (defun jw/rust-lsp-program (&optional interactive)
+        "Get Rust LSP program."
+        (list (jw/find-rust-analyzer)))
 
-    (defun jw/clangd-lsp-program (&optional interactive)
-    "Get clangd LSP program."
-    '("clangd"))
+        (defun jw/clangd-lsp-program (&optional interactive)
+        "Get clangd LSP program."
+        '("clangd"))
 
-    (defun jw/typescript-lsp-program (&optional interactive)
-    "Get TypeScript LSP program."
-    '("typescript-language-server" "--stdio"))
+        (defun jw/typescript-lsp-program (&optional interactive)
+        "Get TypeScript LSP program."
+        '("typescript-language-server" "--stdio"))
 
-    (defun jw/marksman-lsp-program (&optional interactive)
-    "Get Marksman LSP program."
-    '("marksman"))
+        (defun jw/marksman-lsp-program (&optional interactive)
+        "Get Marksman LSP program."
+        '("marksman"))
 
-    (defun jw/astro-lsp-program (&optional interactive)
-    "Get Astro LSP program."
-    '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
+        (defun jw/astro-lsp-program (&optional interactive)
+        "Get Astro LSP program."
+        '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
 
 
 ```
-
-
 
 Add to `eglot` server list and setup hook after eglot is loaded.
 
@@ -2136,12 +2121,14 @@ Add the hook to auto start `eglot` depending on configured language.
 ```
 
 
-### The `jw-emacs-langs.el` section for debugging (`dape`)
+### dape.el
+
+For debuggin,
 
 ```emacs-lisp
 
   (use-package dape
-    :ensure t
+    :straight t
     ;; :preface
     ;; By default dape shares the same keybinding prefix as `gud'
     ;; If you do not want to use any prefix, set it to nil.
@@ -2188,12 +2175,14 @@ Add the hook to auto start `eglot` depending on configured language.
 ```
 
 
-### The `jw-emacs-langs.el` for `tramp-sh.el` and remote configs
+### tramp-sh.el
 
 ```emacs-lisp
 
+  ;; for remote configs
   (with-eval-after-load 'tramp
     (require 'tramp-sh)
+    (setq tramp-own-remote-path '("/bin" "/usr/bin" "/usr/local/bin"))
     (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 ```

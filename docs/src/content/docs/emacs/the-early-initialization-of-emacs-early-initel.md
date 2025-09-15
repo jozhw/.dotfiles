@@ -3,6 +3,7 @@ title: The early initialization of Emacs (`early-init.el`)
 description: Documentation for The early initialization of Emacs (`early-init.el`)
 ---
 
+
 ## The `early-init.el` macro to run code only in a Desktop Environment
 
 ```emacs-lisp
@@ -26,22 +27,17 @@ description: Documentation for The early initialization of Emacs (`early-init.el
 
 ```emacs-lisp
 
-;; Set frame parameters early
-(setq initial-frame-alist
-      (append '((alpha . (90 . 90))
-                (fullscreen . maximized))
-              initial-frame-alist))
+  ;; Set frame parameters early (without font-related settings;; )
+  (setq initial-frame-alist
+        (append '((alpha . (90 . 90))
+                  (fullscreen . maximized))
+                initial-frame-alist))
 
-(setq default-frame-alist
-      (append '((alpha . (90 . 90))
-                (fullscreen . maximized))
-              default-frame-alist))
+  (setq default-frame-alist
+        (append '((alpha . (90 . 90))
+                  (fullscreen . maximized))
+                default-frame-alist))
 
-;; Ensure the current frame is also updated
-(add-hook 'window-setup-hook
-          (lambda ()
-            (set-frame-parameter nil 'alpha '(90 . 90))
-            (set-frame-parameter nil 'fullscreen 'maximized)))
 
 ```
 
@@ -135,13 +131,14 @@ Also, turn on `lexical-binding` for the init file!
       (enable-theme theme)))
 
 ```
+
 ## The `early-init.el` gives a name to the default frame
 
-The following configuration is taken from [prot's configuration](https:/*protesilaos.com*emacs/dotemacs#h:ad227f7e-b0a7-43f8-91d6-b50db82da9ad).
+The following configuration is taken from [prot's configuration](https:/*protesilaos.com*emacs/dotemacs#h:ad227f7e-b0a7-43f8-91d6-b50db82da9ad), with the description from Prot,
 
-Finally, I like to call my default frame `home`. This is because I use my `beframe` package to group the list of buffers on a per-frame basis ([The prot-emacs-window.el section about beframe](https:/*protesilaos.com*emacs/dotemacs#h:77e4f174-0c86-460d-8a54-47545f922ae9)). The multi-frame arrangement is the best thing I ever did to boost my productivity: bonus points when used in tandem with a tiling window manager.
+"Finally, I like to call my default frame `home`. This is because I use my `beframe` package to group the list of buffers on a per-frame basis ([The prot-emacs-window.el section about beframe](https:/*protesilaos.com*emacs/dotemacs#h:77e4f174-0c86-460d-8a54-47545f922ae9)). The multi-frame arrangement is the best thing I ever did to boost my productivity: bonus points when used in tandem with a tiling window manager.
 
-Naming frames allows you to select them using completion. Emacs can do this (`M-x select-frame-by-name`), though it is not always reliable as it depends on the window manager (it works fine on GNOME, from what I can tell). For minimalist window managers on Linux, something like the `rofi` program can select system windows based on their name.
+Naming frames allows you to select them using completion. Emacs can do this (`M-x select-frame-by-name`), though it is not always reliable as it depends on the window manager (it works fine on GNOME, from what I can tell). For minimalist window managers on Linux, something like the `rofi` program can select system windows based on their name."
 
 ```emacs-lisp
 

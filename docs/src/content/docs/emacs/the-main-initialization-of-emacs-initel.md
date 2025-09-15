@@ -3,56 +3,68 @@ title: The main initialization of Emacs (`init.el`)
 description: Documentation for The main initialization of Emacs (`init.el`)
 ---
 
-## The `init.el` conditional to remove display of mode-line
+
+## The `init.el` key installations post-`early-init.el`
+
+These installations do not require the package manager to be configured and are also essential for the functioning of the rest of this configuration.
+
+### straight.el
+
+```emacs-lisp
+
+    ;; installation of straight.el package manager
+    (defvar bootstrap-version)
+    (let ((bootstrap-file
+            (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+            (bootstrap-version 5))
+        (unless (file-exists-p bootstrap-file)
+        (with-current-buffer
+            (url-retrieve-synchronously
+            "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+            'silent 'inhibit-cookies)
+            (goto-char (point-max))
+            (eval-print-last-sexp)))
+        (load bootstrap-file nil 'nomessage))
+
+```
+
+## The `init.el` for aesthetics
 
 Want to disable to mode-line at the very start and enable it when the mode-line configuration is loaded to make startup look smooth. The mode-line will be added when the mode-line is loaded ([The `jw-emacs-modeline.el` to enable the mode-line](*The `jw-emacs-modeline.el` to enable the mode-line)).
 
 ```emacs-lisp
 
-(setq-default mode-line-format nil)
+    ;; conditional to remove display of mode-line
+    (setq-default mode-line-format nil)
 
 ```
-## The `init.el` setting to `dired` --native
+
 
 ```emacs-lisp
 
-  (require 'dired)
+    (require 'dired)
 
-  (add-hook 'dired-mode-hook
-            (lambda ()
-              (define-key dired-mode-map (kbd "(") 'dired-hide-details-mode)
-              ;; Uncomment the next line to start with details hidden
-              (dired-hide-details-mode 1)
-              ))
-
+    ;; make dired look nice
+    (add-hook 'dired-mode-hook
+                (lambda ()
+                (define-key dired-mode-map (kbd "(") 'dired-hide-details-mode)
+                ;; Uncomment the next line to start with details hidden
+                (dired-hide-details-mode 1)
+                ))
 
 ```
-## The `init.el` settings for packages (`use-package`) --native
+
+
+## The `init.el` for package manager
 
 [use-package](https:/*github.com*jwiegley/use-package) is a native package built into emacs since `v29.0.0` and is used in this configuration to make it a lot easier to automate the installation and configuration of everything else.
 
 ```emacs-lisp
 
-  ;; Initialize package sources
-  (require 'package)
+    ;; Install use-package
+    (straight-use-package 'use-package)
 
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ("melpa-stable" . "https://stable.melpa.org/packages/")
-                           ("org" . "https://orgmode.org/elpa/")
-                           ("elpa" . "https://elpa.gnu.org/packages/")))
-
-  (add-to-list 'package-archives
-               '("gnu-devel" . "https://elpa.gnu.org/devel/") :append)
-
-  (package-initialize)
-  (unless package-archive-contents
-   (package-refresh-contents))
-
-  ;; Initialize use-package on non-Linux platforms
-  (unless (package-installed-p 'use-package)
-     (package-install 'use-package))
-
-  (setq use-package-always-ensure t)
+    (setq straight-use-package-by-default t)
 
 ```
 
@@ -67,51 +79,8 @@ To debug `use-package` run `emacs --debug-init`.
             debug-on-error t)
     (setq use-package-verbose nil
           use-package-expand-minimally t))
-```
-
-To remove packages that are not used run `M-x use-package-autoremove`. However, the current code only works for packages that have the `:ensure` | `:vc` | `:init` keywords. 
-
-```emacs-lisp
-
-  (eval-and-compile
-    (defvar use-package-selected-packages nil
-     "Explicitly installed packages.")
-
-    (define-advice use-package-handler/:ensure
-        (:around (fn name-symbol keyword args rest state) select)
-      (let ((items (funcall fn name-symbol keyword args rest state)))
-        (dolist (ensure args items)
-          (let ((package
-                 (or (and (eq ensure t) (use-package-as-symbol name-symbol))
-                     ensure)))
-            (when package
-              (when (consp package)
-                (setq package (car package)))
-              (push `(add-to-list 'use-package-selected-packages ',package) items))))))
-
-    (define-advice use-package-handler/:vc
-        (:around (fn name-symbol &rest rest) select)
-      (cons `(add-to-list 'use-package-selected-packages ',name-symbol)
-            (apply fn name-symbol rest))))
-
-  (define-advice use-package-handler/:init
-    (:around (fn name-symbol keyword args rest state) select)
-  (let ((items (funcall fn name-symbol keyword args rest state)))
-    (dolist (init args items)
-      (push `(add-to-list 'use-package-selected-packages ',name-symbol) items))))
-
-  (defun use-package-autoremove ()
-  "Autoremove packages not used by use-package."
-  (interactive)
-  (let ((package-selected-packages use-package-selected-packages))
-    (package-autoremove)))
 
 ```
-
-#### Troubleshooting
-
-If you get a package not found error and the package exists, then you can try refreshing the package contents by running `M-x package-refresh-contents`.
-
 
 
 ## The `init.el` for keeping `.emacs.d` clean
@@ -127,7 +96,7 @@ If you get a package not found error and the package exists, then you can try re
         auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves/" user-emacs-directory) t)))
 
   (use-package no-littering
-    :ensure t)
+    :straight t)
 
 ```
 
@@ -139,7 +108,7 @@ in conjunction with Evil modes.
 ```emacs-lisp
 
   (use-package general
-    :ensure t
+    :straight t
     :config
     (general-create-definer jw/leader-key-def
       :keymaps '(normal insert visual emacs)
@@ -149,43 +118,37 @@ in conjunction with Evil modes.
 ```
 
 ## The `init.el` essential key configurations
-### The `init.el` essential key configuration for `esc`
-
-Bind the quit prompting function to the `esc` key.
 
 ```emacs-lisp
 
+  ;; bind quit prompting func to escape
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 ```
 
-### The `init.el` essential key configuration for indentation
-
-Use spaces instead of tabs for indentation
 
 ```emacs-lisp
 
+  ;; use spaces instead of tabs for indentation
   (setq-default indent-tabs-mode nil)
 
 ```
 
-### The `init.el` essential key configuration for user interface toggles
 
 ```emacs-lisp
-
+  ;; for ui toggles
   (jw/leader-key-def
     "t"  '(:ignore t :which-key "toggles")
     "tw" 'whitespace-mode
     )
 
 ```
-### The `init.el` essential key configuration for `evil-mode`
 
-This configuration uses [evil-mode](https:/*evil.readthedocs.io*en*latest*index.html) for a Vi-like modal editing experience.  [evil-collection](https:/*github.com*emacs-evil/evil-collection) is used to automatically configure various Emacs modes with Vi-like keybindings for evil-mode.
+### evil-mode
 
 ```emacs-lisp
   (use-package evil
-    :ensure t
+    :straight t
     :init
     (setq evil-want-integration t)
     (setq evil-want-keybinding nil)
@@ -193,8 +156,10 @@ This configuration uses [evil-mode](https:/*evil.readthedocs.io*en*latest*index.
     (setq evil-want-C-i-jump nil)
     :config
     (evil-mode 1)
+    (evil-set-undo-system 'undo-redo)
     (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
     (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+    (define-key evil-normal-state-map (kbd "C-r") 'evil-redo)
 
     ;; Use visual line motions even outside of visual-line-mode buffers
     (evil-global-set-key 'motion "j" 'evil-next-visual-line)
@@ -205,11 +170,23 @@ This configuration uses [evil-mode](https:/*evil.readthedocs.io*en*latest*index.
 
   (use-package evil-collection
     :after evil
-    :ensure t
+    :straight t
     :config
     (evil-collection-init)
     (with-eval-after-load 'forge
     (evil-collection-forge-setup)))
+
+
+```
+
+### smooth scrolling
+
+```emacs-lisp
+
+  ;; Enable smooth scrolling with a margin
+  (setq scroll-margin 5)          ; Start scrolling when cursor is 5 lines from top/bottom
+  (setq scroll-conservatively 100) ; Scroll line by line, not by half-screen jumps
+  (setq scroll-step 1)            ; Scroll one line at a time when needed
 
 
 ```
@@ -228,7 +205,7 @@ This configuration uses [evil-mode](https:/*evil.readthedocs.io*en*latest*index.
 
   ;; A few more useful configurations...
   (use-package emacs
-    :ensure t
+    :straight t
     :init
     ;; TAB cycle if there are only few candidates
     ;; (setq completion-cycle-threshold 3)
@@ -274,7 +251,7 @@ Also check the [prot-emacs-which-key.el module](https:/*protesilaos.com*emacs/do
 
 ```emacs-lisp
 
-  (defcustom jw-emacs-load-which-key nil
+  (defcustom jw-emacs-load-which-key t
     "When non-nil, display key binding hints after a short delay.
   This user option must be set in the `prot-emacs-pre-custom.el'
   file.  If that file exists in the Emacs directory, it is loaded
@@ -309,6 +286,7 @@ Also check the [prot-emacs-which-key.el module](https:/*protesilaos.com*emacs/do
                    (const :tag "Do not load a theme module" nil)))
 
 ```
+
 ## The `init.el` final part to load the individual modules
 
 Load the `jw-emacs-modules`.

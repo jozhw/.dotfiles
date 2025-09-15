@@ -5,7 +5,9 @@ description: Documentation for The custom libraries of my Emacs configuration (`
 
 ## The `jw-copy.el` library
 
-### The `jw-copy.el` for copying file path
+### jw-dired-get-file-path
+
+Copy file path.
 
 ```emacs-lisp
   (defun jw-dired-get-file-path ()
@@ -19,7 +21,9 @@ description: Documentation for The custom libraries of my Emacs configuration (`
 
 ```
 
-### The `jw-copy.el` for copying a file
+### jw-copy-file
+
+Copy a file.
 
 ```emacs-lisp
 
