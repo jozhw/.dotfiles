@@ -2470,27 +2470,6 @@ Configuring pythone envs with =conda=.
 
 #+end_src
 
-Define =jw/find-python-langserver=
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
-
-  (defun jw/find-pyright-langserver ()
-    (or (executable-find "pyright-langserver")
-        (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver")
-        ))
-
-#+end_src
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
-
-  (defun jw/local-pyright-command ()
-    "Return the command to run the local Pyright server."
-    (let ((pyright-path (jw/find-pyright-langserver)))
-      (if pyright-path
-          (list pyright-path "--stdio")
-        (error "Could not find pyright-langserver"))))
-
-#+end_src
 
 Python formatter configuration.
 
@@ -2616,9 +2595,11 @@ Make sure you have the necessary packages installed.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
     ;; Dynamic server program functions
-    (defun jw/python-lsp-program (&optional interactive)
-    "Get Python LSP program."
-    (jw/local-pyright-command))
+(defun jw/python-lsp-program (&optional interactive)
+  "Get Python LSP program."
+  (if (file-remote-p default-directory)
+      '("/home/jozhw/bin/pylsp-wrapper")
+    '("pyright-langserver" "--stdio")))
 
     (defun jw/rust-lsp-program (&optional interactive)
     "Get Rust LSP program."
@@ -2777,6 +2758,7 @@ Add the hook to auto start =eglot= depending on configured language.
 
   (with-eval-after-load 'tramp
     (require 'tramp-sh)
+    (setq tramp-own-remote-path '("/bin" "/usr/bin" "/usr/local/bin"))
     (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 #+end_src

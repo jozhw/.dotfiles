@@ -104,18 +104,6 @@
  (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
   (conda-env-autoactivate-mode t)
 
-(defun jw/find-pyright-langserver ()
-  (or (executable-find "pyright-langserver")
-      (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver")
-      ))
-
-(defun jw/local-pyright-command ()
-  "Return the command to run the local Pyright server."
-  (let ((pyright-path (jw/find-pyright-langserver)))
-    (if pyright-path
-        (list pyright-path "--stdio")
-      (error "Could not find pyright-langserver"))))
-
 (use-package python-black
   :demand t
   :after python
@@ -167,28 +155,30 @@
 
 ;; Dynamic server program functions
 (defun jw/python-lsp-program (&optional interactive)
-"Get Python LSP program."
-(jw/local-pyright-command))
+  "Get Python LSP program."
+  (if (file-remote-p default-directory)
+      '("/home/jozhw/bin/pylsp-wrapper")
+    '("pyright-langserver" "--stdio")))
 
-(defun jw/rust-lsp-program (&optional interactive)
-"Get Rust LSP program."
-(list (jw/find-rust-analyzer)))
+    (defun jw/rust-lsp-program (&optional interactive)
+    "Get Rust LSP program."
+    (list (jw/find-rust-analyzer)))
 
-(defun jw/clangd-lsp-program (&optional interactive)
-"Get clangd LSP program."
-'("clangd"))
+    (defun jw/clangd-lsp-program (&optional interactive)
+    "Get clangd LSP program."
+    '("clangd"))
 
-(defun jw/typescript-lsp-program (&optional interactive)
-"Get TypeScript LSP program."
-'("typescript-language-server" "--stdio"))
+    (defun jw/typescript-lsp-program (&optional interactive)
+    "Get TypeScript LSP program."
+    '("typescript-language-server" "--stdio"))
 
-(defun jw/marksman-lsp-program (&optional interactive)
-"Get Marksman LSP program."
-'("marksman"))
+    (defun jw/marksman-lsp-program (&optional interactive)
+    "Get Marksman LSP program."
+    '("marksman"))
 
-(defun jw/astro-lsp-program (&optional interactive)
-"Get Astro LSP program."
-'("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
+    (defun jw/astro-lsp-program (&optional interactive)
+    "Get Astro LSP program."
+    '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
 
 ;; Enhanced eglot configuration
 (with-eval-after-load 'eglot
@@ -292,6 +282,7 @@
 
 (with-eval-after-load 'tramp
   (require 'tramp-sh)
+  (setq tramp-own-remote-path '("/bin" "/usr/bin" "/usr/local/bin"))
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 (provide 'jw-emacs-langs)
