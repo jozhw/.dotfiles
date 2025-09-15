@@ -58,12 +58,6 @@
 (setq org-startup-with-inline-images t)
 (add-hook 'org-mode-hook 'org-display-inline-images)
 
-(unless (package-installed-p 'org-transclusion)
-  (package-refresh-contents)
-  (package-install 'org-transclusion))
-
-(require 'org-transclusion)
-
 ;; This is needed as of Org 9.2
 (require 'org-tempo)
 

@@ -1,5 +1,5 @@
 (use-package pdf-tools
-  :ensure t
+  :straight t
   :config
   (pdf-tools-install)
   :hook (pdf-view-mode . (lambda () 
@@ -8,14 +8,14 @@
 
 ;; Ensure org-noter is installed
 (use-package org-noter
-  :ensure t
+  :straight t
   :after (org pdf-tools)
   :config
   (setq org-noter-always-create-frame nil))
 
 ;; Ensure org-pdftools is set up to work with org-mode
 (use-package org-pdftools
-  :ensure t
+  :straight t
   :hook (org-mode . org-pdftools-setup-link))
 
 ;; Configure org-noter-pdftools
@@ -56,18 +56,10 @@
 
   ;; If you are working with EPUB files
   (use-package nov
-    :ensure t)
+    :straight t)
 
   ;; If you are working with DJVU files
   (use-package djvu
-    :ensure t))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;   (defun jw-pdf-view-mode-hook ()                     ;;
-;;   "Hook to run when entering pdf-view-mode."          ;;
-;;   (display-line-numbers-mode -1))                     ;;
-;;                                                       ;;
-;; (add-hook 'pdf-view-mode-hook 'jw-pdf-view-mode-hook) ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    :straight t))
 
 (provide 'jw-emacs-productivity)

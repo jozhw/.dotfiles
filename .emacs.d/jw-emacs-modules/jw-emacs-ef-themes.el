@@ -3,7 +3,7 @@
   ;; The themes are customisable.  Read the manual:
   ;; <https://protesilaos.com/emacs/ef-themes>.
   (use-package ef-themes
-    :ensure t
+    :straight t
     :demand t
     :bind ("<f5>" . ef-themes-select)
     :config

@@ -19,7 +19,7 @@ This emacs configuration, if running the GUI version requires the font type call
 
 * Running Emacs
 
-** In the Command Line 
+** CLI
 
 To run emacs in the command-line/terminal simply use the following command while in your command-line/terminal: =emacs -nw=.
 
@@ -48,22 +48,17 @@ To run emacs in the command-line/terminal simply use the following command while
 
 #+begin_src emacs-lisp :tangle ".emacs.d/early-init.el" :mkdirp yes
 
-;; Set frame parameters early
-(setq initial-frame-alist
-      (append '((alpha . (90 . 90))
-                (fullscreen . maximized))
-              initial-frame-alist))
+  ;; Set frame parameters early (without font-related settings;; )
+  (setq initial-frame-alist
+        (append '((alpha . (90 . 90))
+                  (fullscreen . maximized))
+                initial-frame-alist))
 
-(setq default-frame-alist
-      (append '((alpha . (90 . 90))
-                (fullscreen . maximized))
-              default-frame-alist))
+  (setq default-frame-alist
+        (append '((alpha . (90 . 90))
+                  (fullscreen . maximized))
+                default-frame-alist))
 
-;; Ensure the current frame is also updated
-(add-hook 'window-setup-hook
-          (lambda ()
-            (set-frame-parameter nil 'alpha '(90 . 90))
-            (set-frame-parameter nil 'fullscreen 'maximized)))
 
 #+end_src
 
@@ -157,6 +152,7 @@ Also, turn on =lexical-binding= for the init file!
       (enable-theme theme)))
 
 #+end_src
+
 ** The =early-init.el= gives a name to the default frame
 
 The following configuration is taken from [[https://protesilaos.com/emacs/dotemacs#h:ad227f7e-b0a7-43f8-91d6-b50db82da9ad][prot's configuration]].
@@ -178,58 +174,72 @@ Naming frames allows you to select them using completion. Emacs can do this (=M-
   (add-to-list 'load-path (expand-file-name "jw-emacs-modules" user-emacs-directory))
   (add-to-list 'load-path (expand-file-name "jw-lisp" user-emacs-directory))
 
+
 #+end_src
+
 * The main initialization of Emacs (=init.el=)
-** The =init.el= conditional to remove display of mode-line
+
+** The =init.el= key installations post-=early-init.el=
+
+These installations do not require the package manager to be configured and are also essential for the functioning of the rest of this configuration.
+
+*** straight.el installation
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+    ;; installation of straight.el package manager
+    (defvar bootstrap-version)
+    (let ((bootstrap-file
+            (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+            (bootstrap-version 5))
+        (unless (file-exists-p bootstrap-file)
+        (with-current-buffer
+            (url-retrieve-synchronously
+            "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+            'silent 'inhibit-cookies)
+            (goto-char (point-max))
+            (eval-print-last-sexp)))
+        (load bootstrap-file nil 'nomessage))
+
+#+end_src
+
+** The =init.el= for aesthetics 
 
 Want to disable to mode-line at the very start and enable it when the mode-line configuration is loaded to make startup look smooth. The mode-line will be added when the mode-line is loaded ([[*The =jw-emacs-modeline.el= to enable the mode-line][The =jw-emacs-modeline.el= to enable the mode-line]]).
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
-(setq-default mode-line-format nil)
+    ;; conditional to remove display of mode-line
+    (setq-default mode-line-format nil)
 
 #+end_src
-** The =init.el= setting to =dired= --native
+
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
-  (require 'dired)
+    (require 'dired)
 
-  (add-hook 'dired-mode-hook
-            (lambda ()
-              (define-key dired-mode-map (kbd "(") 'dired-hide-details-mode)
-              ;; Uncomment the next line to start with details hidden
-              (dired-hide-details-mode 1)
-              ))
-
+    ;; make dired look nice
+    (add-hook 'dired-mode-hook
+                (lambda ()
+                (define-key dired-mode-map (kbd "(") 'dired-hide-details-mode)
+                ;; Uncomment the next line to start with details hidden
+                (dired-hide-details-mode 1)
+                ))
 
 #+end_src
-** The =init.el= settings for packages (=use-package=) --native
+
+
+** The =init.el= for package manager
 
 [[https://github.com/jwiegley/use-package][use-package]] is a native package built into emacs since =v29.0.0= and is used in this configuration to make it a lot easier to automate the installation and configuration of everything else.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
-  ;; Initialize package sources
-  (require 'package)
+    ;; Install use-package
+    (straight-use-package 'use-package)
 
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ("melpa-stable" . "https://stable.melpa.org/packages/")
-                           ("org" . "https://orgmode.org/elpa/")
-                           ("elpa" . "https://elpa.gnu.org/packages/")))
-
-  (add-to-list 'package-archives
-               '("gnu-devel" . "https://elpa.gnu.org/devel/") :append)
-
-  (package-initialize)
-  (unless package-archive-contents
-   (package-refresh-contents))
-
-  ;; Initialize use-package on non-Linux platforms
-  (unless (package-installed-p 'use-package)
-     (package-install 'use-package))
-
-  (setq use-package-always-ensure t)
+    (setq straight-use-package-by-default t)
 
 #+end_src
 
@@ -244,51 +254,8 @@ To debug =use-package= run =emacs --debug-init=.
             debug-on-error t)
     (setq use-package-verbose nil
           use-package-expand-minimally t))
-#+end_src
-
-To remove packages that are not used run =M-x use-package-autoremove=. However, the current code only works for packages that have the =:ensure= | =:vc= | =:init= keywords. 
-
-#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
-
-  (eval-and-compile
-    (defvar use-package-selected-packages nil
-     "Explicitly installed packages.")
-
-    (define-advice use-package-handler/:ensure
-        (:around (fn name-symbol keyword args rest state) select)
-      (let ((items (funcall fn name-symbol keyword args rest state)))
-        (dolist (ensure args items)
-          (let ((package
-                 (or (and (eq ensure t) (use-package-as-symbol name-symbol))
-                     ensure)))
-            (when package
-              (when (consp package)
-                (setq package (car package)))
-              (push `(add-to-list 'use-package-selected-packages ',package) items))))))
-
-    (define-advice use-package-handler/:vc
-        (:around (fn name-symbol &rest rest) select)
-      (cons `(add-to-list 'use-package-selected-packages ',name-symbol)
-            (apply fn name-symbol rest))))
-
-  (define-advice use-package-handler/:init
-    (:around (fn name-symbol keyword args rest state) select)
-  (let ((items (funcall fn name-symbol keyword args rest state)))
-    (dolist (init args items)
-      (push `(add-to-list 'use-package-selected-packages ',name-symbol) items))))
-
-  (defun use-package-autoremove ()
-  "Autoremove packages not used by use-package."
-  (interactive)
-  (let ((package-selected-packages use-package-selected-packages))
-    (package-autoremove)))
 
 #+end_src
-
-**** Troubleshooting
-
-If you get a package not found error and the package exists, then you can try refreshing the package contents by running =M-x package-refresh-contents=.
-
 
 
 ** The =init.el= for keeping =.emacs.d= clean
@@ -304,7 +271,7 @@ If you get a package not found error and the package exists, then you can try re
         auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves/" user-emacs-directory) t)))
 
   (use-package no-littering
-    :ensure t)
+    :straight t)
 
 #+end_src
 
@@ -316,7 +283,7 @@ in conjunction with Evil modes.
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
   (use-package general
-    :ensure t
+    :straight t
     :config
     (general-create-definer jw/leader-key-def
       :keymaps '(normal insert visual emacs)
@@ -326,43 +293,37 @@ in conjunction with Evil modes.
 #+end_src
 
 ** The =init.el= essential key configurations
-*** The =init.el= essential key configuration for =esc=
-
-Bind the quit prompting function to the =esc= key.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
+  ;; bind quit prompting func to escape
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 #+end_src
 
-*** The =init.el= essential key configuration for indentation
-
-Use spaces instead of tabs for indentation
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
+  ;; use spaces instead of tabs for indentation
   (setq-default indent-tabs-mode nil)
 
 #+end_src
 
-*** The =init.el= essential key configuration for user interface toggles
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
-
+  ;; for ui toggles
   (jw/leader-key-def
     "t"  '(:ignore t :which-key "toggles")
     "tw" 'whitespace-mode
     )
 
 #+end_src
-*** The =init.el= essential key configuration for =evil-mode=
 
-This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil-mode]] for a Vi-like modal editing experience.  [[https://github.com/emacs-evil/evil-collection][evil-collection]] is used to automatically configure various Emacs modes with Vi-like keybindings for evil-mode.
+*** The =init.el= essential key configuration for =evil-mode=
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
   (use-package evil
-    :ensure t
+    :straight t
     :init
     (setq evil-want-integration t)
     (setq evil-want-keybinding nil)
@@ -384,7 +345,7 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
   (use-package evil-collection
     :after evil
-    :ensure t
+    :straight t
     :config
     (evil-collection-init)
     (with-eval-after-load 'forge
@@ -420,7 +381,7 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
   ;; A few more useful configurations...
   (use-package emacs
-    :ensure t
+    :straight t
     :init
     ;; TAB cycle if there are only few candidates
     ;; (setq completion-cycle-threshold 3)
@@ -466,7 +427,7 @@ Also check the [[https://protesilaos.com/emacs/dotemacs#h:ddb1070d-2f91-4224-ad4
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
-  (defcustom jw-emacs-load-which-key nil
+  (defcustom jw-emacs-load-which-key t
     "When non-nil, display key binding hints after a short delay.
   This user option must be set in the `prot-emacs-pre-custom.el'
   file.  If that file exists in the Emacs directory, it is loaded
@@ -559,7 +520,7 @@ Load =jw-lisp=.
   ;; The themes are highly customisable.  Read the manual:
   ;; <https://protesilaos.com/emacs/modus-themes>.
   (use-package modus-themes
-    :ensure t
+    :straight t
     :demand t
     :bind (("<f5>" . modus-themes-toggle)
            ("C-<f5>" . modus-themes-select))
@@ -597,7 +558,7 @@ Load =jw-lisp=.
   ;; The themes are customisable.  Read the manual:
   ;; <https://protesilaos.com/emacs/ef-themes>.
   (use-package ef-themes
-    :ensure t
+    :straight t
     :demand t
     :bind ("<f5>" . ef-themes-select)
     :config
@@ -633,7 +594,7 @@ Load =jw-lisp=.
   ;;;; Pulsar
   ;; Read the pulsar manual: <https://protesilaos.com/emacs/pulsar>.
   (use-package pulsar
-    :ensure t
+    :straight t
     :config
     (setopt pulsar-pulse t
             pulsar-delay 0.055
@@ -663,7 +624,7 @@ Load =jw-lisp=.
   ;;;; Lin
   ;; Read the lin manual: <https://protesilaos.com/emacs/lin>.
   (use-package lin
-    :ensure t
+    :straight t
     :hook (after-init . lin-global-mode) ; applies to all `lin-mode-hooks'
     :config
     ;; You can use this to live update the face:
@@ -684,7 +645,7 @@ Load =jw-lisp=.
   ;; Yet another one of my packages:
   ;; <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>.
   (use-package spacious-padding
-    :ensure t
+    :straight t
     :if (display-graphic-p)
     :hook (after-init . spacious-padding-mode)
     :bind ("<f8>" . spacious-padding-mode)
@@ -717,7 +678,7 @@ Load =jw-lisp=.
   ;;; Cursor appearance (cursory)
   ;; Read the manual: <https://protesilaos.com/emacs/cursory>.
   (use-package cursory
-    :ensure t
+    :straight t
     :demand t
     :if (display-graphic-p)
     :config
@@ -777,7 +738,7 @@ Load =jw-lisp=.
 
    ;;;; Theme buffet
   (use-package theme-buffet
-    :ensure t
+    :straight t
     :after (:any modus-themes ef-themes)
     :defer 1
     :config
@@ -813,20 +774,17 @@ Load =jw-lisp=.
   ;;;; Fontaine (font configurations)
   ;; Read the manual: <https://protesilaos.com/emacs/fontaine>
   (use-package fontaine
-    :ensure t
+    :straight t
     :if (display-graphic-p)
     :hook
-    ;; Persist the latest font preset when closing/starting Emacs and
-    ;; while switching between themes.
+    ;; Persist the latest font preset when closing/starting Emacs.
     ((after-init . fontaine-mode)
      (after-init . (lambda ()
-                          ;; Set last preset or fall back to desired style from `fontaine-presets'.
-                          (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
-    :bind ("C-c f" . fontaine-set-preset)
+                     ;; Set last preset or fall back to desired style from `fontaine-presets'.
+                     (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
+    :bind (("C-c f" . fontaine-set-preset)
+           ("C-c F" . fontaine-toggle-preset))
     :config
-    ;; This is defined in Emacs C code: it belongs to font settings.
-    (setq x-underline-at-descent-line nil)
-
     ;; And this is for Emacs28.
     (setq-default text-scale-remap-header-line t)
 
@@ -834,90 +792,97 @@ Load =jw-lisp=.
     ;; completeness.
     (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
 
+    ;; The font family is my design: <https://github.com/protesilaos/aporetic>.
     (setq fontaine-presets
           '((small
-             :default-family "Iosevka Comfy Motion"
-             :default-height 80
-             :variable-pitch-family "Iosevka Comfy Duo")
+             :default-height 80)
             (regular) ; like this it uses all the fallback values and is named `regular'
             (medium
-             :default-weight semilight
+             :default-family "Aporetic Serif Mono"
              :default-height 115
-             :bold-weight extrabold)
+             :fixed-pitch-family "Aporetic Serif Mono"
+             :variable-pitch-family "Aporetic Sans")
             (large
-             :inherit medium
              :default-height 150)
-            (live-stream
-             :default-family "Iosevka Comfy Wide Motion"
-             :default-height 150
-             :default-weight medium
-             :fixed-pitch-family "Iosevka Comfy Wide Motion"
-             :variable-pitch-family "Iosevka Comfy Wide Duo"
-             :bold-weight extrabold)
             (presentation
              :default-height 180)
+            (jumbo
+             :inherit medium
+             :default-height 260)
             (t
              ;; I keep all properties for didactic purposes, but most can be
              ;; omitted.  See the fontaine manual for the technicalities:
              ;; <https://protesilaos.com/emacs/fontaine>.
-             :default-family "Iosevka Comfy"
+             :default-family "Aporetic Sans Mono"
              :default-weight regular
              :default-slant normal
-             :default-height 180
+             :default-width normal
+             :default-height 100
 
-             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight nil
              :fixed-pitch-slant nil
+             :fixed-pitch-width nil
              :fixed-pitch-height 1.0
 
              :fixed-pitch-serif-family nil
              :fixed-pitch-serif-weight nil
              :fixed-pitch-serif-slant nil
+             :fixed-pitch-serif-width nil
              :fixed-pitch-serif-height 1.0
 
-             :variable-pitch-family "Iosevka Comfy Motion Duo"
+             :variable-pitch-family "Aporetic Serif"
              :variable-pitch-weight nil
              :variable-pitch-slant nil
+             :variable-pitch-width nil
              :variable-pitch-height 1.0
 
              :mode-line-active-family nil
              :mode-line-active-weight nil
              :mode-line-active-slant nil
+             :mode-line-active-width nil
              :mode-line-active-height 1.0
 
              :mode-line-inactive-family nil
              :mode-line-inactive-weight nil
              :mode-line-inactive-slant nil
+             :mode-line-inactive-width nil
              :mode-line-inactive-height 1.0
 
              :header-line-family nil
              :header-line-weight nil
              :header-line-slant nil
+             :header-line-width nil
              :header-line-height 1.0
 
              :line-number-family nil
              :line-number-weight nil
              :line-number-slant nil
+             :line-number-width nil
              :line-number-height 1.0
 
              :tab-bar-family nil
              :tab-bar-weight nil
              :tab-bar-slant nil
+             :tab-bar-width nil
              :tab-bar-height 1.0
 
              :tab-line-family nil
              :tab-line-weight nil
              :tab-line-slant nil
+             :tab-line-width nil
              :tab-line-height 1.0
 
              :bold-family nil
-             :bold-weight bold
              :bold-slant nil
+             :bold-weight bold
+             :bold-width nil
              :bold-height 1.0
 
              :italic-family nil
              :italic-weight nil
              :italic-slant italic
+             :italic-width nil
              :italic-height 1.0
 
              :line-spacing nil)))
@@ -933,7 +898,7 @@ Load =jw-lisp=.
 
     ;;;;; `variable-pitch-mode' setup
   (use-package face-remap
-    :ensure nil
+    :straight nil
     :functions jw/enable-variable-pitch
     :bind ( :map ctl-x-x-map
             ("v" . variable-pitch-mode))
@@ -967,14 +932,6 @@ Load =jw-lisp=.
 ** The =jw-emacs-essentials.el= module
 *** The =jw-emacs-essentials.el= section for gui configurations
 
-Set up the visible bell to be on instead of the beeping. For macos it is best to leave commented below to not have the visual bell because it is distracting.
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el"
-
-  ;; (setq visible-bell t)
-
-#+end_src
-
-
 Enable line numbers globally, but not in the following modes: org, term, shell, and eshell.
 
 In addition to line numbers, the column number will also be displayed. 
@@ -1001,17 +958,6 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el"
 
   (setq-default fill-column 80)
-
-#+end_src
-
-*** The =jw-emacs-essentials.el= section for window configurations
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el"
-
-  (global-set-key (kbd "C-c <up>")    'windmove-up)
-  (global-set-key (kbd "C-c <down>")  'windmove-down)
-  (global-set-key (kbd "C-c <left>")  'windmove-left)
-  (global-set-key (kbd "C-c <right>") 'windmove-right)
 
 #+end_src
 
@@ -1080,7 +1026,7 @@ If you are running in the =macos= terminal, then you have to make sure that you 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
   (use-package doom-modeline
-    :ensure t
+    :straight t
     :init (doom-modeline-mode 1)
     :custom ((doom-modeline-height 15)))
 
@@ -1152,6 +1098,7 @@ Display the virtual environment version.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
   (use-package savehist
+    :straight t
     :config
     (setq history-length 25)
     (savehist-mode 1))
@@ -1179,7 +1126,7 @@ Display the virtual environment version.
         (delete-word (- arg))))
 
   (use-package vertico
-    :ensure t
+    :straight t
     :bind (:map vertico-map
            ("C-j" . vertico-next)
            ("C-k" . vertico-previous)
@@ -1193,26 +1140,12 @@ Display the virtual environment version.
 
 #+end_src
 
-**** Troubleshooting
-
-If in the Emacs buffer if you get a =Error in post-command-hook (vertico--exhibit): (void-function compat--completion-metadata-get)= error then you either delete vertico and recomplile or recompile
-
-#+begin_src
-
-  M-x package-recompile
-  vertico
-
-#+end_src
-
-The reason this issue is observed is due to updating Emacs.
-
-A link to the github issue where I found the solution is [[https://github.com/minad/vertico/discussions/501#discussioncomment-12390155][here]].
 
 *** The =jw-emacs-completion.el= section for completions in region (=corfu.el=)
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
   (use-package corfu
-    :ensure t
+    :straight t
     ;; Optional customizations
     :custom
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
@@ -1283,7 +1216,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
   (use-package cape
-    :ensure t
+    :straight t
     :init
     (add-to-list 'completion-at-point-functions #'cape-file)
     (add-to-list 'completion-at-point-functions #'cape-dabbrev))
@@ -1304,17 +1237,14 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 *** The =jw-emacs-completion.el= section for completion annotations (=marginalia.el=)
 
-Marginalia provides helpful annotations for various types of minibuffer completions. You can think of it as a replacement of =ivy-rich=.
-
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
-  (use-package marginalia
-    :after vertico
-    :ensure t
-    :custom
-    (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
-    :init
-    (marginalia-mode))
+;;; Detailed completion annotations (marginalia.el)
+(use-package marginalia
+  :straight t
+  :hook (after-init . marginalia-mode)
+  :config
+  (setq marginalia-max-relative-age 0)) ; absolute time
 
 #+end_src
 
@@ -1481,20 +1411,6 @@ Customize the heading bullets to make it consistent and nicer.
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for =org-transclusion=
-
-Link to the docs: [[https://nobiot.github.io/org-transclusion/][org-transclude]].
-
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
-
-  (unless (package-installed-p 'org-transclusion)
-    (package-refresh-contents)
-    (package-install 'org-transclusion))
-
-  (require 'org-transclusion)
-
-#+end_src
 
 *** The =jw-emacs-org.el= section for structured templates (=org-tempo=) --native
 
@@ -1680,7 +1596,7 @@ For macos, make sure to have =coreutils= installed. To install run, =brew instal
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
   (use-package denote
-                   :ensure t)
+                   :straight t)
 
   (setq denote-directory (expand-file-name "~/Otzar/Gnosis/"))
   (setq denote-save-buffer-after-creation nil)
@@ -1807,18 +1723,6 @@ Create [[id:43652950-B9D2-4FAF-8F0C-75D1496E85FE][the =jw-emacs-org.el= section 
 
 #+end_src
 
-*** The =jw-emacs-information-management.el= section for =ledger-mode=
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
-
-  (use-package ledger-mode
-    :ensure t
-    :mode (
-           "\\.ledger\\'")
-    :custom (ledger-clear-whole-transactions t))
-
-
-#+end_src
 
 *** The =jw-emacs-information-management.el= section for clean directories
 
@@ -1850,7 +1754,7 @@ Make sure to run =M-x pdf-tools-install= after installation.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-productivity.el" :mkdirp yes
 
   (use-package pdf-tools
-    :ensure t
+    :straight t
     :config
     (pdf-tools-install)
     :hook (pdf-view-mode . (lambda () 
@@ -1860,7 +1764,7 @@ Make sure to run =M-x pdf-tools-install= after installation.
 
 #+end_src
 
-**** Troubleshooting
+**** Issues
 
 ***** 2025-01-15: Works
 
@@ -1878,14 +1782,14 @@ If you receive the option to rebuild the =epdfserver= and you agree to building 
 
   ;; Ensure org-noter is installed
   (use-package org-noter
-    :ensure t
+    :straight t
     :after (org pdf-tools)
     :config
     (setq org-noter-always-create-frame nil))
 
   ;; Ensure org-pdftools is set up to work with org-mode
   (use-package org-pdftools
-    :ensure t
+    :straight t
     :hook (org-mode . org-pdftools-setup-link))
 
   ;; Configure org-noter-pdftools
@@ -1926,27 +1830,14 @@ If you receive the option to rebuild the =epdfserver= and you agree to building 
 
     ;; If you are working with EPUB files
     (use-package nov
-      :ensure t)
+      :straight t)
 
     ;; If you are working with DJVU files
     (use-package djvu
-      :ensure t))
+      :straight t))
 
 #+end_src
 
-*** The =jw-emacs-productivity.el= section for =pdf-viewer= hooks
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-productivity.el" :mkdirp yes
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;   (defun jw-pdf-view-mode-hook ()                     ;;
-  ;;   "Hook to run when entering pdf-view-mode."          ;;
-  ;;   (display-line-numbers-mode -1))                     ;;
-  ;;                                                       ;;
-  ;; (add-hook 'pdf-view-mode-hook 'jw-pdf-view-mode-hook) ;;
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-#+end_src
 
 *** The =jw-emacs-productivity.el= call to provide
 
@@ -1963,7 +1854,7 @@ If you receive the option to rebuild the =epdfserver= and you agree to building 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
 
   (use-package tramp
-    :ensure t)
+    :straight t)
   (setq tramp-default-method "ssh")
   ;; for debugging
   (setq tramp-verbose 3)
@@ -2167,7 +2058,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
 
   (use-package evil-surround
-    :ensure t
+    :straight t
     :config
     (global-evil-surround-mode 1))
 
@@ -2202,7 +2093,7 @@ When the =which-key-mode= is enabled, any incomplete key sequence will produce a
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-which-key.el" :mkdirp yes
 
   (use-package which-key
-    :ensure t
+    :straight t
     :hook (after-init . which-key-mode)
     :config
     (setq which-key-separator "  ")
@@ -2228,7 +2119,7 @@ Incorporates the use of llms in the emacs client. For a great summary of the fea
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-ai.el" :mkdirp yes
 
   (use-package gptel
-    :ensure t
+    :straight t
     :after auth-source
     :init
     ;; Ensure auth-source is configured to find ~/.authinfo or ~/.authinfo.gpg
@@ -2288,6 +2179,10 @@ Incorporates the use of llms in the emacs client. For a great summary of the fea
     ;; (setq auth-source-debug t)
   )
 
+(setq gptel-display-buffer-action
+      '(display-buffer-in-side-window
+        (side . right)
+        (window-width . 0.4)))
 
 #+end_src
 
@@ -2383,7 +2278,7 @@ The issue with the built in =treesit.el= is that it does not auto default to whi
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
   (use-package treesit-auto
-    :ensure t
+    :straight t
     :custom
     (treesit-auto-install 'prompt)
     :config
@@ -2406,7 +2301,7 @@ Auto install grammars when missing
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
 (use-package auctex
-  :ensure t
+  :straight t
   :defer t
   :init
   (setq TeX-auto-save t)
@@ -2462,14 +2357,12 @@ Configuring pythone envs with =conda=.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-  (unless (package-installed-p 'conda)
-    (package-refresh-contents)
-    (package-install 'conda))
-
-  (require 'conda)
+(use-package conda
+  :straight t
+  :config
   (setq conda-anaconda-home (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/"))
-   (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
-    (conda-env-autoactivate-mode t)
+  (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
+  (conda-env-autoactivate-mode t))
 
 
 #+end_src
@@ -2495,7 +2388,7 @@ I used the [[https://medium.com/@jrmjrm/configuring-emacs-and-eglot-to-work-with
 
     ;; WEB MODE
     (use-package web-mode
-    :ensure t)
+    :straight t)
 
     ;; astro
     ;; ASTRO
@@ -2516,20 +2409,16 @@ Download =rust-mode=.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-  (unless (package-installed-p 'rust-mode)
-    (package-refresh-contents)
-    (package-install 'rust-mode))
+    (use-package rust-mode
+    :straight t
+    :mode "\\.rs\\'"
+    :config
+    (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode)))
 
 #+end_src
 
 Setting up =rust-mode=.
 
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
-
-  (require 'rust-mode)
-  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
-
-#+end_src
 
 Custom function to find rust analyzer.
 
@@ -2574,7 +2463,7 @@ Make sure you have the necessary packages installed.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
   (use-package apheleia
-    :ensure t
+    :straight t
     :config
     (setf (alist-get 'prettier-json apheleia-formatters)
         '("prettier" "--stdin-filepath" filepath))
@@ -2603,7 +2492,7 @@ Make sure you have the necessary packages installed.
   "Get Python LSP program."
   (if (file-remote-p default-directory)
       '("/home/jozhw/bin/pylsp-wrapper")
-    '("pyright-langserver" "--stdio")))
+    '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
 
     (defun jw/rust-lsp-program (&optional interactive)
     "Get Rust LSP program."
@@ -2709,7 +2598,7 @@ Add the hook to auto start =eglot= depending on configured language.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
   (use-package dape
-    :ensure t
+    :straight t
     ;; :preface
     ;; By default dape shares the same keybinding prefix as `gud'
     ;; If you do not want to use any prefix, set it to nil.

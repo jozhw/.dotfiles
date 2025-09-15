@@ -1,4 +1,5 @@
 (use-package savehist
+  :straight t
   :config
   (setq history-length 25)
   (savehist-mode 1))
@@ -20,7 +21,7 @@ folder, otherwise delete a word"
       (delete-word (- arg))))
 
 (use-package vertico
-  :ensure t
+  :straight t
   :bind (:map vertico-map
          ("C-j" . vertico-next)
          ("C-k" . vertico-previous)
@@ -33,7 +34,7 @@ folder, otherwise delete a word"
   (vertico-mode))
 
 (use-package corfu
-  :ensure t
+  :straight t
   ;; Optional customizations
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
@@ -86,7 +87,7 @@ folder, otherwise delete a word"
   )
 
 (use-package cape
-  :ensure t
+  :straight t
   :init
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-dabbrev))
@@ -97,12 +98,11 @@ folder, otherwise delete a word"
         completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion))))))
 
+;;; Detailed completion annotations (marginalia.el)
 (use-package marginalia
-  :after vertico
-  :ensure t
-  :custom
-  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
-  :init
-  (marginalia-mode))
+  :straight t
+  :hook (after-init . marginalia-mode)
+  :config
+  (setq marginalia-max-relative-age 0)) ; absolute time
 
 (provide 'jw-emacs-completion)

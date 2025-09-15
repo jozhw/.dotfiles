@@ -3,7 +3,7 @@
 ;; The themes are highly customisable.  Read the manual:
 ;; <https://protesilaos.com/emacs/modus-themes>.
 (use-package modus-themes
-  :ensure t
+  :straight t
   :demand t
   :bind (("<f5>" . modus-themes-toggle)
          ("C-<f5>" . modus-themes-select))

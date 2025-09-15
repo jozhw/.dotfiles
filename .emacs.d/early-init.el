@@ -11,7 +11,7 @@ constitutes a matching tiling window manager."
               ((not (string-match-p session jw-emacs-tiling-window-manager-regexp))))
      ,@body))
 
-;; Set frame parameters early
+;; Set frame parameters early (without font-related settings;; )
 (setq initial-frame-alist
       (append '((alpha . (90 . 90))
                 (fullscreen . maximized))
@@ -21,12 +21,6 @@ constitutes a matching tiling window manager."
       (append '((alpha . (90 . 90))
                 (fullscreen . maximized))
               default-frame-alist))
-
-;; Ensure the current frame is also updated
-(add-hook 'window-setup-hook
-          (lambda ()
-            (set-frame-parameter nil 'alpha '(90 . 90))
-            (set-frame-parameter nil 'fullscreen 'maximized)))
 
 (setq frame-resize-pixelwise t
       frame-inhibit-implied-resize t

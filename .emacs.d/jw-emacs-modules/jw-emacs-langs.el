@@ -37,7 +37,7 @@
                                        ))
 
 (use-package treesit-auto
-  :ensure t
+  :straight t
   :custom
   (treesit-auto-install 'prompt)
   :config
@@ -47,7 +47,7 @@
 (setq treesit-auto-install 'prompt)
 
 (use-package auctex
-  :ensure t
+  :straight t
   :defer t
   :init
   (setq TeX-auto-save t)
@@ -95,14 +95,12 @@
   ;; RefTeX configuration
   (setq reftex-plug-into-AUCTeX t))
 
-(unless (package-installed-p 'conda)
-  (package-refresh-contents)
-  (package-install 'conda))
-
-(require 'conda)
-(setq conda-anaconda-home (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/"))
- (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
-  (conda-env-autoactivate-mode t)
+(use-package conda
+  :straight t
+  :config
+  (setq conda-anaconda-home (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/"))
+  (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
+  (conda-env-autoactivate-mode t))
 
 (use-package python-black
   :demand t
@@ -111,7 +109,7 @@
 
 ;; WEB MODE
 (use-package web-mode
-:ensure t)
+:straight t)
 
 ;; astro
 ;; ASTRO
@@ -120,12 +118,11 @@
     (append '((".*\\.astro\\'" . astro-mode))
             auto-mode-alist))
 
-(unless (package-installed-p 'rust-mode)
-  (package-refresh-contents)
-  (package-install 'rust-mode))
-
-(require 'rust-mode)
-(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+(use-package rust-mode
+:straight t
+:mode "\\.rs\\'"
+:config
+(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode)))
 
 (defun jw/find-rust-analyzer ()
   (or (executable-find "rust-analyzer")
@@ -140,7 +137,7 @@
 ;; :mode "\\.json\\'")
 
 (use-package apheleia
-  :ensure t
+  :straight t
   :config
   (setf (alist-get 'prettier-json apheleia-formatters)
       '("prettier" "--stdin-filepath" filepath))
@@ -158,7 +155,7 @@
   "Get Python LSP program."
   (if (file-remote-p default-directory)
       '("/home/jozhw/bin/pylsp-wrapper")
-    '("pyright-langserver" "--stdio")))
+    '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
 
     (defun jw/rust-lsp-program (&optional interactive)
     "Get Rust LSP program."
@@ -236,7 +233,7 @@
 (add-hook 'astro-mode-hook #'jw/maybe-start-eglot)
 
 (use-package dape
-  :ensure t
+  :straight t
   ;; :preface
   ;; By default dape shares the same keybinding prefix as `gud'
   ;; If you do not want to use any prefix, set it to nil.
