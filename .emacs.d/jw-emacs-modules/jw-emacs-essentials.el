@@ -1,5 +1,3 @@
-;; (setq visible-bell t)
-
 ;; Enable column numbers
 (column-number-mode)
 
@@ -14,10 +12,5 @@
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 (setq-default fill-column 80)
-
-(global-set-key (kbd "C-c <up>")    'windmove-up)
-(global-set-key (kbd "C-c <down>")  'windmove-down)
-(global-set-key (kbd "C-c <left>")  'windmove-left)
-(global-set-key (kbd "C-c <right>") 'windmove-right)
 
 (provide 'jw-emacs-essentials)

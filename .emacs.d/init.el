@@ -1,34 +1,34 @@
+;; installation of straight.el package manager
+(defvar bootstrap-version)
+(let ((bootstrap-file
+        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+        "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+        'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+
+;; conditional to remove display of mode-line
 (setq-default mode-line-format nil)
 
 (require 'dired)
 
+;; make dired look nice
 (add-hook 'dired-mode-hook
-          (lambda ()
+            (lambda ()
             (define-key dired-mode-map (kbd "(") 'dired-hide-details-mode)
             ;; Uncomment the next line to start with details hidden
             (dired-hide-details-mode 1)
             ))
 
-;; Initialize package sources
-(require 'package)
+;; Install use-package
+(straight-use-package 'use-package)
 
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("melpa-stable" . "https://stable.melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
-
-(add-to-list 'package-archives
-             '("gnu-devel" . "https://elpa.gnu.org/devel/") :append)
-
-(package-initialize)
-(unless package-archive-contents
- (package-refresh-contents))
-
-;; Initialize use-package on non-Linux platforms
-(unless (package-installed-p 'use-package)
-   (package-install 'use-package))
-
-(setq use-package-always-ensure t)
+(setq straight-use-package-by-default t)
 
 (if init-file-debug
     (setq use-package-verbose t
@@ -37,39 +37,6 @@
           debug-on-error t)
   (setq use-package-verbose nil
         use-package-expand-minimally t))
-
-(eval-and-compile
-  (defvar use-package-selected-packages nil
-   "Explicitly installed packages.")
-
-  (define-advice use-package-handler/:ensure
-      (:around (fn name-symbol keyword args rest state) select)
-    (let ((items (funcall fn name-symbol keyword args rest state)))
-      (dolist (ensure args items)
-        (let ((package
-               (or (and (eq ensure t) (use-package-as-symbol name-symbol))
-                   ensure)))
-          (when package
-            (when (consp package)
-              (setq package (car package)))
-            (push `(add-to-list 'use-package-selected-packages ',package) items))))))
-
-  (define-advice use-package-handler/:vc
-      (:around (fn name-symbol &rest rest) select)
-    (cons `(add-to-list 'use-package-selected-packages ',name-symbol)
-          (apply fn name-symbol rest))))
-
-(define-advice use-package-handler/:init
-  (:around (fn name-symbol keyword args rest state) select)
-(let ((items (funcall fn name-symbol keyword args rest state)))
-  (dolist (init args items)
-    (push `(add-to-list 'use-package-selected-packages ',name-symbol) items))))
-
-(defun use-package-autoremove ()
-"Autoremove packages not used by use-package."
-(interactive)
-(let ((package-selected-packages use-package-selected-packages))
-  (package-autoremove)))
 
 (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
 
@@ -80,27 +47,30 @@
       auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves/" user-emacs-directory) t)))
 
 (use-package no-littering
-  :ensure t)
+  :straight t)
 
 (use-package general
-  :ensure t
+  :straight t
   :config
   (general-create-definer jw/leader-key-def
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC"))
 
+;; bind quit prompting func to escape
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
+;; use spaces instead of tabs for indentation
 (setq-default indent-tabs-mode nil)
 
+;; for ui toggles
 (jw/leader-key-def
   "t"  '(:ignore t :which-key "toggles")
   "tw" 'whitespace-mode
   )
 
 (use-package evil
-  :ensure t
+  :straight t
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
@@ -122,7 +92,7 @@
 
 (use-package evil-collection
   :after evil
-  :ensure t
+  :straight t
   :config
   (evil-collection-init)
   (with-eval-after-load 'forge
@@ -138,7 +108,7 @@
 
 ;; A few more useful configurations...
 (use-package emacs
-  :ensure t
+  :straight t
   :init
   ;; TAB cycle if there are only few candidates
   ;; (setq completion-cycle-threshold 3)
@@ -167,7 +137,7 @@ prot-emacs-pre-custom.el.  This file must be in the same
 directory as the init.el."
   :group 'file)
 
-(defcustom jw-emacs-load-which-key nil
+(defcustom jw-emacs-load-which-key t
   "When non-nil, display key binding hints after a short delay.
 This user option must be set in the `prot-emacs-pre-custom.el'
 file.  If that file exists in the Emacs directory, it is loaded

@@ -1,5 +1,5 @@
 (use-package denote
-                 :ensure t)
+                 :straight t)
 
 (setq denote-directory (expand-file-name "~/Otzar/Gnosis/"))
 (setq denote-save-buffer-after-creation nil)
@@ -101,12 +101,6 @@ convention with the '__tasks' tag."
         ""
         :empty-lines 1
         )))
-
-(use-package ledger-mode
-  :ensure t
-  :mode (
-         "\\.ledger\\'")
-  :custom (ledger-clear-whole-transactions t))
 
 (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
 

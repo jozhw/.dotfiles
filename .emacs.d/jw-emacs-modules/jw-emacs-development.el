@@ -1,5 +1,5 @@
 (use-package tramp
-  :ensure t)
+  :straight t)
 (setq tramp-default-method "ssh")
 ;; for debugging
 (setq tramp-verbose 3)
@@ -125,7 +125,7 @@
                 (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
 
 (use-package evil-surround
-  :ensure t
+  :straight t
   :config
   (global-evil-surround-mode 1))
 

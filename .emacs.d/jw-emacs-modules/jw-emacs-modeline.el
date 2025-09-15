@@ -4,7 +4,7 @@
       display-time-default-load-average nil)
 
 (use-package doom-modeline
-  :ensure t
+  :straight t
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 15)))
 

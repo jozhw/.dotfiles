@@ -11,15 +11,22 @@ This literate configuration has a script that will convert this file into an =as
 This org file is used to set up my emacs configuration. The code blocks of this org file
 will be executed using =org-babel-tangle=. Thus, to initiate you must use =M-x ^org-babel-tangle= or use the key-binding =C-c C-v t=.
 
-* Dependencies
+** Dependencies
 
-** Fonts
+*** aporetic typeface
 
-This emacs configuration, if running the GUI version requires the font type called [[https://github.com/protesilaos/iosevka-comfy][iosevka-comfy]]. I have a copy of the git repo attached as a submodule in the fonts directory of this repository. Make sure that have that font style installed.
+The GUI version of Emacs uses this typeface, so make sure to have aporetic installed. Here is the [[https://github.com/protesilaos/aporetic][repo]] for the install instructions.
 
-* Running Emacs
+For macos users, you can simply run
 
-** In the Command Line 
+#+begin_src bash
+
+  brew install font-aporetic
+
+#+end_src
+
+
+** Running Emacs
 
 To run emacs in the command-line/terminal simply use the following command while in your command-line/terminal: =emacs -nw=.
 
@@ -48,22 +55,17 @@ To run emacs in the command-line/terminal simply use the following command while
 
 #+begin_src emacs-lisp :tangle ".emacs.d/early-init.el" :mkdirp yes
 
-;; Set frame parameters early
-(setq initial-frame-alist
-      (append '((alpha . (90 . 90))
-                (fullscreen . maximized))
-              initial-frame-alist))
+  ;; Set frame parameters early (without font-related settings;; )
+  (setq initial-frame-alist
+        (append '((alpha . (90 . 90))
+                  (fullscreen . maximized))
+                initial-frame-alist))
 
-(setq default-frame-alist
-      (append '((alpha . (90 . 90))
-                (fullscreen . maximized))
-              default-frame-alist))
+  (setq default-frame-alist
+        (append '((alpha . (90 . 90))
+                  (fullscreen . maximized))
+                default-frame-alist))
 
-;; Ensure the current frame is also updated
-(add-hook 'window-setup-hook
-          (lambda ()
-            (set-frame-parameter nil 'alpha '(90 . 90))
-            (set-frame-parameter nil 'fullscreen 'maximized)))
 
 #+end_src
 
@@ -157,13 +159,14 @@ Also, turn on =lexical-binding= for the init file!
       (enable-theme theme)))
 
 #+end_src
+
 ** The =early-init.el= gives a name to the default frame
 
-The following configuration is taken from [[https://protesilaos.com/emacs/dotemacs#h:ad227f7e-b0a7-43f8-91d6-b50db82da9ad][prot's configuration]].
+The following configuration is taken from [[https://protesilaos.com/emacs/dotemacs#h:ad227f7e-b0a7-43f8-91d6-b50db82da9ad][prot's configuration]], with the description from Prot,
 
-Finally, I like to call my default frame =home=. This is because I use my =beframe= package to group the list of buffers on a per-frame basis ([[https://protesilaos.com/emacs/dotemacs#h:77e4f174-0c86-460d-8a54-47545f922ae9][The prot-emacs-window.el section about beframe]]). The multi-frame arrangement is the best thing I ever did to boost my productivity: bonus points when used in tandem with a tiling window manager.
+"Finally, I like to call my default frame =home=. This is because I use my =beframe= package to group the list of buffers on a per-frame basis ([[https://protesilaos.com/emacs/dotemacs#h:77e4f174-0c86-460d-8a54-47545f922ae9][The prot-emacs-window.el section about beframe]]). The multi-frame arrangement is the best thing I ever did to boost my productivity: bonus points when used in tandem with a tiling window manager.
 
-Naming frames allows you to select them using completion. Emacs can do this (=M-x select-frame-by-name=), though it is not always reliable as it depends on the window manager (it works fine on GNOME, from what I can tell). For minimalist window managers on Linux, something like the =rofi= program can select system windows based on their name.
+Naming frames allows you to select them using completion. Emacs can do this (=M-x select-frame-by-name=), though it is not always reliable as it depends on the window manager (it works fine on GNOME, from what I can tell). For minimalist window managers on Linux, something like the =rofi= program can select system windows based on their name."
 
 #+begin_src emacs-lisp :tangle ".emacs.d/early-init.el" :mkdirp yes
 
@@ -179,57 +182,70 @@ Naming frames allows you to select them using completion. Emacs can do this (=M-
   (add-to-list 'load-path (expand-file-name "jw-lisp" user-emacs-directory))
 
 #+end_src
+
 * The main initialization of Emacs (=init.el=)
-** The =init.el= conditional to remove display of mode-line
+
+** The =init.el= key installations post-=early-init.el=
+
+These installations do not require the package manager to be configured and are also essential for the functioning of the rest of this configuration.
+
+*** straight.el
+
+#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
+
+    ;; installation of straight.el package manager
+    (defvar bootstrap-version)
+    (let ((bootstrap-file
+            (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+            (bootstrap-version 5))
+        (unless (file-exists-p bootstrap-file)
+        (with-current-buffer
+            (url-retrieve-synchronously
+            "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+            'silent 'inhibit-cookies)
+            (goto-char (point-max))
+            (eval-print-last-sexp)))
+        (load bootstrap-file nil 'nomessage))
+
+#+end_src
+
+** The =init.el= for aesthetics 
 
 Want to disable to mode-line at the very start and enable it when the mode-line configuration is loaded to make startup look smooth. The mode-line will be added when the mode-line is loaded ([[*The =jw-emacs-modeline.el= to enable the mode-line][The =jw-emacs-modeline.el= to enable the mode-line]]).
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
-(setq-default mode-line-format nil)
+    ;; conditional to remove display of mode-line
+    (setq-default mode-line-format nil)
 
 #+end_src
-** The =init.el= setting to =dired= --native
+
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
-  (require 'dired)
+    (require 'dired)
 
-  (add-hook 'dired-mode-hook
-            (lambda ()
-              (define-key dired-mode-map (kbd "(") 'dired-hide-details-mode)
-              ;; Uncomment the next line to start with details hidden
-              (dired-hide-details-mode 1)
-              ))
-
+    ;; make dired look nice
+    (add-hook 'dired-mode-hook
+                (lambda ()
+                (define-key dired-mode-map (kbd "(") 'dired-hide-details-mode)
+                ;; Uncomment the next line to start with details hidden
+                (dired-hide-details-mode 1)
+                ))
 
 #+end_src
-** The =init.el= settings for packages (=use-package=) --native
+
+
+** The =init.el= for package manager
 
 [[https://github.com/jwiegley/use-package][use-package]] is a native package built into emacs since =v29.0.0= and is used in this configuration to make it a lot easier to automate the installation and configuration of everything else.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
-  ;; Initialize package sources
-  (require 'package)
+    ;; Install use-package
+    (straight-use-package 'use-package)
 
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ("melpa-stable" . "https://stable.melpa.org/packages/")
-                           ("org" . "https://orgmode.org/elpa/")
-                           ("elpa" . "https://elpa.gnu.org/packages/")))
-
-  (add-to-list 'package-archives
-               '("gnu-devel" . "https://elpa.gnu.org/devel/") :append)
-
-  (package-initialize)
-  (unless package-archive-contents
-   (package-refresh-contents))
-
-  ;; Initialize use-package on non-Linux platforms
-  (unless (package-installed-p 'use-package)
-     (package-install 'use-package))
-
-  (setq use-package-always-ensure t)
+    (setq straight-use-package-by-default t)
 
 #+end_src
 
@@ -244,51 +260,8 @@ To debug =use-package= run =emacs --debug-init=.
             debug-on-error t)
     (setq use-package-verbose nil
           use-package-expand-minimally t))
-#+end_src
-
-To remove packages that are not used run =M-x use-package-autoremove=. However, the current code only works for packages that have the =:ensure= | =:vc= | =:init= keywords. 
-
-#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
-
-  (eval-and-compile
-    (defvar use-package-selected-packages nil
-     "Explicitly installed packages.")
-
-    (define-advice use-package-handler/:ensure
-        (:around (fn name-symbol keyword args rest state) select)
-      (let ((items (funcall fn name-symbol keyword args rest state)))
-        (dolist (ensure args items)
-          (let ((package
-                 (or (and (eq ensure t) (use-package-as-symbol name-symbol))
-                     ensure)))
-            (when package
-              (when (consp package)
-                (setq package (car package)))
-              (push `(add-to-list 'use-package-selected-packages ',package) items))))))
-
-    (define-advice use-package-handler/:vc
-        (:around (fn name-symbol &rest rest) select)
-      (cons `(add-to-list 'use-package-selected-packages ',name-symbol)
-            (apply fn name-symbol rest))))
-
-  (define-advice use-package-handler/:init
-    (:around (fn name-symbol keyword args rest state) select)
-  (let ((items (funcall fn name-symbol keyword args rest state)))
-    (dolist (init args items)
-      (push `(add-to-list 'use-package-selected-packages ',name-symbol) items))))
-
-  (defun use-package-autoremove ()
-  "Autoremove packages not used by use-package."
-  (interactive)
-  (let ((package-selected-packages use-package-selected-packages))
-    (package-autoremove)))
 
 #+end_src
-
-**** Troubleshooting
-
-If you get a package not found error and the package exists, then you can try refreshing the package contents by running =M-x package-refresh-contents=.
-
 
 
 ** The =init.el= for keeping =.emacs.d= clean
@@ -304,7 +277,7 @@ If you get a package not found error and the package exists, then you can try re
         auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves/" user-emacs-directory) t)))
 
   (use-package no-littering
-    :ensure t)
+    :straight t)
 
 #+end_src
 
@@ -316,7 +289,7 @@ in conjunction with Evil modes.
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
   (use-package general
-    :ensure t
+    :straight t
     :config
     (general-create-definer jw/leader-key-def
       :keymaps '(normal insert visual emacs)
@@ -326,43 +299,37 @@ in conjunction with Evil modes.
 #+end_src
 
 ** The =init.el= essential key configurations
-*** The =init.el= essential key configuration for =esc=
-
-Bind the quit prompting function to the =esc= key.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
+  ;; bind quit prompting func to escape
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 #+end_src
 
-*** The =init.el= essential key configuration for indentation
-
-Use spaces instead of tabs for indentation
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
+  ;; use spaces instead of tabs for indentation
   (setq-default indent-tabs-mode nil)
 
 #+end_src
 
-*** The =init.el= essential key configuration for user interface toggles
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
-
+  ;; for ui toggles
   (jw/leader-key-def
     "t"  '(:ignore t :which-key "toggles")
     "tw" 'whitespace-mode
     )
 
 #+end_src
-*** The =init.el= essential key configuration for =evil-mode=
 
-This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil-mode]] for a Vi-like modal editing experience.  [[https://github.com/emacs-evil/evil-collection][evil-collection]] is used to automatically configure various Emacs modes with Vi-like keybindings for evil-mode.
+*** evil-mode
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
   (use-package evil
-    :ensure t
+    :straight t
     :init
     (setq evil-want-integration t)
     (setq evil-want-keybinding nil)
@@ -384,7 +351,7 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
   (use-package evil-collection
     :after evil
-    :ensure t
+    :straight t
     :config
     (evil-collection-init)
     (with-eval-after-load 'forge
@@ -393,8 +360,7 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+end_src
 
-*** The =init.el= essential key configuration for smooth scrolling 
-
+***  smooth scrolling
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
@@ -420,7 +386,7 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
   ;; A few more useful configurations...
   (use-package emacs
-    :ensure t
+    :straight t
     :init
     ;; TAB cycle if there are only few candidates
     ;; (setq completion-cycle-threshold 3)
@@ -466,7 +432,7 @@ Also check the [[https://protesilaos.com/emacs/dotemacs#h:ddb1070d-2f91-4224-ad4
 
 #+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
 
-  (defcustom jw-emacs-load-which-key nil
+  (defcustom jw-emacs-load-which-key t
     "When non-nil, display key binding hints after a short delay.
   This user option must be set in the `prot-emacs-pre-custom.el'
   file.  If that file exists in the Emacs directory, it is loaded
@@ -501,6 +467,7 @@ Also check the [[https://protesilaos.com/emacs/dotemacs#h:ddb1070d-2f91-4224-ad4
                    (const :tag "Do not load a theme module" nil)))
 
 #+end_src
+
 ** The =init.el= final part to load the individual modules
 
 Load the =jw-emacs-modules=.
@@ -531,8 +498,10 @@ Load =jw-lisp=.
 
 #+end_src
 * The modules of my Emacs configuration (=jw-emacs-modules/=)
+
 ** The =jw-emacs-theme.el= module
-*** The =jw-emacs-theme.el= section to load a theme (=jw-emacs-load-theme-family=)
+
+*** jw-emacs-load-theme-family
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
@@ -550,7 +519,7 @@ Load =jw-lisp=.
 
 #+end_src
 
-**** The =jw-emacs-modus-themes.el= module -- native
+**** jw-emacs-modus-themes.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modus-themes.el" :mkdirp yes
 
@@ -559,7 +528,7 @@ Load =jw-lisp=.
   ;; The themes are highly customisable.  Read the manual:
   ;; <https://protesilaos.com/emacs/modus-themes>.
   (use-package modus-themes
-    :ensure t
+    :straight t
     :demand t
     :bind (("<f5>" . modus-themes-toggle)
            ("C-<f5>" . modus-themes-select))
@@ -588,7 +557,7 @@ Load =jw-lisp=.
 
 #+end_src
 
-**** The =jw-emacs-ef-themes.el= module
+**** jw-emacs-ef-themes.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-ef-themes.el" :mkdirp yes
 
@@ -597,7 +566,7 @@ Load =jw-lisp=.
   ;; The themes are customisable.  Read the manual:
   ;; <https://protesilaos.com/emacs/ef-themes>.
   (use-package ef-themes
-    :ensure t
+    :straight t
     :demand t
     :bind ("<f5>" . ef-themes-select)
     :config
@@ -626,14 +595,15 @@ Load =jw-lisp=.
       (ef-themes-load-random 'light)))
 (provide 'jw-emacs-ef-themes)
 #+end_src
-*** The =jw-emacs-theme.el= section for =pulsar=
+
+*** pulsar.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
   ;;;; Pulsar
   ;; Read the pulsar manual: <https://protesilaos.com/emacs/pulsar>.
   (use-package pulsar
-    :ensure t
+    :straight t
     :config
     (setopt pulsar-pulse t
             pulsar-delay 0.055
@@ -656,14 +626,14 @@ Load =jw-lisp=.
      ("C-x L" . pulsar-highlight-dwim))) ; or use `pulsar-highlight-line'
 #+end_src
 
-*** The =jw-emacs-theme.el= section for =lin=
+*** lin.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
   ;;;; Lin
   ;; Read the lin manual: <https://protesilaos.com/emacs/lin>.
   (use-package lin
-    :ensure t
+    :straight t
     :hook (after-init . lin-global-mode) ; applies to all `lin-mode-hooks'
     :config
     ;; You can use this to live update the face:
@@ -676,7 +646,8 @@ Load =jw-lisp=.
     (setq lin-face 'lin-magenta))
 
 #+end_src
-*** The =jw-emacs-theme.el= section for =spacious-padding=
+
+*** spacious-padding.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
@@ -684,7 +655,7 @@ Load =jw-lisp=.
   ;; Yet another one of my packages:
   ;; <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>.
   (use-package spacious-padding
-    :ensure t
+    :straight t
     :if (display-graphic-p)
     :hook (after-init . spacious-padding-mode)
     :bind ("<f8>" . spacious-padding-mode)
@@ -710,14 +681,15 @@ Load =jw-lisp=.
              :mode-line-inactive window-divider)))
 
 #+end_src
-*** The =jw-emacs-theme.el= section for =cursory=
+
+*** cursory.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
   ;;; Cursor appearance (cursory)
   ;; Read the manual: <https://protesilaos.com/emacs/cursory>.
   (use-package cursory
-    :ensure t
+    :straight t
     :demand t
     :if (display-graphic-p)
     :config
@@ -771,13 +743,13 @@ Load =jw-lisp=.
     ("C-c p" . cursory-set-preset))
 #+end_src
 
-*** The =jw-emacs-theme.el= section for =theme-buffet=
+*** theme-buffet.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
    ;;;; Theme buffet
   (use-package theme-buffet
-    :ensure t
+    :straight t
     :after (:any modus-themes ef-themes)
     :defer 1
     :config
@@ -806,27 +778,25 @@ Load =jw-lisp=.
         (theme-buffet-timer-hours 1))))
 
 #+end_src
-*** The =jw-emacs-theme.el= section for =fontaine=
+
+*** fontaine.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
   ;;;; Fontaine (font configurations)
   ;; Read the manual: <https://protesilaos.com/emacs/fontaine>
   (use-package fontaine
-    :ensure t
+    :straight t
     :if (display-graphic-p)
     :hook
-    ;; Persist the latest font preset when closing/starting Emacs and
-    ;; while switching between themes.
+    ;; Persist the latest font preset when closing/starting Emacs.
     ((after-init . fontaine-mode)
      (after-init . (lambda ()
-                          ;; Set last preset or fall back to desired style from `fontaine-presets'.
-                          (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
-    :bind ("C-c f" . fontaine-set-preset)
+                     ;; Set last preset or fall back to desired style from `fontaine-presets'.
+                     (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
+    :bind (("C-c f" . fontaine-set-preset)
+           ("C-c F" . fontaine-toggle-preset))
     :config
-    ;; This is defined in Emacs C code: it belongs to font settings.
-    (setq x-underline-at-descent-line nil)
-
     ;; And this is for Emacs28.
     (setq-default text-scale-remap-header-line t)
 
@@ -834,90 +804,97 @@ Load =jw-lisp=.
     ;; completeness.
     (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
 
+    ;; The font family is my design: <https://github.com/protesilaos/aporetic>.
     (setq fontaine-presets
           '((small
-             :default-family "Iosevka Comfy Motion"
-             :default-height 80
-             :variable-pitch-family "Iosevka Comfy Duo")
+             :default-height 80)
             (regular) ; like this it uses all the fallback values and is named `regular'
             (medium
-             :default-weight semilight
+             :default-family "Aporetic Serif Mono"
              :default-height 115
-             :bold-weight extrabold)
+             :fixed-pitch-family "Aporetic Serif Mono"
+             :variable-pitch-family "Aporetic Sans")
             (large
-             :inherit medium
              :default-height 150)
-            (live-stream
-             :default-family "Iosevka Comfy Wide Motion"
-             :default-height 150
-             :default-weight medium
-             :fixed-pitch-family "Iosevka Comfy Wide Motion"
-             :variable-pitch-family "Iosevka Comfy Wide Duo"
-             :bold-weight extrabold)
             (presentation
              :default-height 180)
+            (jumbo
+             :inherit medium
+             :default-height 260)
             (t
              ;; I keep all properties for didactic purposes, but most can be
              ;; omitted.  See the fontaine manual for the technicalities:
              ;; <https://protesilaos.com/emacs/fontaine>.
-             :default-family "Iosevka Comfy"
+             :default-family "Aporetic Sans Mono"
              :default-weight regular
              :default-slant normal
-             :default-height 180
+             :default-width normal
+             :default-height 100
 
-             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight nil
              :fixed-pitch-slant nil
+             :fixed-pitch-width nil
              :fixed-pitch-height 1.0
 
              :fixed-pitch-serif-family nil
              :fixed-pitch-serif-weight nil
              :fixed-pitch-serif-slant nil
+             :fixed-pitch-serif-width nil
              :fixed-pitch-serif-height 1.0
 
-             :variable-pitch-family "Iosevka Comfy Motion Duo"
+             :variable-pitch-family "Aporetic Serif"
              :variable-pitch-weight nil
              :variable-pitch-slant nil
+             :variable-pitch-width nil
              :variable-pitch-height 1.0
 
              :mode-line-active-family nil
              :mode-line-active-weight nil
              :mode-line-active-slant nil
+             :mode-line-active-width nil
              :mode-line-active-height 1.0
 
              :mode-line-inactive-family nil
              :mode-line-inactive-weight nil
              :mode-line-inactive-slant nil
+             :mode-line-inactive-width nil
              :mode-line-inactive-height 1.0
 
              :header-line-family nil
              :header-line-weight nil
              :header-line-slant nil
+             :header-line-width nil
              :header-line-height 1.0
 
              :line-number-family nil
              :line-number-weight nil
              :line-number-slant nil
+             :line-number-width nil
              :line-number-height 1.0
 
              :tab-bar-family nil
              :tab-bar-weight nil
              :tab-bar-slant nil
+             :tab-bar-width nil
              :tab-bar-height 1.0
 
              :tab-line-family nil
              :tab-line-weight nil
              :tab-line-slant nil
+             :tab-line-width nil
              :tab-line-height 1.0
 
              :bold-family nil
-             :bold-weight bold
              :bold-slant nil
+             :bold-weight bold
+             :bold-width nil
              :bold-height 1.0
 
              :italic-family nil
              :italic-weight nil
              :italic-slant italic
+             :italic-width nil
              :italic-height 1.0
 
              :line-spacing nil)))
@@ -927,13 +904,14 @@ Load =jw-lisp=.
 
 
 #+end_src
-*** The =jw-emacs-theme.el= section for font resizing and =variable-pitch-mode= --native
+
+*** variable-pitch-mode.el --native 
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-theme.el" :mkdirp yes
 
     ;;;;; `variable-pitch-mode' setup
   (use-package face-remap
-    :ensure nil
+    :straight nil
     :functions jw/enable-variable-pitch
     :bind ( :map ctl-x-x-map
             ("v" . variable-pitch-mode))
@@ -965,15 +943,8 @@ Load =jw-lisp=.
 #+end_src
 
 ** The =jw-emacs-essentials.el= module
-*** The =jw-emacs-essentials.el= section for gui configurations
 
-Set up the visible bell to be on instead of the beeping. For macos it is best to leave commented below to not have the visual bell because it is distracting.
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el"
-
-  ;; (setq visible-bell t)
-
-#+end_src
-
+*** gui configurations
 
 Enable line numbers globally, but not in the following modes: org, term, shell, and eshell.
 
@@ -1004,18 +975,7 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
 
 #+end_src
 
-*** The =jw-emacs-essentials.el= section for window configurations
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el"
-
-  (global-set-key (kbd "C-c <up>")    'windmove-up)
-  (global-set-key (kbd "C-c <down>")  'windmove-down)
-  (global-set-key (kbd "C-c <left>")  'windmove-left)
-  (global-set-key (kbd "C-c <right>") 'windmove-right)
-
-#+end_src
-
-*** The =jw-emacs-essentials.el= section for =helpful.el=
+*** helpful.el
 
 [[https://github.com/Wilfred/helpful][Helpful]] adds a lot of very helpful (get it?) information to Emacs' =describe-= command buffers.  For example, if you use =describe-function=, you will not only get the documentation about the function, you will also see the source code of the function and where it gets used in other places in the Emacs configuration.  It is very useful for figuring out how things work in Emacs.
 
@@ -1028,7 +988,7 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
 
 #+end_src
 
-*** The =jw-emacs-essentials.el= for =auth-sources.el= -- native
+*** auth-sources.el -- native
 
 
 #+begin_src emacs-lisp ".emacs.d/jw-emacs-modules/jw-emacs-essentials.el" :mkdirp yes
@@ -1046,7 +1006,9 @@ Since =fill-paragraph= wraps =fill-column=, we adjust the size of the =fill-colu
 #+end_src
 
 ** The =jw-emacs-modeline.el= module
-*** The =jw-emacs-modeline.el= to enable the mode-line
+
+*** enable the mode-line
+
 The mode-line was disabled earlier ([[*The =init.el= conditional to remove display of mode-line][The =init.el= conditional to remove display of mode-line]]) so that the startup UI would look smooth
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
@@ -1055,7 +1017,7 @@ The mode-line was disabled earlier ([[*The =init.el= conditional to remove displ
 
 #+end_src
 
-*** The =jw-emacs-modeline.el= basic user interface configuration
+*** basic user interface
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
@@ -1064,7 +1026,7 @@ The mode-line was disabled earlier ([[*The =init.el= conditional to remove displ
 
 #+end_src
 
-*** The =jw-emacs-modeline.el= customization with =doom-modeline=
+*** doom-modeline.el
 
 [[https://github.com/seagle0128/doom-modeline][doom-modeline]] is a very attractive and rich (yet still minimal) mode line configuration for Emacs.  The default configuration is quite good but you can check out the [[https://github.com/seagle0128/doom-modeline#customize][configuration options]] for more things you can enable or disable.
 
@@ -1080,7 +1042,7 @@ If you are running in the =macos= terminal, then you have to make sure that you 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
   (use-package doom-modeline
-    :ensure t
+    :straight t
     :init (doom-modeline-mode 1)
     :custom ((doom-modeline-height 15)))
 
@@ -1115,7 +1077,6 @@ To turn off icons uncomment the following:
 
 The following contains configurations of the =doom-modeline=. All the configurations here use the =setq=.
 
-
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-modeline.el" :mkdirp yes
 
   ;; If non-nil, a word count will be added to the selection-info modeline segment.
@@ -1128,7 +1089,6 @@ The following contains configurations of the =doom-modeline=. All the configurat
   (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
 
 #+end_src
-
 
 Display the virtual environment version.
 
@@ -1147,11 +1107,13 @@ Display the virtual environment version.
 #+end_src
 
 ** The =jw-emacs-completion.el= module
-*** The =jw-emacs-completion.el= section for preserving minibuffer history (=savehist.el=)
+*** savehist.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
+  ;; for preserving minibuffer history
   (use-package savehist
+    :straight t
     :config
     (setq history-length 25)
     (savehist-mode 1))
@@ -1163,7 +1125,9 @@ Display the virtual environment version.
 
 #+end_src
 
-*** The =jw-emacs-completion.el= section for completions (=vertico.el=)
+*** vertico.el
+
+Completions with =vertico.el=
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
@@ -1179,7 +1143,7 @@ Display the virtual environment version.
         (delete-word (- arg))))
 
   (use-package vertico
-    :ensure t
+    :straight t
     :bind (:map vertico-map
            ("C-j" . vertico-next)
            ("C-k" . vertico-previous)
@@ -1193,26 +1157,13 @@ Display the virtual environment version.
 
 #+end_src
 
-**** Troubleshooting
 
-If in the Emacs buffer if you get a =Error in post-command-hook (vertico--exhibit): (void-function compat--completion-metadata-get)= error then you either delete vertico and recomplile or recompile
+*** corfu.el
 
-#+begin_src
-
-  M-x package-recompile
-  vertico
-
-#+end_src
-
-The reason this issue is observed is due to updating Emacs.
-
-A link to the github issue where I found the solution is [[https://github.com/minad/vertico/discussions/501#discussioncomment-12390155][here]].
-
-*** The =jw-emacs-completion.el= section for completions in region (=corfu.el=)
-
+Completions in region with =corfu.el=.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
   (use-package corfu
-    :ensure t
+    :straight t
     ;; Optional customizations
     :custom
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
@@ -1245,7 +1196,8 @@ A link to the github issue where I found the solution is [[https://github.com/mi
     (global-corfu-mode))
 
 #+end_src
-*** The =jw-emacs-completion.el= section for completions in region on terminal
+
+*** company.el
 
 Since =corfu.el= does not support running emacs in the terminal, I will just stick with =company.el= instead of =corfu-terminal=.
 
@@ -1278,19 +1230,23 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-*** The =jw-emacs-completion.el= section for additional completions in region (=cape.el=)
+*** cape.el
+
+Additional completions in region with =cape.el=.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
   (use-package cape
-    :ensure t
+    :straight t
     :init
     (add-to-list 'completion-at-point-functions #'cape-file)
     (add-to-list 'completion-at-point-functions #'cape-dabbrev))
 
 #+end_src
 
-*** The =jw-emacs-completion.el= section for candidate filtering (=orderless.el=)
+*** orderless.el
+
+For candidate filtering.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
@@ -1302,19 +1258,18 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-*** The =jw-emacs-completion.el= section for completion annotations (=marginalia.el=)
+*** marginalia.el
 
-Marginalia provides helpful annotations for various types of minibuffer completions. You can think of it as a replacement of =ivy-rich=.
+For completion notations.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-completion.el" :mkdirp yes
 
-  (use-package marginalia
-    :after vertico
-    :ensure t
-    :custom
-    (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
-    :init
-    (marginalia-mode))
+;;; Detailed completion annotations (marginalia.el)
+(use-package marginalia
+  :straight t
+  :hook (after-init . marginalia-mode)
+  :config
+  (setq marginalia-max-relative-age 0)) ; absolute time
 
 #+end_src
 
@@ -1330,7 +1285,8 @@ Marginalia provides helpful annotations for various types of minibuffer completi
 :PROPERTIES:
 :ID:       77434357-7761-4049-9F64-1808E10E549D
 :END:
-*** The =jw-emacs-org.el= section for org-mode setup --native
+
+*** org-mode setup
 
 Set up Org Mode with a baseline configuration. The following sections will add more things to it.
 
@@ -1356,7 +1312,7 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 #+end_src
 
-*** the =jw-emacs-org.el= section for =org-agenda= --native
+*** org-agenda
 :PROPERTIES:
 :ID:       43652950-B9D2-4FAF-8F0C-75D1496E85FE
 :END:
@@ -1370,7 +1326,7 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for org pomodoro timer --native
+*** org-pomodoro
 
 Configure for macos to play sound:
 
@@ -1407,7 +1363,8 @@ Configure for macos to play sound:
 
 #+end_src
 
-**** Sound Support
+
+The following is for sound support,
 
 Usually this is a problem for macos and I found a snippet of code that enables sound support. The way to tell is by running =M-x play-sound-file= and navigating to the =.wav= file will ouput "This Emacs binary lacks sound support."
 
@@ -1435,7 +1392,7 @@ Usually this is a problem for macos and I found a snippet of code that enables s
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for org-links
+*** org-links
 
 As recommended by the official =org= manual to have these keys bound.
 
@@ -1456,7 +1413,7 @@ With the =create-if-interactive= setting, it only creates in interactive setting
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for bullets
+*** bullet aesthetics
 
 Customize the heading bullets to make it consistent and nicer.
 
@@ -1470,7 +1427,7 @@ Customize the heading bullets to make it consistent and nicer.
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for inline images
+*** inline images
 
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
@@ -1481,22 +1438,8 @@ Customize the heading bullets to make it consistent and nicer.
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for =org-transclusion=
 
-Link to the docs: [[https://nobiot.github.io/org-transclusion/][org-transclude]].
-
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
-
-  (unless (package-installed-p 'org-transclusion)
-    (package-refresh-contents)
-    (package-install 'org-transclusion))
-
-  (require 'org-transclusion)
-
-#+end_src
-
-*** The =jw-emacs-org.el= section for structured templates (=org-tempo=) --native
+*** org-tempo.el --native
 
 These structured templates are used to auto generate code blocks for org mode. In order
 to use the template simply type =<= followed by the abbreviation of the language and
@@ -1515,7 +1458,7 @@ hit the =TAB= button. For example, the python snippit would be =<py TAB=.
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for auto-tangle
+*** org-babel.el
 
 This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-config= gets executed each time such a buffer gets saved.  This function checks to see if the file being saved is the Emacs.org file you're looking at right now, and if so, automatically exports the configuration here to the associated output files.
 
@@ -1533,8 +1476,6 @@ This snippet adds a hook to =org-mode= buffers so that =jw/org-babel-tangle-conf
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for executing code (=org-babel=)
-
 To execute or export code in =org-mode= code blocks, you'll need to set up =org-babel-load-languages= for each language you'd like to use. [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
@@ -1548,7 +1489,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 
 #+end_src
 
-*** The =jw-emacs-org.el= section for text display (=visual-fill-column.el=)
+*** visual-fill-column.el
 
 =visual-fill-column= will create a document looking display with the extra padding on the left and on the right.
 
@@ -1564,7 +1505,8 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
     (markdown-mode . jw/org-mode-visual-fill))
 
 #+end_src
-*** The =jw-emacs-org.el= section for org-latex
+
+*** org-latex
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
@@ -1604,9 +1546,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 #+end_src
 
 ** The =jw-emacs-git.el= module
-*** The =jw-emacs-git.el= section for =magit.el=
-
-[[https://magit.vc/][Magit]] is the best Git interface I've ever used.  Common Git operations are easy to execute quickly using Magit's command panel system.
+*** magit.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-git.el" :mkdirp yes
 
@@ -1634,7 +1574,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
 
 #+end_src
 
-**** GPG Signing
+**** gpg signing
 
 When on the commit buffer, the argument for `gpg-signing` or `-S` may not be displayed. To resolve this issue manually, on the commit buffer menu, you must enter transient mode with `C-x l` and follow the prompting from there by typing the argument that you want to change the layering and then set the layering.
 
@@ -1647,7 +1587,7 @@ When on the commit buffer, the argument for `gpg-signing` or `-S` may not be dis
 #+end_src
 
 ** The =jw-emacs-dired.el= module
-*** The =jw-emacs-dired.el= section for dired display
+*** dired display
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-dired.el" :mkdirp yes
 
@@ -1655,7 +1595,7 @@ When on the commit buffer, the argument for `gpg-signing` or `-S` may not be dis
 
 #+end_src
 
-*** The =jw-emacs-dired.el= section for gnu =gls=
+*** gnu gls
 
 For macos, make sure to have =coreutils= installed. To install run, =brew install coreutils=
 
@@ -1675,12 +1615,12 @@ For macos, make sure to have =coreutils= installed. To install run, =brew instal
 #+end_src
 
 ** The =jw-emacs-information-management.el= module
-*** The =jw-emacs-information-management.el= section for =denote=
+*** denote.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
   (use-package denote
-                   :ensure t)
+                   :straight t)
 
   (setq denote-directory (expand-file-name "~/Otzar/Gnosis/"))
   (setq denote-save-buffer-after-creation nil)
@@ -1807,20 +1747,8 @@ Create [[id:43652950-B9D2-4FAF-8F0C-75D1496E85FE][the =jw-emacs-org.el= section 
 
 #+end_src
 
-*** The =jw-emacs-information-management.el= section for =ledger-mode=
 
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
-
-  (use-package ledger-mode
-    :ensure t
-    :mode (
-           "\\.ledger\\'")
-    :custom (ledger-clear-whole-transactions t))
-
-
-#+end_src
-
-*** The =jw-emacs-information-management.el= section for clean directories
+*** clean directories
 
 Move the =#<FILE>#= to a temporary directory instead of root directory.
 
@@ -1843,14 +1771,14 @@ Move the =#<FILE>#= to a temporary directory instead of root directory.
 
 ** The =jw-emacs-productivity.el= module
 
-*** The =jw-emacs-productivity.el= section for =pdf-tools=
+*** pdf-tools.el
 
 Make sure to run =M-x pdf-tools-install= after installation.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-productivity.el" :mkdirp yes
 
   (use-package pdf-tools
-    :ensure t
+    :straight t
     :config
     (pdf-tools-install)
     :hook (pdf-view-mode . (lambda () 
@@ -1860,32 +1788,32 @@ Make sure to run =M-x pdf-tools-install= after installation.
 
 #+end_src
 
-**** Troubleshooting
+**** issues
 
-***** 2025-01-15: Works
+***** 2025-01-15: works
 
 The issue with the **2025-01-14** is that if the installation works within the command line, when opening up a pdf file on Emacs would lead to the epdfserver crashing. This issue I found had to do with confict with =macports= being installed. If you uninstall macports, then the issue is resolved. 
 
-***** 2025-01-14: Does Not Work
+***** 2025-01-14: !working
 
 If you receive the option to rebuild the =epdfserver= and you agree to building on Emacs, there are instances where the build fails. When running =M-x pdf-tools-install= you will rebuild within Emacs and will obtain more information. If the error consists of not being able to find poppler, copy and paste the command used to run the installation and run it in the command line outside of emacs.
 
 
-*** The =jw-emacs-productivity.el= section for =org-noter= and =org-pdftools=
+*** org-noter.el and org-pdftools.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-productivity.el" :mkdirp yes
 
 
   ;; Ensure org-noter is installed
   (use-package org-noter
-    :ensure t
+    :straight t
     :after (org pdf-tools)
     :config
     (setq org-noter-always-create-frame nil))
 
   ;; Ensure org-pdftools is set up to work with org-mode
   (use-package org-pdftools
-    :ensure t
+    :straight t
     :hook (org-mode . org-pdftools-setup-link))
 
   ;; Configure org-noter-pdftools
@@ -1926,27 +1854,14 @@ If you receive the option to rebuild the =epdfserver= and you agree to building 
 
     ;; If you are working with EPUB files
     (use-package nov
-      :ensure t)
+      :straight t)
 
     ;; If you are working with DJVU files
     (use-package djvu
-      :ensure t))
+      :straight t))
 
 #+end_src
 
-*** The =jw-emacs-productivity.el= section for =pdf-viewer= hooks
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-productivity.el" :mkdirp yes
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;   (defun jw-pdf-view-mode-hook ()                     ;;
-  ;;   "Hook to run when entering pdf-view-mode."          ;;
-  ;;   (display-line-numbers-mode -1))                     ;;
-  ;;                                                       ;;
-  ;; (add-hook 'pdf-view-mode-hook 'jw-pdf-view-mode-hook) ;;
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-#+end_src
 
 *** The =jw-emacs-productivity.el= call to provide
 
@@ -1958,12 +1873,12 @@ If you receive the option to rebuild the =epdfserver= and you agree to building 
 
 
 ** The =jw-emacs-development.el= module
-*** The =jw-emacs-development.el= section for =tramp.el= --native
+*** tramp.el --native
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
 
   (use-package tramp
-    :ensure t)
+    :straight t)
   (setq tramp-default-method "ssh")
   ;; for debugging
   (setq tramp-verbose 3)
@@ -1979,7 +1894,7 @@ If you receive the option to rebuild the =epdfserver= and you agree to building 
 #+end_src
 
 
-**** Using Direct Async
+**** direct async
 
 Guide by [[https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./][this blog post]]. 
 
@@ -1998,7 +1913,7 @@ Guide by [[https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./][this blog 
 
 #+end_src
 
-**** Fixing Remote Compile
+**** fixing remote compile
 
 =compile= command disables remote ssh connection sharing, which will require you to reenter your password each time you connect. Want to enable this for convienence.
 
@@ -2010,7 +1925,7 @@ Guide by [[https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./][this blog 
 
 #+end_src
 
-**** Caching
+**** caching
 
 Cache passwords until the end of the emacs session, which is default.
 
@@ -2101,7 +2016,7 @@ Cache passwords until the end of the emacs session, which is default.
 
 #+end_src
 
-*** The =jw-emacs-development.el= section for =project.el=  --native
+*** project.el  --native
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
 
@@ -2124,7 +2039,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 
 #+end_src
 
-*** The =jw-emacs-development.el= section for visualizing parent delimiters --native
+*** visualizing delimiters
 
 =show-paren-mode= allows one to see matching pairs of parentheses and other characters. When point is on the opening character of one of the paired characters, the other is highlighted. When the point is after the closing character of one of the paired characters, the other is highlighted. 
 
@@ -2134,7 +2049,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 
 #+end_src
 
-*** The =jw-emacs-development.el= section for visualizing all delimiters 
+To visualize all delimiters,
 
 [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] is useful in programming modes because it colorizes nested parentheses and brackets according to their nesting depth.  This makes it a lot easier to visually match parentheses in Emacs Lisp code without having to count them yourself.
 
@@ -2145,7 +2060,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 
 #+end_src
 
-*** The =jw-emacs-development.el= section for pairing delimiters (=electric-pair-mode=) --native
+*** electric-pair-mode.el --native
 
 =electric-pair-mode= will auto pair delimiters for you. One issue with the auto pairing is the =<= character in =org-mode=. The following hook to the enabling of =electric-pair-mode= aims to solve the issue when in =org-mode=.
 
@@ -2160,20 +2075,22 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 
 #+end_src
 
-*** The =jw-emacs-development.el= section for pairing delimiters (=evil-surround=)
+*** evil-surround.el
 
 =evil-surround= emulates [[https://github.com/tpope/vim-surround][surround.vim]]. For usage instructions visit [[https://github.com/emacs-evil/evil-surround][evil-surround]]
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
 
   (use-package evil-surround
-    :ensure t
+    :straight t
     :config
     (global-evil-surround-mode 1))
 
 #+end_src
 
-*** The =jw-emacs-development.el= section for logging keys (=command-log-mode=)
+*** command-log-mode.el
+
+For logging keys,
 
 [[https://github.com/lewang/command-log-mode][command-log-mode]] is useful for displaying a panel showing each key binding you use in a panel on the right side of the frame. Great for live streams and screencasts!
 
@@ -2185,6 +2102,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 #+end_src
 
 To activate =command-log-mode= you must first run =M-x global-command-log-mode= to have =command-log-mode= in every buffer and then run =M-x clm/toggle-command-log-buffer= to have the buffer be displayed.
+
 *** The =jw-emacs-development.el= call to provide
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
@@ -2202,7 +2120,7 @@ When the =which-key-mode= is enabled, any incomplete key sequence will produce a
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-which-key.el" :mkdirp yes
 
   (use-package which-key
-    :ensure t
+    :straight t
     :hook (after-init . which-key-mode)
     :config
     (setq which-key-separator "  ")
@@ -2216,19 +2134,20 @@ When the =which-key-mode= is enabled, any incomplete key sequence will produce a
   (provide 'jw-emacs-which-key)
 
 #+end_src
+
 ** The =jw-emacs-ai.el= module
 
 The purpose of this module is to have my integrations with llms or other ai models.
 
 
-*** The =jw-emacs-ai.el= section for =gptel=
+*** gptel.el
 
 Incorporates the use of llms in the emacs client. For a great summary of the features please see [[https://www.blogbyben.com/2024/08/gptel-mindblowing-integration-between.html][Ben Simon's video]]. For accessing the source code please see [[https://github.com/karthink/gptel][karthink's repo]].
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-ai.el" :mkdirp yes
 
   (use-package gptel
-    :ensure t
+    :straight t
     :after auth-source
     :init
     ;; Ensure auth-source is configured to find ~/.authinfo or ~/.authinfo.gpg
@@ -2288,6 +2207,10 @@ Incorporates the use of llms in the emacs client. For a great summary of the fea
     ;; (setq auth-source-debug t)
   )
 
+(setq gptel-display-buffer-action
+      '(display-buffer-in-side-window
+        (side . right)
+        (window-width . 0.4)))
 
 #+end_src
 
@@ -2330,7 +2253,7 @@ Incorporates the use of llms in the emacs client. For a great summary of the fea
 
 ** The =jw-emacs-langs.el= module
 
-*** The =jw-emacs-langs.el= section for =treesit= --native
+*** treesitter
 
 Set language sources for treesit
 
@@ -2376,14 +2299,12 @@ Set language sources for treesit
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for =treesit-auto=
-
 The issue with the built in =treesit.el= is that it does not auto default to which language server. In addition if you need to install you will have to input the url yourself. This package is here to automate the process.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
   (use-package treesit-auto
-    :ensure t
+    :straight t
     :custom
     (treesit-auto-install 'prompt)
     :config
@@ -2401,12 +2322,12 @@ Auto install grammars when missing
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for =latex=
+*** latex
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
 (use-package auctex
-  :ensure t
+  :straight t
   :defer t
   :init
   (setq TeX-auto-save t)
@@ -2456,20 +2377,19 @@ Auto install grammars when missing
 
 
 #+end_src
-*** The =jw-emacs-langs.el= section for =python= support
+
+*** python
 
 Configuring pythone envs with =conda=.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-  (unless (package-installed-p 'conda)
-    (package-refresh-contents)
-    (package-install 'conda))
-
-  (require 'conda)
+(use-package conda
+  :straight t
+  :config
   (setq conda-anaconda-home (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/"))
-   (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
-    (conda-env-autoactivate-mode t)
+  (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
+  (conda-env-autoactivate-mode t))
 
 
 #+end_src
@@ -2487,7 +2407,7 @@ Python formatter configuration.
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for =astro= support
+*** astro.js
 
 I used the [[https://medium.com/@jrmjrm/configuring-emacs-and-eglot-to-work-with-astro-language-server-9408eb709ab0][following guide]] from medium for this configuration.
 
@@ -2495,7 +2415,7 @@ I used the [[https://medium.com/@jrmjrm/configuring-emacs-and-eglot-to-work-with
 
     ;; WEB MODE
     (use-package web-mode
-    :ensure t)
+    :straight t)
 
     ;; astro
     ;; ASTRO
@@ -2510,26 +2430,21 @@ I used the [[https://medium.com/@jrmjrm/configuring-emacs-and-eglot-to-work-with
 Now set the config in [[id:F9D087EE-895F-4DBC-BBCF-3056A2A5266E][eglot]].  
 
 
-*** The =jw-emacs-langs.el= section for =rust= support
+*** rust
 
 Download =rust-mode=.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
-  (unless (package-installed-p 'rust-mode)
-    (package-refresh-contents)
-    (package-install 'rust-mode))
+    (use-package rust-mode
+    :straight t
+    :mode "\\.rs\\'"
+    :config
+    (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode)))
 
 #+end_src
 
 Setting up =rust-mode=.
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
-
-  (require 'rust-mode)
-  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
-
-#+end_src
 
 Custom function to find rust analyzer.
 
@@ -2542,7 +2457,7 @@ Custom function to find rust analyzer.
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for =typescript= support
+*** typescript
 
 Typescript support is done through =treesit.el=, which is now native to emacs as of v29.
 
@@ -2567,14 +2482,14 @@ Install =json-mode=
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for automating code formatting with =apheleia=
+*** apheleia.el
 
 Make sure you have the necessary packages installed.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
   (use-package apheleia
-    :ensure t
+    :straight t
     :config
     (setf (alist-get 'prettier-json apheleia-formatters)
         '("prettier" "--stdin-filepath" filepath))
@@ -2590,45 +2505,42 @@ Make sure you have the necessary packages installed.
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for language server configuration (=eglot=) --native
+*** eglot.el --native
 :PROPERTIES:
 :ID:       F9D087EE-895F-4DBC-BBCF-3056A2A5266E
 :END:
 
-
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
     ;; Dynamic server program functions
-(defun jw/python-lsp-program (&optional interactive)
-  "Get Python LSP program."
-  (if (file-remote-p default-directory)
-      '("/home/jozhw/bin/pylsp-wrapper")
-    '("pyright-langserver" "--stdio")))
+    (defun jw/python-lsp-program (&optional interactive)
+    "Get Python LSP program."
+    (if (file-remote-p default-directory)
+        '("/home/jozhw/bin/pylsp-wrapper")
+        '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
 
-    (defun jw/rust-lsp-program (&optional interactive)
-    "Get Rust LSP program."
-    (list (jw/find-rust-analyzer)))
+        (defun jw/rust-lsp-program (&optional interactive)
+        "Get Rust LSP program."
+        (list (jw/find-rust-analyzer)))
 
-    (defun jw/clangd-lsp-program (&optional interactive)
-    "Get clangd LSP program."
-    '("clangd"))
+        (defun jw/clangd-lsp-program (&optional interactive)
+        "Get clangd LSP program."
+        '("clangd"))
 
-    (defun jw/typescript-lsp-program (&optional interactive)
-    "Get TypeScript LSP program."
-    '("typescript-language-server" "--stdio"))
+        (defun jw/typescript-lsp-program (&optional interactive)
+        "Get TypeScript LSP program."
+        '("typescript-language-server" "--stdio"))
 
-    (defun jw/marksman-lsp-program (&optional interactive)
-    "Get Marksman LSP program."
-    '("marksman"))
+        (defun jw/marksman-lsp-program (&optional interactive)
+        "Get Marksman LSP program."
+        '("marksman"))
 
-    (defun jw/astro-lsp-program (&optional interactive)
-    "Get Astro LSP program."
-    '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
+        (defun jw/astro-lsp-program (&optional interactive)
+        "Get Astro LSP program."
+        '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
 
 
 #+end_src
-
-
 
 Add to =eglot= server list and setup hook after eglot is loaded.
 
@@ -2704,12 +2616,14 @@ Add the hook to auto start =eglot= depending on configured language.
 #+end_src
 
 
-*** The =jw-emacs-langs.el= section for debugging (=dape=)
+*** dape.el
+
+For debuggin,
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
   (use-package dape
-    :ensure t
+    :straight t
     ;; :preface
     ;; By default dape shares the same keybinding prefix as `gud'
     ;; If you do not want to use any prefix, set it to nil.
@@ -2756,10 +2670,11 @@ Add the hook to auto start =eglot= depending on configured language.
 #+end_src
 
 
-*** The =jw-emacs-langs.el= for =tramp-sh.el= and remote configs
+*** tramp-sh.el
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 
+  ;; for remote configs
   (with-eval-after-load 'tramp
     (require 'tramp-sh)
     (setq tramp-own-remote-path '("/bin" "/usr/bin" "/usr/local/bin"))
@@ -2779,7 +2694,9 @@ Add the hook to auto start =eglot= depending on configured language.
 * The custom libraries of my Emacs configuration (=jw-lisp/=)
 ** The =jw-copy.el= library
 
-*** The =jw-copy.el= for copying file path
+*** jw-dired-get-file-path
+
+Copy file path.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-lisp/jw-copy.el" :mkdirp yes
   (defun jw-dired-get-file-path ()
@@ -2793,7 +2710,9 @@ Add the hook to auto start =eglot= depending on configured language.
 
 #+end_src
 
-*** The =jw-copy.el= for copying a file
+*** jw-copy-file
+
+Copy a file.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-lisp/jw-copy.el" :mkdirp yes
 
