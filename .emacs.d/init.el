@@ -70,33 +70,36 @@
   )
 
 (use-package evil
-  :straight t
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump nil)
-  :config
-  (evil-mode 1)
-  (evil-set-undo-system 'undo-redo)
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
-  (define-key evil-normal-state-map (kbd "C-r") 'evil-redo)
+    :straight t
+    :init
+    (setq evil-want-integration t)
+    (setq evil-want-keybinding nil)
+    (setq evil-want-C-u-scroll t)
+    (setq evil-want-C-i-jump nil)
+    :config
+    (evil-mode 1)
+    (evil-set-undo-system 'undo-redo)
+    (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+    (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+    (define-key evil-normal-state-map (kbd "C-r") 'evil-redo)
+    ;; Use visual line motions even outside of visual-line-mode buffers
+    (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+    (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
-  ;; Use visual line motions even outside of visual-line-mode buffers
-  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+    (evil-set-initial-state 'messages-buffer-mode 'normal)
+    (evil-set-initial-state 'dashboard-mode 'normal))
 
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
+  (use-package evil-collection
+    :after evil
+    :straight t
+    :config
+    (evil-collection-init)
+    (with-eval-after-load 'forge
+    (evil-collection-forge-setup)))
 
-(use-package evil-collection
-  :after evil
-  :straight t
-  :config
-  (evil-collection-init)
-  (with-eval-after-load 'forge
-  (evil-collection-forge-setup)))
+(defun jw/evil-delete (orig-fn beg end &optional type _ &rest args)
+    (apply orig-fn beg end type ?_ args))
+(advice-add 'evil-delete :around 'jw/evil-delete)
 
 ;; Enable smooth scrolling with a margin
 (setq scroll-margin 5)          ; Start scrolling when cursor is 5 lines from top/bottom
