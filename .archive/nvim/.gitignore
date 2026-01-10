@@ -1,5 +1,0 @@
-# ignore startup.log
-startup.log
-
-# ignore macos directory structure
-**.DS_Store
