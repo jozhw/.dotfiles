@@ -356,9 +356,16 @@ in conjunction with Evil modes.
       (with-eval-after-load 'forge
       (evil-collection-forge-setup)))
 
-  (defun jw/evil-delete (orig-fn beg end &optional type _ &rest args)
-      (apply orig-fn beg end type ?_ args))
-  (advice-add 'evil-delete :around 'jw/evil-delete)
+(defun jw/evil-delete (orig-fn beg end &optional type register &rest args)
+  "Redirect deletes to blackhole unless triggered by `d`."
+  (if (and (not register)                   ; don’t override explicit registers
+           (let ((keys (this-command-keys)))
+             (and keys (eq (aref keys 0) ?d)))) ; first key was "d"
+      ;; If invoked by `d`, let it behave like cut (default register)
+      (apply orig-fn beg end type register args)
+    ;; Otherwise, send to black hole
+    (apply orig-fn beg end type ?_ args)))
+(advice-add 'evil-delete :around #'jw/evil-delete)
 
 #+end_src
 
