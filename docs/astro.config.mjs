@@ -31,14 +31,6 @@ export default defineConfig({
                             slug: "emacs/getting-started",
                         },
                         {
-                            label: "Dependencies",
-                            slug: "emacs/dependencies",
-                        },
-                        {
-                            label: "Running Emacs",
-                            slug: "emacs/running-emacs",
-                        },
-                        {
                             label: "Early Initialization",
                             slug: "emacs/the-early-initialization-of-emacs-early-initel",
                         },
