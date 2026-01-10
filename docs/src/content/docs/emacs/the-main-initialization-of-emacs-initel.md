@@ -147,35 +147,44 @@ in conjunction with Evil modes.
 ### evil-mode
 
 ```emacs-lisp
-  (use-package evil
-    :straight t
-    :init
-    (setq evil-want-integration t)
-    (setq evil-want-keybinding nil)
-    (setq evil-want-C-u-scroll t)
-    (setq evil-want-C-i-jump nil)
-    :config
-    (evil-mode 1)
-    (evil-set-undo-system 'undo-redo)
-    (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-    (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
-    (define-key evil-normal-state-map (kbd "C-r") 'evil-redo)
+    (use-package evil
+      :straight t
+      :init
+      (setq evil-want-integration t)
+      (setq evil-want-keybinding nil)
+      (setq evil-want-C-u-scroll t)
+      (setq evil-want-C-i-jump nil)
+      :config
+      (evil-mode 1)
+      (evil-set-undo-system 'undo-redo)
+      (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+      (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+      (define-key evil-normal-state-map (kbd "C-r") 'evil-redo)
+      ;; Use visual line motions even outside of visual-line-mode buffers
+      (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+      (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
-    ;; Use visual line motions even outside of visual-line-mode buffers
-    (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-    (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+      (evil-set-initial-state 'messages-buffer-mode 'normal)
+      (evil-set-initial-state 'dashboard-mode 'normal))
 
-    (evil-set-initial-state 'messages-buffer-mode 'normal)
-    (evil-set-initial-state 'dashboard-mode 'normal))
+    (use-package evil-collection
+      :after evil
+      :straight t
+      :config
+      (evil-collection-init)
+      (with-eval-after-load 'forge
+      (evil-collection-forge-setup)))
 
-  (use-package evil-collection
-    :after evil
-    :straight t
-    :config
-    (evil-collection-init)
-    (with-eval-after-load 'forge
-    (evil-collection-forge-setup)))
-
+(defun jw/evil-delete (orig-fn beg end &optional type register &rest args)
+  "Redirect deletes to blackhole unless triggered by `d`."
+  (if (and (not register)                   ; don’t override explicit registers
+           (let ((keys (this-command-keys)))
+             (and keys (eq (aref keys 0) ?d)))) ; first key was "d"
+      ;; If invoked by `d`, let it behave like cut (default register)
+      (apply orig-fn beg end type register args)
+    ;; Otherwise, send to black hole
+    (apply orig-fn beg end type ?_ args)))
+(advice-add 'evil-delete :around #'jw/evil-delete)
 
 ```
 

@@ -1,15 +1,11 @@
 ---
-title: Management Services
-description: Management services configuration and help.
+title: Gitea
+description: Self-hosted developement platform.
 ---
-
-This document is used for configuration and help for all of the management services I have. 
-
-## Gitea
 
 Gitea is used as a lightweight self-hosted development platform. For more information please see the [wiki](https://en.wikipedia.org/wiki/Gitea) and [documentation](https://docs.gitea.com/).
 
-### Environmental Variables
+## Environmental Variables
 
 Related to database:
 
@@ -25,5 +21,3 @@ User ids and group ids:
 Misc:
 
 - `TIMEZONE`
-
-

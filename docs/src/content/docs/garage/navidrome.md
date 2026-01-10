@@ -1,14 +1,11 @@
 ---
-title: Media Services
-description: Media services configuration and help.
+title: Navidrome
+description: Navidrome is an open source self-hosted music server akin to the services Spotify provides.
 ---
 
+Navidrome is an open source self-hosted music server akin to the services Spotify provides.
 
-## Navidrome
-
-Navidrome is an open source self-hosted  music server akin to the services Spotify provides.
-
-### Troubleshooting
+## Troubleshooting
 
 **Not all Tracks Appearing in Album**
 
