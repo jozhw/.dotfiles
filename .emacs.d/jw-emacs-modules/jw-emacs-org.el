@@ -16,7 +16,7 @@
   )
 
 ;; setting dir of tasks
-(setq org-agenda-files (directory-files-recursively "~/Otzar/Docs/agenda/" "\\.org$"))
+(setq org-agenda-files (directory-files-recursively "~/Core/Otzar/Docs/agenda/" "\\.org$"))
 (setq org-todo-keywords
     '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)")))
 
