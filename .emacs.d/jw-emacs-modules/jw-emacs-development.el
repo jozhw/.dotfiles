@@ -105,7 +105,7 @@
 
 (defun jw/project-prompter ()
      (read-file-name "Select a project folder:"
-                     "~/Otzar/Projects/Code/"
+                     "~/Core/Otzar/Projects/Code/"
                      nil
                      nil
                      nil

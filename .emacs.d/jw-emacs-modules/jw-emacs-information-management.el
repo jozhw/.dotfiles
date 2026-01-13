@@ -1,7 +1,7 @@
 (use-package denote
                  :straight t)
 
-(setq denote-directory (expand-file-name "~/Otzar/Gnosis/"))
+(setq denote-directory (expand-file-name "~/Core/Otzar/Gnosis/"))
 (setq denote-save-buffer-after-creation nil)
 
 (add-hook 'dired-mode-hook #'denote-dired-mode)
@@ -61,7 +61,7 @@
 The title is in the format 'YYYY: MONTH DD to DD', where DD to DD represents
 the start and end days of the current week. The filename follows the Denote
 convention with the '__tasks' tag."
-(let* ((custom-directory "~/Otzar/Docs/agenda/")  ; Specify your custom directory here
+(let* ((custom-directory "~/Core/Otzar/Docs/agenda/")  ; Specify your custom directory here
         (today (current-time))
         ;; Calculate the start of the week (assuming Monday as the first day)
         (start-of-week (time-subtract today (days-to-time (mod (nth 6 (decode-time today)) 7))))

@@ -1631,7 +1631,7 @@ For macos, make sure to have =coreutils= installed. To install run, =brew instal
   (use-package denote
                    :straight t)
 
-  (setq denote-directory (expand-file-name "~/Otzar/Gnosis/"))
+  (setq denote-directory (expand-file-name "~/Core/Otzar/Gnosis/"))
   (setq denote-save-buffer-after-creation nil)
 
 #+end_src
@@ -1712,7 +1712,7 @@ Create [[id:43652950-B9D2-4FAF-8F0C-75D1496E85FE][the =jw-emacs-org.el= section 
   The title is in the format 'YYYY: MONTH DD to DD', where DD to DD represents
   the start and end days of the current week. The filename follows the Denote
   convention with the '__tasks' tag."
-  (let* ((custom-directory "~/Otzar/Docs/agenda/")  ; Specify your custom directory here
+  (let* ((custom-directory "~/Core/Otzar/Docs/agenda/")  ; Specify your custom directory here
           (today (current-time))
           ;; Calculate the start of the week (assuming Monday as the first day)
           (start-of-week (time-subtract today (days-to-time (mod (nth 6 (decode-time today)) 7))))
@@ -2039,7 +2039,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
    (defun jw/project-prompter ()
         (read-file-name "Select a project folder:"
-                        "~/Otzar/Projects/Code/"
+                        "~/Core/Otzar/Projects/Code/"
                         nil
                         nil
                         nil
@@ -2238,7 +2238,7 @@ Incorporates the use of llms in the emacs client. For a great summary of the fea
                                 (string-trim (replace-regexp-in-string "[^a-zA-Z0-9-]" "" (replace-regexp-in-string "\\s+" "-" user-input)))
                             "fallback-name"))
                 (timestamp (format-time-string "%Y%m%dT%H%M%S"))
-                (base-dir "~/Otzar/llm-outputs/")
+                (base-dir "~/Core/Otzar/llm-outputs/")
                 (filename (concat (file-name-as-directory (expand-file-name base-dir)) timestamp "--" clean-name ".md")))
             (condition-case err
                 (progn

@@ -77,7 +77,7 @@
                             (string-trim (replace-regexp-in-string "[^a-zA-Z0-9-]" "" (replace-regexp-in-string "\\s+" "-" user-input)))
                         "fallback-name"))
             (timestamp (format-time-string "%Y%m%dT%H%M%S"))
-            (base-dir "~/Otzar/llm-outputs/")
+            (base-dir "~/Core/Otzar/llm-outputs/")
             (filename (concat (file-name-as-directory (expand-file-name base-dir)) timestamp "--" clean-name ".md")))
         (condition-case err
             (progn
