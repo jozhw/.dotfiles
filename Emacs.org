@@ -2452,6 +2452,15 @@ I used the [[https://medium.com/@jrmjrm/configuring-emacs-and-eglot-to-work-with
 
 Now set the config in [[id:F9D087EE-895F-4DBC-BBCF-3056A2A5266E][eglot]].  
 
+*** pandoc
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (use-package pandoc-mode
+    :straight t
+    :hook (markdown-mode . pandoc-mode))
+
+#+end_src
 
 *** rust
 

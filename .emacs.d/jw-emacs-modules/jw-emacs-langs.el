@@ -126,6 +126,10 @@
     (append '((".*\\.astro\\'" . astro-mode))
             auto-mode-alist))
 
+(use-package pandoc-mode
+  :straight t
+  :hook (markdown-mode . pandoc-mode))
+
 (use-package rust-mode
 :straight t
 :mode "\\.rs\\'"
