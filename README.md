@@ -7,10 +7,10 @@ To keep all of the commits organized, I suggest for my own reference to use the 
 
 ```bash
   <ACTION>/<FUNCTIONALITY_CHANGED>: "MESSAGE HERE"
-      ```
+```
 
 
-The repo uses `git` and `git lfs` to keep versioning control. Make sure that you have =git lfs= installed (should be installed by the setup scripts). To see which files are being tracked by `git lfs`, check the `.gitattributes` file.
+The repo uses `git` and `git lfs` to keep versioning control. Make sure that you have `git lfs` installed (should be installed by the setup scripts). To see which files are being tracked by `git lfs`, check the `.gitattributes` file.
 
 To see which files are being tracked by `git submodule`, see the `.gitmodules` file in the root directory.
 
