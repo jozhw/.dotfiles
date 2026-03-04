@@ -1,55 +1,43 @@
-#+title: .dotfiles
+# .dotfiles
 
-* Informational
 
-** Version Control
-
-*** Commit Syntax
+## Version Control
 
 To keep all of the commits organized, I suggest for my own reference to use the following commit syntax. The first is the action (i.e. fix, add, rm) and then the functionality that was changed (i.e. emacs, readme, stow) followed by the commit message.
 
-#+begin_src 
-
+```bash
   <ACTION>/<FUNCTIONALITY_CHANGED>: "MESSAGE HERE"
+      ```
 
-#+end_src
 
-*** Git LFS
+The repo uses `git` and `git lfs` to keep versioning control. Make sure that you have =git lfs= installed (should be installed by the setup scripts). To see which files are being tracked by `git lfs`, check the `.gitattributes` file.
 
-The repo uses =git= and =git lfs= to keep versioning control. Make sure that you have =git lfs= installed (should be installed by the setup scripts). To see which files are being tracked by =git lfs=, check the =.gitattributes= file.
-
-*** Submodules
-
-To see which files are being tracked by =git submodule=, see the =.gitmodules= file in the root directory.
+To see which files are being tracked by `git submodule`, see the `.gitmodules` file in the root directory.
 
 The following paths are submodules:
 
-**** =./.emacs.d/elpa=
+### =./.emacs.d/elpa=
 
 Contains all of the emacs packages that I use.
 
 The reason for this submodule is to avoid breaking changes on updates and can revert to previous versionings.
 
-**** =./.emacs.d/fonts/=
+### =./.emacs.d/fonts/=
 
 This directory contains the fonts that I currently use and VC is linked to the repo for the respective fonts to faciliate updates.
 
-***** =Iosevka=
+### =Iosevka=
 
 Font face that I currently do not use, but I use Prot's updated version of the Iosevka typeface
 
-***** =iosevka-comfy=
 
-Font face that I use for *Emacs*.
-  
+## Setting Up
 
-* Setting Up
-
-** brew
+### brew
 
 All of the brew scripts are within the brew dir. The path relative to this project's root directory is as follows: =./brew/scripts=.
 
-*** brew.sh
+#### brew.sh
 
 The script was heavily inspired from [[https://github.com/mathiasbynens/dotfiles/blob/main/brew.sh][mathiasbynens dotfiles github repo]], but adjusted to suit my needs. A notable difference between my "brew.sh" is that it is modularized with the brew.sh being the wrapper that will download all of the brew files.
 
@@ -63,92 +51,90 @@ To run the script:
 
 #+end_src
 
-*** brew_<category>.sh
+#### brew_<category>.sh
 
-The purpose of these scripts are to categorize brew installs. The wrapper, =brew.sh=, when executed will iterate through all of the =brew_<category>.sh= scripts within the same directory as the =brew.sh=. 
+The purpose of these scripts are to categorize brew installs. The wrapper, =brew.sh=, when executed will iterate through all of the =brew_<category>.sh= scripts within the same directory as the `brew.sh`. 
 
-** stow
+### stow
 
-To stow (create symbolic links), after installing gnu stow, run the script in the =/.config/stow/stow.sh= script.
+To stow (create symbolic links), after installing gnu stow, run the script in the `/.config/stow/stow.sh` script.
 
-* Configurations
+## Configurations
 
-Please see the =ConfigInfo.org= file for more detailing of particular configurations.
+Please see the `ConfigInfo.org` file for more detailing of particular configurations.
 
-** emacs
+### emacs
 
-All emacs configurations are written via a literate configuration in =org-mode= named =Emacs.org=. Each section in =Emacs.org= is modularized via =tangle= upon saving the file. All of the modularized configs are stored within the =.emacs.d= directory.
+All emacs configurations are written via a literate configuration in `org-mode` named `Emacs.org`. Each section in `Emacs.org` is modularized via =tangle= upon saving the file. All of the modularized configs are stored within the =.emacs.d= directory.
 
-** elpa
+### elpa
 
 The elpa directory contains all of the emacs packages that I use for my configuration. The reason why this is seperate and vc'd is to preserve the configuration for emacs, and to decrease the liklihood of errors in setting up. Furthermore, certain packages may have breaking changes that will be in need for fixes, which could be a major hassle. Thus, if a package is accidently updated, then it can be revered to the previous version.
 
-** .profile
+### .profile
 
-=.profile= serves as a generic shell configuration that will be applied in all shell sessions (bash or zsh).
+`.profile` serves as a generic shell configuration that will be applied in all shell sessions (bash or zsh).
 
-To find which shell you are using, simply enter the command =echo %SHELL=.
+To find which shell you are using, simply enter the command `echo %SHELL`.
 
-To switch default shells, enter the command =chsh -s <PATH_TO_SHELL>=. The =<PATH_TO_SHELL>= typically is in the form of =/bin/bash= for =bash= and =/bin/zsh= for =zsh=.
+To switch default shells, enter the command `chsh -s <PATH_TO_SHELL>`. The `<PATH_TO_SHELL>` typically is in the form of `/bin/bash` for =bash= and `/bin/zsh` for `zsh`.
    
-** macos
+### macos
 
-The =.macos= file is used to configure macs. The template was taken from [[https://github.com/mathiasbynens/dotfiles/blob/main/.macos][@mathiasbynens]] and adjusted for my needs.
+The =.macos= file is used to configure macs. The template was taken from [@mathiasbynens](https://github.com/mathiasbynens/dotfiles/blob/main/.macos) and adjusted for my needs.
 
-* Source Code 
+## Source Code 
 
 Consists of scripts and "repos" that are part of my overall setup, not just on my local machine. The rationale behind this is because monorepos may be better suited for this.
 
-** Garage
+### Garage
 
 This repo serves as a place that consolidates all of my services that I run in my home laboratory along with all of the instructions and config files necessary to get these applications up and running. 
 
-*** Structure
+#### Structure
 
 Each service has its own directory and within each service directory contains subdirectories that specify the major services used for setup. This is done so that replicating would be easy — minimal changes needed to get things working.
 
 
-*** Docker
+#### Docker
 
-To be consistent with the philosophy of reproducibility, =docker-compose.yaml= files are used if possible. 
+To be consistent with the philosophy of reproducibility, `docker-compose.yaml` files are used if possible. 
 
-It is important to note that the docker compose files may have a =.env= file that must be created within the same directory as the =docker-compose.yaml=. 
+It is important to note that the docker compose files may have a `.env` file that must be created within the same directory as the `docker-compose.yaml`. 
 
 
-** Atzlan
+### Atzlan
 
 Atzlan a Repository to be Lazy
 
-*** IMPORTANT
+#### IMPORTANT
 
 All the scripts, unless otherwise noted, are geared towards macos users using bash shell.
 Linux users may benefit depending on their shell configurations.
 
-*** What is Atzlan?
+#### What is Atzlan?
 
 "Atzlan" is the English translation of the Hebrew word for lazy, indolent, or sluggish.
 As the name implies, this repository is for those who seek to be "lazy" or are "lazy."
 Joking aside, the purpose of this respository is to house scripts that can make you life
 easier.
 
-*** Developers
+#### Developers
 
-**** Executable Scripts
+##### Executable Scripts
 
 Make sure that the scripts are executable and according to your operating system.
 
 To make a script executable, for unix users just do the following:
 
-#+begin_src shell
-
+```bash
   chmod +x <NAME_OF_EXECUTABLE_SCRIPT>
-
-#+end_src
+```
 
 Make sure that you read the documentation for each of the scripts in order that you have the right dependencies installed in order for the script to work
 
-* Documentation
+## Documentation
 
-Please see the provided link to the documentation - [[https://dotfiles.jozhw.com][dotfiles.jozhw.com]].
+Please see the provided link to the documentation - [dotfiles.jozhw.com](https://dotfiles.jozhw.com).
 
 Note that the documentation is what I use to keep track of any details/information that I find useful, hence the purpose is not for others to use, meaning you will not find the documentation to be "organized" nor "intuitive".
