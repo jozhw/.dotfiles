@@ -1884,6 +1884,15 @@ If you receive the option to rebuild the =epdfserver= and you agree to building 
 
 
 ** The =jw-emacs-development.el= module
+*** eca-emacs.el
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
+
+  (use-package eca
+    :straight (:type git :host github :repo "editor-code-assistant/eca-emacs"))
+
+#+end_src
+
 *** tramp.el --native
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
@@ -2431,6 +2440,19 @@ Python formatter configuration.
 
 #+end_src
 
+*** r
+
+R syntax and REPL integration through =ESS=.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (use-package ess
+    :straight t
+    :mode (("\\.R\\'" . ess-r-mode)
+           ("\\.r\\'" . ess-r-mode)))
+
+#+end_src
+
 
 *** astro.js
 
@@ -2527,9 +2549,15 @@ Make sure you have the necessary packages installed.
     :config
     (setf (alist-get 'prettier-json apheleia-formatters)
         '("prettier" "--stdin-filepath" filepath))
+    ;; R formatter via styler (requires `install.packages("styler")` in R)
+    (setf (alist-get 'r-styler apheleia-formatters)
+          '("Rscript" "--vanilla" "-e"
+            "con<-file('stdin');txt<-readLines(con,warn=FALSE);close(con);cat(styler::style_text(txt),sep='\\n')"))
     ;; Map json-ts-mode to the prettier-json formatter
     (setf (alist-get 'json-ts-mode apheleia-mode-alist)
         '(prettier-json))
+    (setf (alist-get 'ess-r-mode apheleia-mode-alist)
+          '(r-styler))
     (add-to-list 'apheleia-mode-alist '(tsx-ts-mode . prettier))
     (add-to-list 'apheleia-mode-alist '(typescript-ts-mode . prettier))
     (add-to-list 'apheleia-mode-alist '(c++-ts-mode . clang-format))
@@ -2578,6 +2606,10 @@ Make sure you have the necessary packages installed.
        '("texlab")
        )
 
+      (defun jw/r-lsp-program (&optional interactive)
+      "Get R LSP program."
+      '("R" "--slave" "-e" "languageserver::run()"))
+
 
 #+end_src
 
@@ -2607,6 +2639,8 @@ Add to =eglot= server list and setup hook after eglot is loaded.
                 '(markdown-mode . jw/marksman-lsp-program))
     (add-to-list 'eglot-server-programs 
                 '((latex-mode tex-mode LaTex-mode) . jw/tex-lsp-program))
+    (add-to-list 'eglot-server-programs
+                '(ess-r-mode . jw/r-lsp-program))
     (add-to-list 'eglot-server-programs 
                 '(astro-mode . jw/astro-lsp-program)))
 
@@ -2629,7 +2663,8 @@ Function to start eglot.
                     (derived-mode-p 'typescript-ts-mode)
                     (derived-mode-p 'tsx-ts-mode)
                     (derived-mode-p 'markdown-mode)
-                    (derived-mode-p 'astro-mode)))
+                    (derived-mode-p 'astro-mode)
+                    (derived-mode-p 'ess-r-mode)))
         (eglot-ensure)))
 
   ;; Helper function to restart eglot in current buffer
@@ -2655,6 +2690,7 @@ Add the hook to auto start =eglot= depending on configured language.
   (add-hook 'markdown-mode-hook #'jw/maybe-start-eglot)
   (add-hook 'astro-mode-hook #'jw/maybe-start-eglot)
   (add-hook 'tex-mode-hook #'jw/maybe-start-eglot)
+  (add-hook 'ess-r-mode-hook #'jw/maybe-start-eglot)
 
 #+end_src
 
@@ -2782,4 +2818,3 @@ Copy a file.
   (provide 'jw-copy)
 
 #+end_src
-

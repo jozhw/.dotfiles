@@ -115,6 +115,11 @@
   :after python
   :hook (python-ts-mode . python-black-on-save-mode))
 
+(use-package ess
+  :straight t
+  :mode (("\\.R\\'" . ess-r-mode)
+         ("\\.r\\'" . ess-r-mode)))
+
 ;; WEB MODE
 (use-package web-mode
 :straight t)
@@ -153,9 +158,15 @@
   :config
   (setf (alist-get 'prettier-json apheleia-formatters)
       '("prettier" "--stdin-filepath" filepath))
+  ;; R formatter via styler (requires `install.packages("styler")` in R)
+  (setf (alist-get 'r-styler apheleia-formatters)
+        '("Rscript" "--vanilla" "-e"
+          "con<-file('stdin');txt<-readLines(con,warn=FALSE);close(con);cat(styler::style_text(txt),sep='\\n')"))
   ;; Map json-ts-mode to the prettier-json formatter
   (setf (alist-get 'json-ts-mode apheleia-mode-alist)
       '(prettier-json))
+  (setf (alist-get 'ess-r-mode apheleia-mode-alist)
+        '(r-styler))
   (add-to-list 'apheleia-mode-alist '(tsx-ts-mode . prettier))
   (add-to-list 'apheleia-mode-alist '(typescript-ts-mode . prettier))
   (add-to-list 'apheleia-mode-alist '(c++-ts-mode . clang-format))
@@ -194,6 +205,10 @@
      '("texlab")
      )
 
+    (defun jw/r-lsp-program (&optional interactive)
+    "Get R LSP program."
+    '("R" "--slave" "-e" "languageserver::run()"))
+
 ;; Enhanced eglot configuration
 (with-eval-after-load 'eglot
 (setq eglot-prefer-local-server t)
@@ -216,6 +231,8 @@
             '(markdown-mode . jw/marksman-lsp-program))
 (add-to-list 'eglot-server-programs 
             '((latex-mode tex-mode LaTex-mode) . jw/tex-lsp-program))
+(add-to-list 'eglot-server-programs
+            '(ess-r-mode . jw/r-lsp-program))
 (add-to-list 'eglot-server-programs 
             '(astro-mode . jw/astro-lsp-program)))
 
@@ -232,7 +249,8 @@
                   (derived-mode-p 'typescript-ts-mode)
                   (derived-mode-p 'tsx-ts-mode)
                   (derived-mode-p 'markdown-mode)
-                  (derived-mode-p 'astro-mode)))
+                  (derived-mode-p 'astro-mode)
+                  (derived-mode-p 'ess-r-mode)))
       (eglot-ensure)))
 
 ;; Helper function to restart eglot in current buffer
@@ -252,6 +270,7 @@
 (add-hook 'markdown-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'astro-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'tex-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'ess-r-mode-hook #'jw/maybe-start-eglot)
 
 (use-package dape
   :straight t

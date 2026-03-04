@@ -1,3 +1,6 @@
+(use-package eca
+  :straight (:type git :host github :repo "editor-code-assistant/eca-emacs"))
+
 (use-package tramp
   :straight t)
 (setq tramp-default-method "ssh")
