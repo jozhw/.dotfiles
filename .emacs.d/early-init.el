@@ -11,6 +11,9 @@ constitutes a matching tiling window manager."
               ((not (string-match-p session jw-emacs-tiling-window-manager-regexp))))
      ,@body))
 
+;; prevent conflict with multiple versions of packages because useing straight
+(setq package-enable-at-startup nil)
+
 ;; Set frame parameters early (without font-related settings;; )
 (setq initial-frame-alist
       (append '((alpha . (90 . 90))
