@@ -1,15 +1,35 @@
 ---
-title: Starlight
-description: Using Starlight for this site.
+title: Editing This Site
+description: How this documentation site is built and regenerated.
 ---
 
-For a comprehensive guide to using Starlight, which is an official documentation template by the Astro team, please see the [documentation](https://starlight.astro.build/).
+This site is built with [Starlight](https://starlight.astro.build/), the official documentation theme by the Astro team. The pages under **Emacs** are generated from the literate `Emacs.org` config; everything else is hand-written.
+
+## Regenerating the Emacs pages
+
+The literate config is the source of truth. To regenerate the Emacs pages after editing `Emacs.org`, run from the repo root:
+
+```shell
+./src/scripts/org_to_md.sh
+```
+
+This converts `Emacs.org` into `docs/src/content/docs/emacs/*.md` (pruning any stale pages). Do **not** hand-edit files in `emacs/` — they are overwritten on every run.
 
 ## Development
 
-To enable a development server, using the javascript package manager of your choice, in this case I am using `yarn`, rrun the development server as indicated by the [documentation](https://starlight.astro.build/). For this particular build run `yarn dev`.
+Run a local dev server with hot reload (using `yarn`, from the `docs/` directory):
+
+```shell
+yarn dev
+```
 
 ## Building
 
-To build run `yarn build` and to preview the build run `yarn astro preview`. Of course substitute the build command with the package manager used.
+To produce the static site and preview it:
 
+```shell
+yarn build
+yarn astro preview
+```
+
+Substitute the package manager of your choice for `yarn`.

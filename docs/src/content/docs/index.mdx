@@ -1,14 +1,14 @@
 ---
 title: Welcome to John's Dotfiles
-description: John's Dotfiles Documentation.
+description: Documentation for John's dotfiles, homelab, and scripts.
 template: splash
 hero:
-  tagline: Find the documentation to John's Dotfiles here!
+  tagline: Configuration, homelab runbooks, and scripts — documented so future-me doesn't have to remember.
   image:
     file: ../../assets/houston.webp
   actions:
-    - text: About
-      link: /overview/informational/
+    - text: Start Here
+      link: /overview/about/
       icon: right-arrow
     - text: Repository
       link: https://github.com/jozhw/.dotfiles
@@ -18,19 +18,17 @@ hero:
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
-
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+	<Card title="Editor" icon="pencil">
+		My literate Emacs configuration, generated straight from `Emacs.org`.
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	<Card title="Shell & CLI" icon="laptop">
+		Bootstrapping a machine, GPG signing, and the CLI tools I rely on.
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
+	<Card title="Homelab" icon="rocket">
+		Runbooks for the self-hosted services I run — setup, backup, and recovery.
 	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="Scripts" icon="seti:shell">
+		Atzlan: small scripts that make life easier (rsync, yt-dlp, sshfs, …).
 	</Card>
 </CardGrid>
