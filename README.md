@@ -51,9 +51,28 @@ To run the script:
 
 #+end_src
 
-#### brew_<category>.sh
+#### brew_<NN>_<category>.sh
 
-The purpose of these scripts are to categorize brew installs. The wrapper, =brew.sh=, when executed will iterate through all of the =brew_<category>.sh= scripts within the same directory as the `brew.sh`. 
+The purpose of these scripts are to categorize brew installs. The wrapper, =brew.sh=, when executed will iterate (in filename order) through all of the =brew_*.sh= scripts within the same directory as the `brew.sh` and =source= each one.
+
+Each category script is named =brew_<NN>_<category>.sh=:
+
+- =<NN>= is a two-digit number that both **groups** related scripts and **fixes the run order** (lower numbers run first). Numbers are spaced in ranges (00, 10, 20, ...) so new categories can be slotted in between without renaming existing files.
+- =<category>= names the bucket, e.g. =system=, =files=, =langs=, =cask=.
+
+The ranges currently in use:
+
+| Range | Group    | Scope                                                    |
+| :---- | :------- | :------------------------------------------------------- |
+| 00-09 | system   | GNU/updated replacements for built-in macOS tools        |
+| 10-19 | cli      | files, search, compression, shell, data pipelines        |
+| 20-29 | dev      | languages, LSPs, formatters, version control             |
+| 30-39 | media    | audio/video, graphics, documents                         |
+| 40-49 | network  | web browsing and downloading                             |
+| 50-59 | security | CTF / pentest / forensics tooling                        |
+| 60-69 | apps     | GUI applications (Homebrew casks)                         |
+| 70-79 | misc     | everything else (personal information management, etc.)   |
+
 
 ### stow
 
