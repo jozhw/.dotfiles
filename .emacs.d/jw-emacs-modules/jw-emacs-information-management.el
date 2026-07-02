@@ -2,6 +2,9 @@
                  :straight t)
 
 (setq denote-directory (expand-file-name "~/Core/Otzar/Gnosis/"))
+;; Create the notes directory if it does not exist yet (e.g. fresh machine).
+(unless (file-directory-p denote-directory)
+  (make-directory denote-directory t))
 (setq denote-save-buffer-after-creation nil)
 
 (add-hook 'dired-mode-hook #'denote-dired-mode)

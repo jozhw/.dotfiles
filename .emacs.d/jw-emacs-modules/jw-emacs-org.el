@@ -16,7 +16,12 @@
   )
 
 ;; setting dir of tasks
-(setq org-agenda-files (directory-files-recursively "~/Core/Otzar/Docs/agenda/" "\\.org$"))
+;; `directory-files-recursively' errors if the directory is missing (e.g. on
+;; a fresh machine), so create it first if it is not there.
+(let ((agenda-dir (expand-file-name "~/Core/Otzar/Docs/agenda/")))
+  (unless (file-directory-p agenda-dir)
+    (make-directory agenda-dir t))
+  (setq org-agenda-files (directory-files-recursively agenda-dir "\\.org$")))
 (setq org-todo-keywords
     '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)")))
 
