@@ -18,3 +18,5 @@ brew install --cask vlc            # VLC media player
 brew install --cask docker         # Docker Desktop container runtime
 brew install --cask ghostty        # Ghostty — native GPU-accelerated terminal emulator
 brew install --cask skim           # Skim PDF reader and annotator
+brew install --cask zotero         # research paper organizater and citer
+brew install --cask rectangle      # window manager
