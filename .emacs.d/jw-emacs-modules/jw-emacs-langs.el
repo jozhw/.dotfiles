@@ -17,9 +17,19 @@
         (bash "https://github.com/tree-sitter/tree-sitter-bash")
         ))
 
+;; Install any missing grammars.  Guard each one individually:
+;; `treesit-install-language-grammar' signals an error when a grammar cannot
+;; be fetched or compiled, which would abort the whole loop and leave later
+;; grammars (e.g. `bash', the last entry) uninstalled.  Wrapping each call so
+;; one bad grammar cannot block the rest.
 (dolist (source treesit-language-source-alist)
-  (unless (treesit-ready-p (car source))
-    (treesit-install-language-grammar (car source))))
+  (let ((lang (car source)))
+    (unless (treesit-ready-p lang t) ; t = probe quietly, no warning
+      (condition-case err
+          (treesit-install-language-grammar lang)
+        (error
+         (message "Could not install tree-sitter grammar for `%s': %s"
+                  lang (error-message-string err)))))))
 
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
