@@ -20,9 +20,10 @@ fi
 brew install coreutils
 ln -s "${BREW_PREFIX}/bin/gsha256sum" "${BREW_PREFIX}/bin/sha256sum"
 
-brew install moreutils   # Extra Unix tools such as `sponge`, `ts`, and `vidir`
-brew install findutils   # GNU find/locate/updatedb/xargs (installed `g`-prefixed)
-brew install grep        # GNU grep, newer than the bundled build (use as `ggrep`)
-brew install openssh     # Up-to-date OpenSSH client and server
-brew install screen      # Terminal multiplexer, newer than the bundled version
-brew install gmp         # GNU multiple-precision arithmetic library
+brew install moreutils      # Extra Unix tools such as `sponge`, `ts`, and `vidir`
+brew install findutils      # GNU find/locate/updatedb/xargs (installed `g`-prefixed)
+brew install grep           # GNU grep, newer than the bundled build (use as `ggrep`)
+brew install openssh        # Up-to-date OpenSSH client and server
+brew install screen         # Terminal multiplexer, newer than the bundled version
+brew install gmp            # GNU multiple-precision arithmetic library
+brew install pinentry-mac   # GNUPG passphrase reader
