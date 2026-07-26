@@ -43,8 +43,6 @@ Referenced by the capture template in `jw-emacs-information-management'.")
 (setq org-agenda-span 'day)
 (setq org-agenda-start-on-weekday nil)
 
-;; Neither of these was bound anywhere, which made the whole flow an `M-x'
-;; away.  `C-c c' matches the note left on `cursory' above.
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
 

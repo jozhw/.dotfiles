@@ -14,7 +14,11 @@
 
 
 
-(setq denote-known-keywords '("hf" "philosophy" "ministry" "journal"))
+(setq denote-known-keywords
+      '("math" "markets" "hf" "code" "infra"
+        "philosophy" "ministry" "health" "people" "writing"))
+;; Offer keywords already present in the notes, not only the list above, so
+;; the vocabulary can drift without editing this file.
 (setq denote-infer-keywords t)
 (setq denote-sort-keywords t)
 
@@ -81,8 +85,6 @@
   :straight t
   :demand t
   :config
-  ;; Create the vault (and its subdirectories) before assigning the path:
-  ;; the `obsidian-directory' setter errors out on a missing directory.
   (let ((vault (expand-file-name "~/Core/Otzar/Obsidian/")))
     (dolist (dir (list vault
                        (expand-file-name "notes" vault)
@@ -90,16 +92,14 @@
                        (expand-file-name "templates" vault)))
       (unless (file-directory-p dir)
         (make-directory dir t)))
-    ;; `obsidian-daily-note' calls `insert-file-contents' on the template
-    ;; without checking that it exists, so seed a minimal one -- a daily note
-    ;; is a landing strip, and prompts or fixed sections would only add a
-    ;; decision to something whose whole value is having none.
+    ;; `obsidian-daily-note' inserts this file without checking that it
+    ;; exists, so seed a minimal one.
     (let ((template (expand-file-name "templates/Daily Note Template.md" vault)))
       (unless (file-exists-p template)
         (with-temp-file template
           (insert "# {{title}}\n\n"))))
     (setopt obsidian-directory vault))
-  ;; Track vault files everywhere so links/tags resolve globally.
+  ;; Track vault files everywhere so links and tags resolve globally.
   (global-obsidian-mode t))
 
 
@@ -108,25 +108,53 @@
 (setq obsidian-daily-notes-directory "daily-notes") ; daily note file is YYYY-MM-DD.md
 (setq obsidian-templates-directory "templates")     ; note templates live here
 (setq obsidian-daily-note-template "Daily Note Template.md")
-;; When following a wiki-link whose target does not exist yet:
-;;   t   -> create it in `obsidian-inbox-directory'
-;;   nil -> create it alongside the current file (i.e. inside `daily-notes/')
+;; Following a wiki-link to a note that does not exist yet creates it in
+;; `obsidian-inbox-directory' rather than beside the current file.
 (setq obsidian-create-unfound-files-in-inbox t)
 
 
 
-;; Entry points: reachable from anywhere, not just from inside the vault.
+;; Entry points: reachable from anywhere, not only from inside the vault.
 (global-set-key (kbd "C-c n n") #'obsidian-daily-note)
 (global-set-key (kbd "C-c n c") #'obsidian-capture)
 (global-set-key (kbd "C-c n j") #'obsidian-jump)
 (global-set-key (kbd "C-c n s") #'obsidian-search)
-(global-set-key (kbd "C-c n u") #'obsidian-update)
+(global-set-key (kbd "C-c n t") #'obsidian-insert-tag)
+(global-set-key (kbd "C-c n f") #'obsidian-find-tag)
+(global-set-key (kbd "C-c n i") #'jw-obsidian-insert-template)
 (global-set-key (kbd "C-c n b") #'obsidian-backlinks-mode)
+(global-set-key (kbd "C-c n u") #'obsidian-update)
 
 (with-eval-after-load 'obsidian
   (define-key obsidian-mode-map (kbd "C-c C-o") #'obsidian-follow-link-at-point)
   (define-key obsidian-mode-map (kbd "C-c C-b") #'obsidian-backlink-jump)
   (define-key obsidian-mode-map (kbd "C-c C-l") #'obsidian-insert-wikilink))
+
+
+
+(use-package xeft
+  :straight t
+  :after obsidian
+  :bind ("C-c n g" . xeft)
+  :custom
+  (xeft-directory obsidian-directory)
+  (xeft-recursive t)                            ; notes/, daily-notes/, ...
+  (xeft-file-filter #'obsidian-file-p)
+  (xeft-title-function #'obsidian-file-title-function))
+
+
+
+(defun jw-obsidian-insert-template ()
+  "Insert a template from `obsidian-templates-directory' into this buffer.
+Substitutes {{title}}, {{date}} and {{time}} the same way `obsidian-daily-note'
+does, since it reuses `obsidian-apply-template'."
+  (interactive)
+  (let* ((dir (expand-file-name obsidian-templates-directory obsidian-directory))
+         (templates (directory-files dir nil "\\.md\\'")))
+    (unless templates
+      (user-error "No templates in %s" dir))
+    (obsidian-apply-template
+     (expand-file-name (completing-read "Template: " templates) dir))))
 
 
 

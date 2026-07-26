@@ -1326,15 +1326,12 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 :ID:       43652950-B9D2-4FAF-8F0C-75D1496E85FE
 :END:
 
-The agenda is deliberately a *single file* that never rotates. Anything that
-files tasks into per-week or per-project files buys structure at the cost of a
-decision every time you capture, and tasks whose lifespan is one day do not
-earn that. Add a line, it shows up today; mark it =DONE=, it disappears.
-
-Note also that the previous version computed =org-agenda-files= once at startup
-with =directory-files-recursively=, so a task file created mid-session was
-invisible to the agenda until Emacs restarted. A fixed one-element list has no
-such failure mode.
+The agenda is deliberately a *single file* that never rotates. Per-week or
+per-project files buy structure at the cost of a decision on every capture, and
+tasks whose lifespan is one day do not earn that. Add a line, it shows up today;
+mark it =DONE=, it disappears. Naming the file explicitly (rather than scanning
+a directory at startup) also means a file created mid-session is never missing
+from the agenda.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
@@ -1362,8 +1359,6 @@ such failure mode.
   (setq org-agenda-span 'day)
   (setq org-agenda-start-on-weekday nil)
 
-  ;; Neither of these was bound anywhere, which made the whole flow an `M-x'
-  ;; away.  `C-c c' matches the note left on `cursory' above.
   (global-set-key (kbd "C-c a") #'org-agenda)
   (global-set-key (kbd "C-c c") #'org-capture)
 
@@ -1392,22 +1387,20 @@ from the clock. So the layout is:
       2027.org
 #+end_example
 
-Year is the file boundary and month/day are headings inside it. Splitting
-further --- a file per month --- was considered and rejected: it yields twelve
-files a year, sixty after five years, each a few hundred lines, which is worse
-for grepping and is exactly the kind of proliferation this setup exists to
-avoid. Year is also the only unit anyone actually retires as a whole.
+Year is the file boundary; month and day are headings inside it. A file per
+month would give sixty files after five years, which is worse for grepping and
+is the proliferation this setup exists to avoid --- and a year is the only unit
+anyone ever retires whole.
 
-The *year comes from each entry's =CLOSED= date, not from today*. That is the
-detail that makes the whole thing safe to neglect: a sweep run in January still
-files December's work under =2026.org=, so the archive is accurate regardless of
-when it is run. Computing the file per entry (rather than once at startup) also
-avoids a session that stays open across New Year writing into the wrong year.
+The *year comes from each entry's =CLOSED= date, not from today*. That is what
+makes the archive safe to neglect: a sweep run in January still files December's
+work under =2026.org=. Computing it per entry also keeps a session left open
+across New Year from writing into the wrong file.
 
-Note that =org-archive-location= is deliberately *not* set globally --- it is
-bound only inside the command below. Setting it globally would redirect
-archiving from *every* Org file, including denote notes, into the agenda
-archive. Everything outside =todo.org= keeps Org's default of a
+=org-archive-location= is deliberately *not* set globally --- it is bound only
+inside the command below. Set globally it would redirect archiving from *every*
+Org file, including denote notes, into the agenda archive. Everything outside
+=todo.org= keeps Org's default of a
 =<file>.org_archive= sibling.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
@@ -1827,9 +1820,21 @@ Enable the denote dired mode for all files so that the components can easily be 
 
 #+end_src
 
+Keywords are the same vocabulary used for tags in the Obsidian vault --- see
+[[*Tags][Tags]] for what each one covers and why the list is short. One vocabulary across
+both tools means one thing to remember; two would guarantee drift.
+
+=journal= is not in the list: denote notes that are a dated log are better served
+by the vault's =daily-notes/=, and a keyword that duplicates a location earns
+nothing.
+
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
-  (setq denote-known-keywords '("hf" "philosophy" "ministry" "journal"))
+  (setq denote-known-keywords
+        '("math" "markets" "hf" "code" "infra"
+          "philosophy" "ministry" "health" "people" "writing"))
+  ;; Offer keywords already present in the notes, not only the list above, so
+  ;; the vocabulary can drift without editing this file.
   (setq denote-infer-keywords t)
   (setq denote-sort-keywords t)
 
@@ -1911,28 +1916,15 @@ it depending on load order.
 
 *** obsidian.el
 
-[[https://github.com/licht1stein/obsidian.el][obsidian.el]] brings an [[https://obsidian.md][Obsidian]] vault into Emacs: it treats a
-directory of Markdown files as a knowledge base, understands =[[wiki-links]]=
-and =#tags=, and provides jumping, capturing, searching, and a backlinks panel.
-It complements [[*denote.el][denote.el]] --- use denote for Org-based notes and obsidian.el
-when you want to live inside an existing Markdown vault.
+[[https://github.com/licht1stein/obsidian.el][obsidian.el]] treats a directory of Markdown files as a knowledge base:
+=[[wiki-links]]=, =#tags=, jumping, search, and a backlinks panel. This vault is
+the *knowledge bank* --- things worth referencing later. Tasks live in
+[[id:43652950-B9D2-4FAF-8F0C-75D1496E85FE][org-agenda]]; [[*denote.el][denote.el]] holds Org-format notes.
 
-Install via =straight.el=. =:demand t= is used because =global-obsidian-mode=
-needs to be active as soon as a vault file is opened.
-
-Ordering here is load-bearing, and the previous version got it wrong three ways:
-
-1. =obsidian-directory= is a =defcustom=, not a function. Writing
-   =(obsidian-directory "...")= evaluated as a *function call* and signalled
-   =void-function=, which aborted the rest of =:config= --- so
-   =global-obsidian-mode= never turned on and the vault path stayed ="".=
-2. That =defcustom= has a =:set= handler that calls =user-error= when the
-   directory does not exist, so the vault must be created *before* it is
-   assigned, not after.
-3. =obsidian-backlinks-mode= was enabled before the vault path was known.
-
-=setopt= is what runs the =:set= handler; a plain =setq= would set the value
-but skip the bookkeeping that populates =obsidian--relative-path-length=.
+The vault directories are created before the path is assigned because
+=obsidian-directory= has a =:set= handler that refuses a missing directory.
+=setopt= (not =setq=) is what runs that handler, which also records the path
+length used to compute vault-relative names.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
@@ -1940,8 +1932,6 @@ but skip the bookkeeping that populates =obsidian--relative-path-length=.
     :straight t
     :demand t
     :config
-    ;; Create the vault (and its subdirectories) before assigning the path:
-    ;; the `obsidian-directory' setter errors out on a missing directory.
     (let ((vault (expand-file-name "~/Core/Otzar/Obsidian/")))
       (dolist (dir (list vault
                          (expand-file-name "notes" vault)
@@ -1949,59 +1939,25 @@ but skip the bookkeeping that populates =obsidian--relative-path-length=.
                          (expand-file-name "templates" vault)))
         (unless (file-directory-p dir)
           (make-directory dir t)))
-      ;; `obsidian-daily-note' calls `insert-file-contents' on the template
-      ;; without checking that it exists, so seed a minimal one -- a daily note
-      ;; is a landing strip, and prompts or fixed sections would only add a
-      ;; decision to something whose whole value is having none.
+      ;; `obsidian-daily-note' inserts this file without checking that it
+      ;; exists, so seed a minimal one.
       (let ((template (expand-file-name "templates/Daily Note Template.md" vault)))
         (unless (file-exists-p template)
           (with-temp-file template
             (insert "# {{title}}\n\n"))))
       (setopt obsidian-directory vault))
-    ;; Track vault files everywhere so links/tags resolve globally.
+    ;; Track vault files everywhere so links and tags resolve globally.
     (global-obsidian-mode t))
 
 #+end_src
 
-=obsidian-backlinks-mode= is deliberately *not* enabled here. It is a =:global=
-minor mode whose activation body calls =obsidian-open-backlinks-panel=
-immediately and adds =obsidian--populate-backlinks-buffer= to
-=buffer-list-update-hook=, so turning it on at load time means a side window on
-every Emacs start --- including sessions that never touch the vault --- plus a
-hook that runs on every buffer switch.
+Backlinks are a *toggle*, not a default. =obsidian-backlinks-mode= is a global
+minor mode that opens its side window the instant it is enabled and hooks
+=buffer-list-update-hook=, so enabling it at load time puts a panel in every
+session --- including ones that never touch the vault. =C-c n b= when it is
+actually wanted.
 
-Backlinks are worth *asking* for rather than always having, so it is bound to a
-toggle below instead. (To go back to always-on, add =(obsidian-backlinks-mode 1)=
-to the =:config= above; to get it only inside the vault, hang it on
-=obsidian-mode-hook= --- though note it stays on globally once triggered.)
-
-Vault-relative directories used for capture, daily notes, and templates. All
-paths are relative to =obsidian-directory=; leave a variable =nil= to disable
-that feature.
-
-The vault has exactly two real buckets, split by *what indexes them*:
-
-- =daily-notes/= --- indexed by *when*. An append-only log: what happened, what
-  was read, what was thought. Created by =obsidian-daily-note=, which asks no
-  questions, so the cost of capturing is zero.
-- =notes/= --- indexed by *what*. Named notes, flat; =[[wiki-links]]= and
-  =#tags= do the organising rather than a folder hierarchy.
-
-The rule that decides between them: *if you can name it, it is a note; if you
-cannot, it goes in today's daily note.* That maps onto the commands themselves,
-since =obsidian-capture= prompts for a title and =obsidian-daily-note= does not.
-
-The folder is =notes/= rather than the conventional =inbox/= on purpose. An
-inbox is an implicit promise to process it later, and an unprocessed inbox
-becomes a graveyard plus a second thing to search. Nothing in =notes/= needs to
-graduate anywhere.
-
-Note that =obsidian-wiki-link-create-file-in-inbox= --- set here previously ---
-does not exist in this package; the real variable is
-=obsidian-create-unfound-files-in-inbox=, so the old line only interned a stray
-symbol and had no effect. Left at =t=: following a =[[wiki-link]]= from a daily
-note drops the new file in =notes/=, which is right, because writing the link
-means it has already been named.
+Vault-relative directories; =nil= disables a feature.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
@@ -2009,43 +1965,50 @@ means it has already been named.
   (setq obsidian-daily-notes-directory "daily-notes") ; daily note file is YYYY-MM-DD.md
   (setq obsidian-templates-directory "templates")     ; note templates live here
   (setq obsidian-daily-note-template "Daily Note Template.md")
-  ;; When following a wiki-link whose target does not exist yet:
-  ;;   t   -> create it in `obsidian-inbox-directory'
-  ;;   nil -> create it alongside the current file (i.e. inside `daily-notes/')
+  ;; Following a wiki-link to a note that does not exist yet creates it in
+  ;; `obsidian-inbox-directory' rather than beside the current file.
   (setq obsidian-create-unfound-files-in-inbox t)
 
 #+end_src
 
-Keybindings split by whether the command is an *entry point* into the vault or
-an operation *within* it. Previously everything lived in =obsidian-mode-map=,
-which meant =obsidian-jump= and =obsidian-capture= were only reachable from a
-buffer already inside the vault --- of no use when the whole point is getting
-there from somewhere else. Those move to a global =C-c n= prefix.
+The capture folder is =notes/= rather than the usual =inbox/= because an inbox
+is an implicit promise to process it later; nothing here needs to graduate
+anywhere.
 
-Entry points (global):
+**** Keys
 
-- =obsidian-daily-note= --- open today's daily note, creating it from the template. The default landing spot.
-- =obsidian-capture= --- create a named note in =notes/=.
-- =obsidian-jump= --- fuzzy-jump to any note in the vault.
-- =obsidian-search= --- full-text search across the vault.
-- =obsidian-update= --- re-scan the vault after adding files outside Emacs.
-- =obsidian-backlinks-mode= --- toggle the backlinks side panel on demand.
+Entry points are global so the vault is reachable from anywhere; link and
+backlink commands are scoped to vault buffers, where they are the natural
+=C-c C-*= verbs.
 
-Within a vault buffer (=obsidian-mode-map=):
-
-- =obsidian-follow-link-at-point= --- follow the =[[wiki-link]]= or Markdown link under point.
-- =obsidian-backlink-jump= --- open the backlinks panel and jump to a note that links here.
-- =obsidian-insert-wikilink= --- insert a =[[wiki]]= link.
+| Key       | Command                        | Does                                  |
+|-----------+--------------------------------+---------------------------------------|
+| =C-c n n= | =obsidian-daily-note=          | today's daily note, from the template |
+| =C-c n c= | =obsidian-capture=             | new named note in =notes/=            |
+| =C-c n j= | =obsidian-jump=                | fuzzy-jump to any note                |
+| =C-c n s= | =obsidian-search=              | full-text search the vault            |
+| =C-c n g= | =xeft=                         | search-as-you-type with context       |
+| =C-c n t= | =obsidian-insert-tag=          | insert a tag, completing on existing  |
+| =C-c n f= | =obsidian-find-tag=            | list notes carrying a tag             |
+| =C-c n i= | =jw-obsidian-insert-template=  | insert a template into this buffer    |
+| =C-c n b= | =obsidian-backlinks-mode=      | toggle the backlinks panel            |
+| =C-c n u= | =obsidian-update=              | re-scan after edits made outside Emacs |
+| =C-c C-o= | =obsidian-follow-link-at-point= | follow the link under point          |
+| =C-c C-b= | =obsidian-backlink-jump=       | jump to a note linking here           |
+| =C-c C-l= | =obsidian-insert-wikilink=     | insert a =[[wiki]]= link              |
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
-  ;; Entry points: reachable from anywhere, not just from inside the vault.
+  ;; Entry points: reachable from anywhere, not only from inside the vault.
   (global-set-key (kbd "C-c n n") #'obsidian-daily-note)
   (global-set-key (kbd "C-c n c") #'obsidian-capture)
   (global-set-key (kbd "C-c n j") #'obsidian-jump)
   (global-set-key (kbd "C-c n s") #'obsidian-search)
-  (global-set-key (kbd "C-c n u") #'obsidian-update)
+  (global-set-key (kbd "C-c n t") #'obsidian-insert-tag)
+  (global-set-key (kbd "C-c n f") #'obsidian-find-tag)
+  (global-set-key (kbd "C-c n i") #'jw-obsidian-insert-template)
   (global-set-key (kbd "C-c n b") #'obsidian-backlinks-mode)
+  (global-set-key (kbd "C-c n u") #'obsidian-update)
 
   (with-eval-after-load 'obsidian
     (define-key obsidian-mode-map (kbd "C-c C-o") #'obsidian-follow-link-at-point)
@@ -2054,80 +2017,232 @@ Within a vault buffer (=obsidian-mode-map=):
 
 #+end_src
 
-**** Working practice
+**** Search: xeft
 
-The config above only creates folders. What keeps the vault usable is the
-practice, so it is written down here rather than left to be re-derived later.
+=obsidian-search= is a one-shot grep: type a phrase, get a hit list. [[https://sr.ht/~casouri/xeft/][xeft]] is
+search-as-you-type across the whole vault, showing each match with its
+surrounding context, and =RET= on a phrase with no match creates a note by that
+name. For a knowledge bank whose main failure mode is *not remembering what a
+note was called*, that live-filtering loop is the more useful retrieval path ---
+so both are kept, on adjacent keys.
+
+obsidian.el supplies the two functions that make xeft vault-aware:
+=obsidian-file-p= excludes anything that is not a vault Markdown file, and
+=obsidian-file-title-function= reads a =title:= from front matter, falling back
+to the first line and then the file name. Deriving =xeft-directory= from
+=obsidian-directory= keeps one source of truth for the vault path; =:after
+obsidian= is what guarantees that variable is already set.
+
+Upstream binds this to =C-c C-g= in =obsidian-mode-map=. It is bound globally
+here instead --- searching is how you *get into* the vault, so a binding that
+only works once you are already in it is backwards. (=C-c C-g= also means
+"refresh" inside xeft's own buffer, so reusing it for entry reads oddly.)
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
+
+  (use-package xeft
+    :straight t
+    :after obsidian
+    :bind ("C-c n g" . xeft)
+    :custom
+    (xeft-directory obsidian-directory)
+    (xeft-recursive t)                            ; notes/, daily-notes/, ...
+    (xeft-file-filter #'obsidian-file-p)
+    (xeft-title-function #'obsidian-file-title-function))
+
+#+end_src
+
+***** Prerequisites
+
+xeft searches through a Xapian index, which means a *dynamic module* --- this is
+the one piece of the config with a dependency outside Emacs:
+
+#+begin_src sh
+  brew install xapian
+#+end_src
+
+Emacs must also have been built with module support, and a C++ compiler and
+=make= must be present. The first =M-x xeft= calls =xeft--require-xapian-lite=,
+which finds no module and offers three choices: compile locally, download a
+prebuilt binary, or quit. Compiling is the honest option once =xapian= is
+installed; it runs =make= in xeft's own directory and is a one-time cost.
+
+If it cannot proceed it says =Cannot start xeft because required dynamic module
+is missing= --- that message means the module, not the package, so the fix is
+=brew install xapian= and re-running the compile prompt rather than reinstalling
+xeft.
+
+Note that =templates/= is indexed along with everything else, so template files
+surface in results. With one or two templates that is not worth filtering; if it
+becomes noise, wrap =obsidian-file-p= in a predicate that rejects that
+subdirectory.
+
+**** Templates
+
+obsidian.el applies a template in exactly one place: =obsidian-daily-note=
+inserts =obsidian-daily-note-template= into a newly created daily note. Its
+=obsidian-apply-template= is not an interactive command, so there is no built-in
+way to use a template anywhere else. This adds one:
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
+
+  (defun jw-obsidian-insert-template ()
+    "Insert a template from `obsidian-templates-directory' into this buffer.
+  Substitutes {{title}}, {{date}} and {{time}} the same way `obsidian-daily-note'
+  does, since it reuses `obsidian-apply-template'."
+    (interactive)
+    (let* ((dir (expand-file-name obsidian-templates-directory obsidian-directory))
+           (templates (directory-files dir nil "\\.md\\'")))
+      (unless templates
+        (user-error "No templates in %s" dir))
+      (obsidian-apply-template
+       (expand-file-name (completing-read "Template: " templates) dir))))
+
+#+end_src
+
+The substitutions available are =\{\{title\}\}= (the file name), =\{\{date\}\}=
+and =\{\{time\}\}=. There is no prompting and no cursor placement --- these are
+skeletons, not Org capture templates.
+
+Keep them few and nearly empty. A template's cost is not writing it, it is that
+*every section in it becomes an obligation*: headings that get left blank
+accumulate across hundreds of notes and make the vault look like work in
+progress rather than a reference. The daily note template seeded above is just
+=# {{title}}= for exactly this reason --- a daily note's value is having no
+structure to satisfy.
+
+A second template is worth it only for a shape that is genuinely repeated, and
+the one that pays here is the durable note, because it encodes the handoff rules
+below --- claim first, sources kept:
+
+#+begin_example
+  # {{title}}
+
+  <!-- one-sentence claim, stated flat -->
+
+  ## Why
+
+  ## Sources
+#+end_example
+
+**** Tags
+
+The rule that keeps tags from turning into chaos: *tags carry the domain, links
+carry the topic.*
+
+Links are unbounded and cost nothing --- every =[[wiki-link]]= is one more
+retrieval path, and a wrong one is harmless. Tags are the opposite: a tag is
+only useful if many notes share it, so every new tag slightly devalues the
+existing ones. =#trading=, =#trades= and =#markets= as three separate tags means
+none of them reliably returns everything.
+
+So topics are never tags. What a note is *about* belongs in its title and its
+links. Tags answer only "which pile do I want to walk through?", which in
+practice means a handful of life domains. The same list is set as
+=denote-known-keywords= above, so both tools share one vocabulary.
+
+Three habits are enough to hold the line:
+
+1. *Insert tags with =C-c n t=, never by typing them.* =obsidian-insert-tag=
+   completes over tags already in the vault, so the path of least resistance is
+   reuse. Typing =#= by hand is how a second spelling gets in.
+2. *Keep the vocabulary memorable.* Roughly ten tags, few enough to recall
+   without looking. Adding one should feel like a decision; if a new tag
+   overlaps an old one, pick one and rename rather than keeping both.
+3. *One tag is usually right, three is a lot.* If a note needs many tags to be
+   findable, it is really several notes, or it wants a link instead.
+
+The starting vocabulary:
+
+| Tag          | Covers                                                     |
+|--------------+------------------------------------------------------------|
+| =math=       | math, statistics, probability, optimization                |
+| =markets=    | instruments, microstructure, macro, execution mechanics    |
+| =hf=         | the fund itself --- strategy, thesis, ops, building it     |
+| =code=       | programming, languages, libraries, tooling                 |
+| =infra=      | homelab, servers, backups, self-hosting                    |
+| =philosophy= | analytic reasoning, ethics, metaphysics                    |
+| =ministry=   | faith, practice, teaching                                  |
+| =health=     | training, sleep, food                                      |
+| =people=     | thinkers, contacts, who believes what                      |
+| =writing=    | drafts and arguments in progress                           |
+
+The test for whether two candidates should be one tag: *can you name a case
+where seeing the other pile would be noise?* Statistics is folded into =math=
+because the answer is no --- both are wanted on essentially every search, and
+splitting them puts a filing decision on exactly the boundary cases (stochastic
+calculus, measure-theoretic probability) where it is hardest to make.
+
+=hf= and =markets= are the closest call in the other direction. They stay apart
+because merging them would put one tag on most of the vault, and a tag matching
+60% of notes filters nothing --- the same failure as a tag matching one note.
+The line is *learned versus built*: how a limit order book works is =markets=;
+how this fund's strategy works is =hf=. That is also where the separate-vault
+split would fall if the firm bank ever becomes real.
+
+Deliberately absent is =journal=: daily notes already live in =daily-notes/=, and
+tagging what the location already says is pure noise. The last two rows are the
+least certain --- domains are discovered from use rather than designed up front,
+so treat any row that stays unused after a few months as a slot to reclaim.
+
+This list is documentation, not configuration. Keep the living copy as a note in
+the vault so it is visible while writing; a vocabulary meant to drift slowly
+should not need a re-tangle to change.
+
+Retrieval is =C-c n f= (=obsidian-find-tag=) for a domain, then
+=obsidian-backlink-jump= (=C-c C-b=) to walk outward through links. The tag
+narrows to a pile; the links do the actual navigating.
+
+**** Working practice
 
 ***** Which bucket does this go in?
 
 *If you can name it, it is a note. If you cannot, it goes in today's daily note.*
 
-Naming is the only filing decision in the whole system, and it is one that can
-be made instantly or not at all. The rule maps onto the commands themselves:
-=obsidian-capture= (=C-c n c=) asks for a title, =obsidian-daily-note=
-(=C-c n n=) asks nothing.
+Naming is the only filing decision in the system, and it can be made instantly
+or not at all. The commands mirror it: =obsidian-capture= (=C-c n c=) asks for a
+title, =obsidian-daily-note= (=C-c n n=) asks nothing.
 
 The asymmetry that matters: *an inbox carries debt and a daily note does not.*
-A staging folder is an implicit promise to process it later; miss that for a
-few weeks and it becomes a graveyard plus a second place to search. An
-unprocessed daily note is still a perfectly good log --- it was never going to
-become anything else. That is why the capture folder here is named =notes/=
-rather than the conventional =inbox/=: nothing in it needs to graduate anywhere.
+An unprocessed daily note is still a perfectly good log --- it was never going
+to become anything else.
 
 ***** Promotion happens through links, not filing
 
 There is no review step and no "process the inbox" ritual. When a line in a
 daily note keeps recurring, write it as a =[[wiki-link]]= and follow it with
-=C-c C-o=. Since =obsidian-create-unfound-files-in-inbox= is =t=, that creates
-the note in =notes/=. Writing the link *is* the promotion, and it is correct by
-construction, because writing the link means it has already been named.
-
-Structure within =notes/= comes from =#tags= and links, never folders. Use
-=obsidian-backlink-jump= (=C-c C-b=) to see what already points at a note ---
-that is the real index.
+=C-c C-o=; the note gets created in =notes/=. Writing the link *is* the
+promotion, and it is correct by construction, because writing the link means it
+has already been named.
 
 ***** Editing: mechanics get overwritten, judgments get logged
 
-Notes are *edited in place*, not superseded by later iterations. Keeping
-"Basis Trade", "Basis Trade v2" and "Basis Trade (revised)" side by side means
-reconstructing the truth by reading three documents in order and diffing them,
-which is the failure this whole setup exists to avoid.
+Notes are *edited in place*, not superseded by later iterations. Keeping "Basis
+Trade", "Basis Trade v2" and "Basis Trade (revised)" side by side means
+reconstructing the truth by reading three documents and diffing them.
 
-The split:
-
-- *Mechanics* --- how a thing works, a definition, a procedure. When the
-  understanding sharpens, overwrite it. There should be exactly one note and it
-  should be currently correct.
-- *Judgments* --- a view, a thesis, a call. Here the evolution *is* the
-  content, so keep a dated log inside the single note: thought X in March
-  because Y, revised in June because Z.
+- *Mechanics* --- how something works, a definition, a procedure. Overwrite it.
+  There should be one note and it should be currently correct.
+- *Judgments* --- a view, a thesis, a call. Here the evolution *is* the content,
+  so keep a dated log inside the single note.
 
 Append-only feels like discipline, but its real motivation is fear of losing
-provenance --- and that is already solved. *Keep the vault under git.* It is a
-directory of Markdown files; =git log= gives every prior iteration, dated and
-diffable, without polluting what has to be read to get an answer. A knowledge
-bank is measured by the cost of retrieving a correct answer, and append-only
-trades that away for a problem version control already handles.
+provenance, and that is already solved: *keep the vault under git*. A knowledge
+bank is measured by the cost of retrieving a correct answer, and versioned notes
+trade that away for a problem =git log= already handles.
 
 ***** Writing for a future handoff
 
-The bank is intended to eventually be written up by someone else. That changes
-what is worth optimising: a writer can turn a rough correct idea into good
-prose, but *cannot* reconstruct why something was believed. Therefore:
+The bank is meant to eventually be written up by someone else. A writer can turn
+a rough correct idea into good prose but *cannot* reconstruct why something was
+believed. So: *lead with the claim* (first line states the assertion, not the
+background), *do not polish* (prose is the part being outsourced), and *keep the
+sources* (links and citations cannot be recovered later).
 
-- *Lead with the claim.* The first line of a durable note states the assertion,
-  not the background. This is what makes a note handoff-able.
-- *Do not polish.* Prose is the part being outsourced; time spent on it is the
-  lowest-return activity in the vault.
-- *Keep the sources.* Links and citations are what a writer needs and cannot
-  recover.
+One decision that is cheap now and near-impossible later: if a firm research
+bank ever becomes real, make it a *separate vault* --- not for tidiness, but for
+the moment other people get access.
 
-One decision that is cheap now and near-impossible later: if a firm/research
-knowledge bank ever becomes real, make it a *separate vault*. Not for tidiness
---- for the moment other people get access. Separating private thinking from
-shared research inside one directory after the fact is genuinely miserable, and
-drawing the line while both are empty costs nothing.
 
 *** clean directories
 
