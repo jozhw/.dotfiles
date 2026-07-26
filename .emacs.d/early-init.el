@@ -1,3 +1,4 @@
+
 (defvar jw-emacs-tiling-window-manager-regexp "bspwm\\|herbstluftwm\\|i3"
   "Regular expression to  tiling window managers.
 See definition of `prot-emacs-with-desktop-session'.")
@@ -11,8 +12,12 @@ constitutes a matching tiling window manager."
               ((not (string-match-p session jw-emacs-tiling-window-manager-regexp))))
      ,@body))
 
+
+
 ;; prevent conflict with multiple versions of packages because useing straight
-(setq package-enable-at-startup nil)
+(setq package-enable-at-startup nil) 
+
+
 
 ;; Set frame parameters early (without font-related settings;; )
 (setq initial-frame-alist
@@ -46,6 +51,8 @@ constitutes a matching tiling window manager."
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 
+
+
 ;; -*- lexical-binding: t; -*-
 
 ;; The default is 800 kilobytes.  Measured in bytes.
@@ -59,6 +66,7 @@ constitutes a matching tiling window manager."
                              (float-time
                               (time-subtract after-init-time before-init-time)))
                      gcs-done)))
+
 
 (defun jw-emacs-theme-gsettings-dark-p ()
   "Return non-nil if gsettings (GNOME) has a dark theme.
@@ -96,7 +104,12 @@ not retain the generic background set by the function
   (when-let ((theme (car custom-enabled-themes)))
     (enable-theme theme)))
 
+
+
 (add-hook 'after-init-hook (lambda () (set-frame-name "home")))
+
+
 
 (add-to-list 'load-path (expand-file-name "jw-emacs-modules" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "jw-lisp" user-emacs-directory))
+

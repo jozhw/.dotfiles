@@ -1,3 +1,4 @@
+
 (use-package pdf-tools
   :straight t
   :config
@@ -5,6 +6,10 @@
   :hook (pdf-view-mode . (lambda () 
                        (display-line-numbers-mode -1)
                        (message "PDF Tools activated for this buffer"))))
+
+
+
+
 
 ;; Ensure org-noter is installed
 (use-package org-noter
@@ -62,4 +67,7 @@
   (use-package djvu
     :straight t))
 
+
+
 (provide 'jw-emacs-productivity)
+

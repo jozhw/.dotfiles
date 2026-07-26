@@ -273,7 +273,6 @@ Load the `jw-emacs-modules`.
 (require 'jw-emacs-productivity)
 (require 'jw-emacs-development)
 (require 'jw-emacs-which-key)
-(require 'jw-emacs-ai)
 (require 'jw-emacs-langs)
 ```
 

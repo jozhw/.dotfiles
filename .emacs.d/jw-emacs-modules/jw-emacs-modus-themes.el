@@ -1,3 +1,4 @@
+
 ;;; The Modus themes
 
 ;; The themes are highly customisable.  Read the manual:
@@ -29,3 +30,4 @@
     (modus-themes-load-theme (cadr modus-themes-to-toggle))
     (modus-themes-load-theme (car modus-themes-to-toggle)))
  (provide 'jw-emacs-modus-themes)
+

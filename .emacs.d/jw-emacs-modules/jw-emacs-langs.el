@@ -1,3 +1,4 @@
+
 (setq treesit-language-source-alist
       '((typescript .        ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
         (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
@@ -46,6 +47,7 @@
                                        (c-mode . c-ts-mode)
                                        ))
 
+
 (use-package treesit-auto
   :straight t
   :custom
@@ -54,7 +56,11 @@
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
+
+
 (setq treesit-auto-install 'prompt)
+
+
 
 (use-package auctex
   :straight t
@@ -98,6 +104,8 @@
 
   (setq reftex-plug-into-AUCTeX t))
 
+
+
 (use-package conda
   :straight t
   :config
@@ -105,15 +113,22 @@
   (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
   (conda-env-autoactivate-mode t))
 
+
+
+
 (use-package python-black
   :demand t
   :after python
   :hook (python-ts-mode . python-black-on-save-mode))
 
+
+
 (use-package ess
   :straight t
   :mode (("\\.R\\'" . ess-r-mode)
          ("\\.r\\'" . ess-r-mode)))
+
+
 
 ;; WEB MODE
 (use-package web-mode
@@ -126,9 +141,14 @@
     (append '((".*\\.astro\\'" . astro-mode))
             auto-mode-alist))
 
+
+
+
 (use-package pandoc-mode
   :straight t
   :hook (markdown-mode . pandoc-mode))
+
+
 
 (use-package rust-mode
 :straight t
@@ -136,17 +156,25 @@
 :config
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode)))
 
+
+
 (defun jw/find-rust-analyzer ()
   (or (executable-find "rust-analyzer")
       (expand-file-name "~/.cargo/bin/rust-analyzer")))
+
+
 
 ;; (use-package typescript-mode
 ;; :ensure t
 ;; :mode "\\.ts\\'")
 
+
+
 ;; (use-package json-mode
 ;; :ensure t
 ;; :mode "\\.json\\'")
+
+
 
 (use-package apheleia
   :straight t
@@ -167,6 +195,8 @@
   (add-to-list 'apheleia-mode-alist '(c++-ts-mode . clang-format))
   (add-to-list 'apheleia-mode-alist '(c-ts-mode . clang-format))
   (apheleia-global-mode +1))
+
+
 
 ;; Dynamic server program functions
 (defun jw/python-lsp-program (&optional interactive)
@@ -204,6 +234,9 @@
     "Get R LSP program."
     '("R" "--slave" "-e" "languageserver::run()"))
 
+
+
+
 ;; Enhanced eglot configuration
 (with-eval-after-load 'eglot
 (setq eglot-prefer-local-server t)
@@ -231,6 +264,8 @@
 (add-to-list 'eglot-server-programs 
             '(astro-mode . jw/astro-lsp-program)))
 
+
+
 ;; Function to start eglot
   (defun jw/maybe-start-eglot ()
   "Start eglot if current mode is supported and file is not remote."
@@ -256,6 +291,8 @@
     (eglot-shutdown (eglot-current-server))
     (eglot-ensure)))
 
+
+
 (add-hook 'python-ts-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'rust-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'c-ts-mode-hook #'jw/maybe-start-eglot)
@@ -266,6 +303,8 @@
 (add-hook 'astro-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'tex-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'ess-r-mode-hook #'jw/maybe-start-eglot)
+
+
 
 (use-package dape
   :straight t
@@ -312,10 +351,15 @@
   :config
   (repeat-mode))
 
+
+
 ;; for remote configs
 (with-eval-after-load 'tramp
   (require 'tramp-sh)
   (setq tramp-own-remote-path '("/bin" "/usr/bin" "/usr/local/bin"))
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
+
+
 (provide 'jw-emacs-langs)
+

@@ -1,3 +1,4 @@
+
 ;; for preserving minibuffer history
 (use-package savehist
   :straight t
@@ -9,6 +10,8 @@
   ;;(put 'minibuffer-history 'history-length 25)
   ;;(put 'evil-ex-history 'history-length 50)
   ;;(put 'kill-ring 'history-length 25))
+
+
 
 (defun jw/minibuffer-backward-kill (arg)
   "When minibuffer is completing a file name delete up to parent
@@ -33,6 +36,7 @@ folder, otherwise delete a word"
   (vertico-cycle t)
   :init
   (vertico-mode))
+
 
 (use-package corfu
   :straight t
@@ -67,6 +71,8 @@ folder, otherwise delete a word"
   :init
   (global-corfu-mode))
 
+
+
 (unless (display-graphic-p)
     (progn
       ;; Configuration for GUI mode
@@ -87,17 +93,23 @@ folder, otherwise delete a word"
   ;; Add your terminal mode specific configuration here
   )
 
+
+
 (use-package cape
   :straight t
   :init
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-dabbrev))
 
+
+
 (use-package orderless
   :init
   (setq completion-styles '(orderless)
         completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion))))))
+
+
 
 ;;; Detailed completion annotations (marginalia.el)
 (use-package marginalia
@@ -106,4 +118,7 @@ folder, otherwise delete a word"
   :config
   (setq marginalia-max-relative-age 0)) ; absolute time
 
+
+
 (provide 'jw-emacs-completion)
+

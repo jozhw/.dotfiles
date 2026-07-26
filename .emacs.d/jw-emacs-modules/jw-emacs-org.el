@@ -1,3 +1,4 @@
+
 (defun jw/org-mode-setup ()
   (org-indent-mode) ;; auto-indentation for headings
   (variable-pitch-mode 1) ;; cause fonts to vary by proportionality
@@ -15,15 +16,39 @@
 
   )
 
-;; setting dir of tasks
-;; `directory-files-recursively' errors if the directory is missing (e.g. on
-;; a fresh machine), so create it first if it is not there.
-(let ((agenda-dir (expand-file-name "~/Core/Otzar/Docs/agenda/")))
+
+
+
+(defvar jw-org-todo-file
+  (expand-file-name "~/Core/Otzar/Docs/agenda/todo.org")
+  "The one and only agenda file.
+Referenced by the capture template in `jw-emacs-information-management'.")
+
+;; Create the directory and the file on a fresh machine so that both
+;; `org-agenda' and `org-capture' work without any manual setup.
+(let ((agenda-dir (file-name-directory jw-org-todo-file)))
   (unless (file-directory-p agenda-dir)
-    (make-directory agenda-dir t))
-  (setq org-agenda-files (directory-files-recursively agenda-dir "\\.org$")))
+    (make-directory agenda-dir t)))
+(unless (file-exists-p jw-org-todo-file)
+  (with-temp-file jw-org-todo-file
+    (insert "#+title: Todo\n\n")))
+
+(setq org-agenda-files (list jw-org-todo-file))
+
 (setq org-todo-keywords
     '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)")))
+
+;; Show today, not the week ahead -- the agenda is a day's worklist, not a
+;; project plan.
+(setq org-agenda-span 'day)
+(setq org-agenda-start-on-weekday nil)
+
+;; Neither of these was bound anywhere, which made the whole flow an `M-x'
+;; away.  `C-c c' matches the note left on `cursory' above.
+(global-set-key (kbd "C-c a") #'org-agenda)
+(global-set-key (kbd "C-c c") #'org-capture)
+
+
 
 ;; on macos, fix "This Emacs binary lacks sound support" 
 ;; - https://github.com/leoliu/play-sound-osx/blob/master/play-sound.el
@@ -46,12 +71,21 @@
                "afplay" (append (and volume (list "-v" volume))
                                 (list (expand-file-name file data-directory))))))))
 
+
+
+
 (setq org-clock-sound "~/.dotfiles/.assets/sounds/mixkit-alert-quick-chime-766.wav")
+
+
 
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c C-l") 'org-insert-link)
 
+
+
 (setq org-id-link-to-org-use-id 'create-if-interactive)
+
+
 
 (use-package org-bullets
   :after org
@@ -59,9 +93,13 @@
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
+
+
 (setq org-image-actual-width nil)
 (setq org-startup-with-inline-images t)
 (add-hook 'org-mode-hook 'org-display-inline-images)
+
+
 
 ;; This is needed as of Org 9.2
 (require 'org-tempo)
@@ -71,6 +109,8 @@
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 (add-to-list 'org-structure-template-alist '("clang" . "src c"))
 (add-to-list 'org-structure-template-alist '("cpp" . "src cpp"))
+
+
 
 ;; Automatically tangle our Emacs.org config file when we save it
 (defun jw/org-babel-tangle-config ()
@@ -82,12 +122,16 @@
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'jw/org-babel-tangle-config)))
 
+
+
 (org-babel-do-load-languages
   'org-babel-load-languages
   '((emacs-lisp . t)
     (python . t)))
 
 (push '("conf-unix" . conf-unix) org-src-lang-modes)
+
+
 
 (defun jw/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
@@ -97,6 +141,8 @@
 (use-package visual-fill-column
   :hook (org-mode . jw/org-mode-visual-fill)
   (markdown-mode . jw/org-mode-visual-fill))
+
+
 
 (with-eval-after-load 'ox-latex
   (add-to-list 'org-latex-classes
@@ -123,4 +169,7 @@
                  ("\\paragraph*{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph*{%s}" . "\\subparagraph*{%s}"))))
 
+
+
 (provide 'jw-emacs-org)
+

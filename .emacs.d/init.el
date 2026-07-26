@@ -1,3 +1,4 @@
+
 ;; installation of straight.el package manager
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -12,8 +13,12 @@
         (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage))
 
+
+
 ;; conditional to remove display of mode-line
 (setq-default mode-line-format nil)
+
+
 
 (require 'dired)
 
@@ -25,10 +30,14 @@
             (dired-hide-details-mode 1)
             ))
 
+
+
 ;; Install use-package
 (straight-use-package 'use-package)
 
 (setq straight-use-package-by-default t)
+
+
 
 (if init-file-debug
     (setq use-package-verbose t
@@ -37,6 +46,8 @@
           debug-on-error t)
   (setq use-package-verbose nil
         use-package-expand-minimally t))
+
+
 
 (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
 
@@ -49,6 +60,8 @@
 (use-package no-littering
   :straight t)
 
+
+
 (use-package general
   :straight t
   :config
@@ -57,11 +70,16 @@
     :prefix "SPC"
     :global-prefix "C-SPC"))
 
+
+
 ;; bind quit prompting func to escape
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
+
+
 ;; use spaces instead of tabs for indentation
 (setq-default indent-tabs-mode nil)
+
 
 ;; for ui toggles
 (jw/leader-key-def
@@ -69,7 +87,8 @@
   "tw" 'whitespace-mode
   )
 
-(use-package evil
+
+    (use-package evil
       :straight t
       :init
       (setq evil-want-integration t)
@@ -108,13 +127,20 @@
     (apply orig-fn beg end type ?_ args)))
 (advice-add 'evil-delete :around #'jw/evil-delete)
 
+
+
 ;; Enable smooth scrolling with a margin
 (setq scroll-margin 5)          ; Start scrolling when cursor is 5 lines from top/bottom
 (setq scroll-conservatively 100) ; Scroll line by line, not by half-screen jumps
 (setq scroll-step 1)            ; Scroll one line at a time when needed
 
+
+
+
 ;; Always start with *scratch*
 (setq initial-buffer-choice t)
+
+
 
 ;; A few more useful configurations...
 (use-package emacs
@@ -136,6 +162,8 @@
   ;; setting is useful beyond Corfu.
   (setq read-extended-command-predicate #'command-completion-default-include-p))
 
+
+
 ;; taken from prot's config
 ;; For those who use my dotfiles and need an easy way to write their
 ;; own extras on top of what I already load: search below for the files
@@ -147,6 +175,8 @@ prot-emacs-pre-custom.el.  This file must be in the same
 directory as the init.el."
   :group 'file)
 
+
+
 (defcustom jw-emacs-load-which-key t
   "When non-nil, display key binding hints after a short delay.
 This user option must be set in the `prot-emacs-pre-custom.el'
@@ -154,6 +184,9 @@ file.  If that file exists in the Emacs directory, it is loaded
 before all other modules of my setup."
   :group 'jw-emacs
   :type 'boolean)
+
+
+
 
 (defcustom jw-emacs-load-theme-family 'modus
   "Set of themes to load.
@@ -174,6 +207,7 @@ before all other modules of my setup."
                  (const :tag "The `standard-themes' module" standard)
                  (const :tag "Do not load a theme module" nil)))
 
+
 (load (locate-user-emacs-file "jw-emacs-pre-custom.el") :no-error :no-message)
 (require 'jw-emacs-theme)
 (require 'jw-emacs-essentials)
@@ -186,7 +220,5 @@ before all other modules of my setup."
 (require 'jw-emacs-productivity)
 (require 'jw-emacs-development)
 (require 'jw-emacs-which-key)
-(require 'jw-emacs-ai)
 (require 'jw-emacs-langs)
 
-(require 'jw-copy)

@@ -496,18 +496,14 @@ Load the =jw-emacs-modules=.
   (require 'jw-emacs-productivity)
   (require 'jw-emacs-development)
   (require 'jw-emacs-which-key)
-  (require 'jw-emacs-ai)
   (require 'jw-emacs-langs)
 
 #+end_src
 
-Load =jw-lisp=.
+Nothing in =jw-lisp/= is loaded at the moment --- see
+[[*The custom libraries of my Emacs configuration (=jw-lisp/=)][the custom libraries section]]. The =load-path= entry set earlier means a new
+library only needs a =require= added here.
 
-#+begin_src emacs-lisp :tangle ".emacs.d/init.el" :mkdirp yes
-
-  (require 'jw-copy)
-
-#+end_src
 * The modules of my Emacs configuration (=jw-emacs-modules/=)
 
 ** The =jw-emacs-theme.el= module
@@ -1330,19 +1326,73 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 :ID:       43652950-B9D2-4FAF-8F0C-75D1496E85FE
 :END:
 
+The agenda is deliberately a *single file* that never rotates. Anything that
+files tasks into per-week or per-project files buys structure at the cost of a
+decision every time you capture, and tasks whose lifespan is one day do not
+earn that. Add a line, it shows up today; mark it =DONE=, it disappears.
+
+Note also that the previous version computed =org-agenda-files= once at startup
+with =directory-files-recursively=, so a task file created mid-session was
+invisible to the agenda until Emacs restarted. A fixed one-element list has no
+such failure mode.
+
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
-  ;; setting dir of tasks
-  ;; `directory-files-recursively' errors if the directory is missing (e.g. on
-  ;; a fresh machine), so create it first if it is not there.
-  (let ((agenda-dir (expand-file-name "~/Core/Otzar/Docs/agenda/")))
+  (defvar jw-org-todo-file
+    (expand-file-name "~/Core/Otzar/Docs/agenda/todo.org")
+    "The one and only agenda file.
+  Referenced by the capture template in `jw-emacs-information-management'.")
+
+  ;; Create the directory and the file on a fresh machine so that both
+  ;; `org-agenda' and `org-capture' work without any manual setup.
+  (let ((agenda-dir (file-name-directory jw-org-todo-file)))
     (unless (file-directory-p agenda-dir)
-      (make-directory agenda-dir t))
-    (setq org-agenda-files (directory-files-recursively agenda-dir "\\.org$")))
+      (make-directory agenda-dir t)))
+  (unless (file-exists-p jw-org-todo-file)
+    (with-temp-file jw-org-todo-file
+      (insert "#+title: Todo\n\n")))
+
+  (setq org-agenda-files (list jw-org-todo-file))
+
   (setq org-todo-keywords
-      '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)"))) 
+      '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)")))
+
+  ;; Show today, not the week ahead -- the agenda is a day's worklist, not a
+  ;; project plan.
+  (setq org-agenda-span 'day)
+  (setq org-agenda-start-on-weekday nil)
+
+  ;; Neither of these was bound anywhere, which made the whole flow an `M-x'
+  ;; away.  `C-c c' matches the note left on `cursory' above.
+  (global-set-key (kbd "C-c a") #'org-agenda)
+  (global-set-key (kbd "C-c c") #'org-capture)
 
 #+end_src
+
+**** Working practice
+
+The whole loop is two keys:
+
+- =C-c c t= --- capture a task. Type it, =C-c C-c= to file. The template stamps
+  =SCHEDULED: %t= (today), so it appears in the agenda with no further action.
+- =C-c a a= --- open the day's agenda. =t= on a line cycles its state, =RET=
+  jumps to it in =todo.org=.
+
+The states are =TODO -> WAIT -> CANCEL/DONE=. =WAIT=, =CANCEL= and =DONE= all
+have =!= in their definition, so switching to them logs a timestamp into a
+=LOGBOOK= drawer (=org-log-into-drawer= is =t= above) --- history without
+cluttering the visible outline.
+
+Things that are deliberately *not* here, because each one buys structure at the
+cost of a decision per capture: priorities, effort estimates, projects,
+sub-headings, per-week or per-project files, and refile targets. If a task
+needs more scaffolding than a single line, it is not a task --- it is a note,
+and it belongs in the vault (see [[*obsidian.el][obsidian.el]]).
+
+=todo.org= grows without bound because =DONE= items stay in the file, but they
+leave the agenda view immediately, so they cost nothing to read past. If it
+ever becomes genuinely unwieldy, =C-c C-x C-a= (=org-archive-subtree-default=)
+on the done items is enough; there is no need for a scheduled cleanup habit.
 
 *** org-pomodoro
 
@@ -1712,62 +1762,252 @@ Enable the denote dired mode for all files so that the components can easily be 
 
 #+end_src
 
-Create [[id:43652950-B9D2-4FAF-8F0C-75D1496E85FE][the =jw-emacs-org.el= section for =org-agenda= --native]] org capture template leveraging the denote format.
+The capture template for [[id:43652950-B9D2-4FAF-8F0C-75D1496E85FE][the =jw-emacs-org.el= section for =org-agenda=]].
+=SCHEDULED: %t= stamps it with today, so a captured item appears in the day
+agenda without any further filing.
+
+This replaces an earlier =jw-denote-weekly-tasks-filename= that minted a new
+Denote-named file with frontmatter every week. Weekly files are a filing system
+for things that live one day, and the rotation was pure overhead.
+
+Note the use of =add-to-list= rather than =setq=: the denote note template
+below registers itself the same way, and a bare =setq= here silently clobbers
+it depending on load order.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
   ;; Ensure denote.el is loaded
   (require 'denote)
 
-  (defun jw-denote-weekly-tasks-filename ()
-  "Generate a Denote filename for a weekly tasks Org file in a custom directory and ensure the file exists.
-  The title is in the format 'YYYY: MONTH DD to DD', where DD to DD represents
-  the start and end days of the current week. The filename follows the Denote
-  convention with the '__tasks' tag."
-  (let* ((custom-directory "~/Core/Otzar/Docs/agenda/")  ; Specify your custom directory here
-          (today (current-time))
-          ;; Calculate the start of the week (assuming Monday as the first day)
-          (start-of-week (time-subtract today (days-to-time (mod (nth 6 (decode-time today)) 7))))
-          ;; Calculate the end of the week (Sunday)
-          (end-of-week (time-add start-of-week (days-to-time 6)))
-          ;; Format the year and month from the start of the week
-          (year (format-time-string "%Y" start-of-week))
-          (month (format-time-string "%B" start-of-week))
-          (day-start (format-time-string "%d" start-of-week))
-          (day-end (format-time-string "%d" end-of-week))
-          ;; Create the title in the format "YYYY MONTH DD to DD"
-          (title (format "%s: %s %s to %s" year month day-start day-end))
-          ;; Generate the slug for the title
-          (slug (denote-sluggify-title title))
-          ;; Generate the timestamp for the Denote filename
-          (timestamp (format-time-string "%Y%m%dT%H%M%S" start-of-week))
-          ;; Construct the full filename with Denote convention
-          (filename (format "%s--%s__tasks.org" timestamp slug)))
-      ;; Ensure the custom directory exists
-      (make-directory custom-directory t)
-      ;; Generate the full file path
-      (let ((full-path (expand-file-name filename custom-directory)))
-      ;; Create an empty file with Denote metadata if it doesn't exist
-      (unless (file-exists-p full-path)
-          (with-temp-buffer
-            (insert (format "#+title:      %s\n#+date:       %s\n#+filetags:   :tasks:\n#+identifier: %s\n\n"
-                          title
-                          (format-time-string "[%Y-%m-%d %a %H:%M]" today)
-                          timestamp))
-          (write-file full-path)))
-      full-path)))
-
-  ;; Define the Org capture template
-  (setq org-capture-templates
-      '(("w" "Weekly Tasks" entry
-          (file jw-denote-weekly-tasks-filename)
-          ""
-          :empty-lines 1
-          )))
-
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("t" "Todo (today)" entry
+                   (file ,jw-org-todo-file)
+                   "* TODO %?\nSCHEDULED: %t"
+                   :empty-lines 1)))
 
 #+end_src
 
+
+*** obsidian.el
+
+[[https://github.com/licht1stein/obsidian.el][obsidian.el]] brings an [[https://obsidian.md][Obsidian]] vault into Emacs: it treats a
+directory of Markdown files as a knowledge base, understands =[[wiki-links]]=
+and =#tags=, and provides jumping, capturing, searching, and a backlinks panel.
+It complements [[*denote.el][denote.el]] --- use denote for Org-based notes and obsidian.el
+when you want to live inside an existing Markdown vault.
+
+Install via =straight.el=. =:demand t= is used because =global-obsidian-mode=
+needs to be active as soon as a vault file is opened.
+
+Ordering here is load-bearing, and the previous version got it wrong three ways:
+
+1. =obsidian-directory= is a =defcustom=, not a function. Writing
+   =(obsidian-directory "...")= evaluated as a *function call* and signalled
+   =void-function=, which aborted the rest of =:config= --- so
+   =global-obsidian-mode= never turned on and the vault path stayed ="".=
+2. That =defcustom= has a =:set= handler that calls =user-error= when the
+   directory does not exist, so the vault must be created *before* it is
+   assigned, not after.
+3. =obsidian-backlinks-mode= was enabled before the vault path was known.
+
+=setopt= is what runs the =:set= handler; a plain =setq= would set the value
+but skip the bookkeeping that populates =obsidian--relative-path-length=.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
+
+  (use-package obsidian
+    :straight t
+    :demand t
+    :config
+    ;; Create the vault (and its subdirectories) before assigning the path:
+    ;; the `obsidian-directory' setter errors out on a missing directory.
+    (let ((vault (expand-file-name "~/Core/Otzar/Obsidian/")))
+      (dolist (dir (list vault
+                         (expand-file-name "notes" vault)
+                         (expand-file-name "daily-notes" vault)
+                         (expand-file-name "templates" vault)))
+        (unless (file-directory-p dir)
+          (make-directory dir t)))
+      ;; `obsidian-daily-note' calls `insert-file-contents' on the template
+      ;; without checking that it exists, so seed a minimal one -- a daily note
+      ;; is a landing strip, and prompts or fixed sections would only add a
+      ;; decision to something whose whole value is having none.
+      (let ((template (expand-file-name "templates/Daily Note Template.md" vault)))
+        (unless (file-exists-p template)
+          (with-temp-file template
+            (insert "# {{title}}\n\n"))))
+      (setopt obsidian-directory vault))
+    ;; Track vault files everywhere so links/tags resolve globally.
+    (global-obsidian-mode t))
+
+#+end_src
+
+=obsidian-backlinks-mode= is deliberately *not* enabled here. It is a =:global=
+minor mode whose activation body calls =obsidian-open-backlinks-panel=
+immediately and adds =obsidian--populate-backlinks-buffer= to
+=buffer-list-update-hook=, so turning it on at load time means a side window on
+every Emacs start --- including sessions that never touch the vault --- plus a
+hook that runs on every buffer switch.
+
+Backlinks are worth *asking* for rather than always having, so it is bound to a
+toggle below instead. (To go back to always-on, add =(obsidian-backlinks-mode 1)=
+to the =:config= above; to get it only inside the vault, hang it on
+=obsidian-mode-hook= --- though note it stays on globally once triggered.)
+
+Vault-relative directories used for capture, daily notes, and templates. All
+paths are relative to =obsidian-directory=; leave a variable =nil= to disable
+that feature.
+
+The vault has exactly two real buckets, split by *what indexes them*:
+
+- =daily-notes/= --- indexed by *when*. An append-only log: what happened, what
+  was read, what was thought. Created by =obsidian-daily-note=, which asks no
+  questions, so the cost of capturing is zero.
+- =notes/= --- indexed by *what*. Named notes, flat; =[[wiki-links]]= and
+  =#tags= do the organising rather than a folder hierarchy.
+
+The rule that decides between them: *if you can name it, it is a note; if you
+cannot, it goes in today's daily note.* That maps onto the commands themselves,
+since =obsidian-capture= prompts for a title and =obsidian-daily-note= does not.
+
+The folder is =notes/= rather than the conventional =inbox/= on purpose. An
+inbox is an implicit promise to process it later, and an unprocessed inbox
+becomes a graveyard plus a second thing to search. Nothing in =notes/= needs to
+graduate anywhere.
+
+Note that =obsidian-wiki-link-create-file-in-inbox= --- set here previously ---
+does not exist in this package; the real variable is
+=obsidian-create-unfound-files-in-inbox=, so the old line only interned a stray
+symbol and had no effect. Left at =t=: following a =[[wiki-link]]= from a daily
+note drops the new file in =notes/=, which is right, because writing the link
+means it has already been named.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
+
+  (setq obsidian-inbox-directory "notes")             ; destination for `obsidian-capture'
+  (setq obsidian-daily-notes-directory "daily-notes") ; daily note file is YYYY-MM-DD.md
+  (setq obsidian-templates-directory "templates")     ; note templates live here
+  (setq obsidian-daily-note-template "Daily Note Template.md")
+  ;; When following a wiki-link whose target does not exist yet:
+  ;;   t   -> create it in `obsidian-inbox-directory'
+  ;;   nil -> create it alongside the current file (i.e. inside `daily-notes/')
+  (setq obsidian-create-unfound-files-in-inbox t)
+
+#+end_src
+
+Keybindings split by whether the command is an *entry point* into the vault or
+an operation *within* it. Previously everything lived in =obsidian-mode-map=,
+which meant =obsidian-jump= and =obsidian-capture= were only reachable from a
+buffer already inside the vault --- of no use when the whole point is getting
+there from somewhere else. Those move to a global =C-c n= prefix.
+
+Entry points (global):
+
+- =obsidian-daily-note= --- open today's daily note, creating it from the template. The default landing spot.
+- =obsidian-capture= --- create a named note in =notes/=.
+- =obsidian-jump= --- fuzzy-jump to any note in the vault.
+- =obsidian-search= --- full-text search across the vault.
+- =obsidian-update= --- re-scan the vault after adding files outside Emacs.
+- =obsidian-backlinks-mode= --- toggle the backlinks side panel on demand.
+
+Within a vault buffer (=obsidian-mode-map=):
+
+- =obsidian-follow-link-at-point= --- follow the =[[wiki-link]]= or Markdown link under point.
+- =obsidian-backlink-jump= --- open the backlinks panel and jump to a note that links here.
+- =obsidian-insert-wikilink= --- insert a =[[wiki]]= link.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
+
+  ;; Entry points: reachable from anywhere, not just from inside the vault.
+  (global-set-key (kbd "C-c n n") #'obsidian-daily-note)
+  (global-set-key (kbd "C-c n c") #'obsidian-capture)
+  (global-set-key (kbd "C-c n j") #'obsidian-jump)
+  (global-set-key (kbd "C-c n s") #'obsidian-search)
+  (global-set-key (kbd "C-c n u") #'obsidian-update)
+  (global-set-key (kbd "C-c n b") #'obsidian-backlinks-mode)
+
+  (with-eval-after-load 'obsidian
+    (define-key obsidian-mode-map (kbd "C-c C-o") #'obsidian-follow-link-at-point)
+    (define-key obsidian-mode-map (kbd "C-c C-b") #'obsidian-backlink-jump)
+    (define-key obsidian-mode-map (kbd "C-c C-l") #'obsidian-insert-wikilink))
+
+#+end_src
+
+**** Working practice
+
+The config above only creates folders. What keeps the vault usable is the
+practice, so it is written down here rather than left to be re-derived later.
+
+***** Which bucket does this go in?
+
+*If you can name it, it is a note. If you cannot, it goes in today's daily note.*
+
+Naming is the only filing decision in the whole system, and it is one that can
+be made instantly or not at all. The rule maps onto the commands themselves:
+=obsidian-capture= (=C-c n c=) asks for a title, =obsidian-daily-note=
+(=C-c n n=) asks nothing.
+
+The asymmetry that matters: *an inbox carries debt and a daily note does not.*
+A staging folder is an implicit promise to process it later; miss that for a
+few weeks and it becomes a graveyard plus a second place to search. An
+unprocessed daily note is still a perfectly good log --- it was never going to
+become anything else. That is why the capture folder here is named =notes/=
+rather than the conventional =inbox/=: nothing in it needs to graduate anywhere.
+
+***** Promotion happens through links, not filing
+
+There is no review step and no "process the inbox" ritual. When a line in a
+daily note keeps recurring, write it as a =[[wiki-link]]= and follow it with
+=C-c C-o=. Since =obsidian-create-unfound-files-in-inbox= is =t=, that creates
+the note in =notes/=. Writing the link *is* the promotion, and it is correct by
+construction, because writing the link means it has already been named.
+
+Structure within =notes/= comes from =#tags= and links, never folders. Use
+=obsidian-backlink-jump= (=C-c C-b=) to see what already points at a note ---
+that is the real index.
+
+***** Editing: mechanics get overwritten, judgments get logged
+
+Notes are *edited in place*, not superseded by later iterations. Keeping
+"Basis Trade", "Basis Trade v2" and "Basis Trade (revised)" side by side means
+reconstructing the truth by reading three documents in order and diffing them,
+which is the failure this whole setup exists to avoid.
+
+The split:
+
+- *Mechanics* --- how a thing works, a definition, a procedure. When the
+  understanding sharpens, overwrite it. There should be exactly one note and it
+  should be currently correct.
+- *Judgments* --- a view, a thesis, a call. Here the evolution *is* the
+  content, so keep a dated log inside the single note: thought X in March
+  because Y, revised in June because Z.
+
+Append-only feels like discipline, but its real motivation is fear of losing
+provenance --- and that is already solved. *Keep the vault under git.* It is a
+directory of Markdown files; =git log= gives every prior iteration, dated and
+diffable, without polluting what has to be read to get an answer. A knowledge
+bank is measured by the cost of retrieving a correct answer, and append-only
+trades that away for a problem version control already handles.
+
+***** Writing for a future handoff
+
+The bank is intended to eventually be written up by someone else. That changes
+what is worth optimising: a writer can turn a rough correct idea into good
+prose, but *cannot* reconstruct why something was believed. Therefore:
+
+- *Lead with the claim.* The first line of a durable note states the assertion,
+  not the background. This is what makes a note handoff-able.
+- *Do not polish.* Prose is the part being outsourced; time spent on it is the
+  lowest-return activity in the vault.
+- *Keep the sources.* Links and citations are what a writer needs and cannot
+  recover.
+
+One decision that is cheap now and near-impossible later: if a firm/research
+knowledge bank ever becomes real, make it a *separate vault*. Not for tidiness
+--- for the moment other people get access. Separating private thinking from
+shared research inside one directory after the fact is genuinely miserable, and
+drawing the line while both are empty costs nothing.
 
 *** clean directories
 
@@ -1894,14 +2134,6 @@ If you receive the option to rebuild the =epdfserver= and you agree to building 
 
 
 ** The =jw-emacs-development.el= module
-*** eca-emacs.el
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
-
-  (use-package eca
-    :straight (:type git :host github :repo "editor-code-assistant/eca-emacs"))
-
-#+end_src
 
 *** tramp.el --native
 
@@ -2162,122 +2394,6 @@ When the =which-key-mode= is enabled, any incomplete key sequence will produce a
     (setq which-key-max-description-length 40))
 
   (provide 'jw-emacs-which-key)
-
-#+end_src
-
-** The =jw-emacs-ai.el= module
-
-The purpose of this module is to have my integrations with llms or other ai models.
-
-
-*** gptel.el
-
-Incorporates the use of llms in the emacs client. For a great summary of the features please see [[https://www.blogbyben.com/2024/08/gptel-mindblowing-integration-between.html][Ben Simon's video]]. For accessing the source code please see [[https://github.com/karthink/gptel][karthink's repo]].
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-ai.el" :mkdirp yes
-
-  (use-package gptel
-    :straight t
-    :after auth-source
-    :init
-    ;; Ensure auth-source is configured to find ~/.authinfo or ~/.authinfo.gpg
-    (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo" "~/.netrc"))
-    :config
-    ;; Helper function to read file contents
-    (defun gptel-read-file (file-path)
-        "Read the contents of FILE-PATH into a string, trimming whitespace."
-        (if (and (file-exists-p file-path) (file-readable-p file-path))
-            (with-temp-buffer
-            (insert-file-contents file-path)
-            (string-trim (buffer-string)))
-        (progn
-            (message "Warning: File %s is not readable or does not exist" file-path)
-            "You are a polymath who is a helpful assistant. Respond concisely and accurately.")))
-
-    ;; Define directives with file paths
-    (setq gptel-directives
-            (list
-            (cons 'default "You are a polymath who is a helpful assistant. Respond concisely and accurately.")
-            (cons 'coding (gptel-read-file "~/.dotfiles/.assets/gpt-prompts/coding.txt"))
-            (cons 'writing (gptel-read-file "~/.dotfiles/.assets/gpt-prompts/writing.txt"))
-            (cons 'research (gptel-read-file "~/.dotfiles/.assets/gpt-prompts/research.txt"))))
-
-    ;; Set default directive
-    (setq gptel-default-directive 'coding)
-
-    
-    ;; Refresh directives dynamically
-    (defun gptel-refresh-directives ()
-        "Refresh gptel-directives by re-reading files."
-        (interactive)
-        (setq gptel-directives
-            (list
-            (cons 'default "You are a polymath who is a helpful assistant. Respond concisely and accurately.")
-            (cons 'coding (gptel-read-file "~/.dotfiles/.assets/gpt-prompts/coding.txt"))
-            (cons 'writing (gptel-read-file "~/.dotfiles/.assets/gpt-prompts/writing.txt"))
-            (cons 'research (gptel-read-file "~/.dotfiles/.assets/gpt-prompts/research.txt"))))
-        (message "Refreshed gptel-directives from files."))
-
-    ;; Set OpenAI API key using gptel-api-key-from-auth-source
-    (setq gptel-api-key (lambda ()
-                          (auth-source-forget-all-cached)
-                          (gptel-api-key-from-auth-source)))
-    ;; Configure Google (Gemini) backend
-    (gptel-make-gemini "Gemini" :stream t
-                        :key (lambda ()
-             (auth-source-forget-all-cached)
-             (gptel-api-key-from-auth-source "generativelanguage.googleapis.com")))
-    ;; Configure Anthropic (Claude) backend
-    (gptel-make-anthropic "Claude"
-      :stream t
-      :key (lambda ()
-             (auth-source-forget-all-cached)
-             (gptel-api-key-from-auth-source "console.anthropic.com")))
-    ;; Optional: Enable debugging for auth-source issues
-    ;; (setq auth-source-debug t)
-  )
-
-(setq gptel-display-buffer-action
-      '(display-buffer-in-side-window
-        (side . right)
-        (window-width . 0.4)))
-
-#+end_src
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-ai.el" :mkdirp yes
-
-    (defun gptel-save-response ()
-    "Save the entire gptel buffer to a file with a user-provided name."
-    (interactive)
-    (unless (bound-and-true-p gptel-mode)
-        (user-error "This command must be run in a gptel-mode buffer"))
-    (let* ((response (buffer-string))
-            (user-input (read-string "Enter a concise (2-5 words) filename description: ")))
-        (if (string-empty-p response)
-            (message "Error: Buffer is empty, cannot save file")
-        (let* ((clean-name (if (and user-input (stringp user-input) (not (string-empty-p user-input)))
-                                (string-trim (replace-regexp-in-string "[^a-zA-Z0-9-]" "" (replace-regexp-in-string "\\s+" "-" user-input)))
-                            "fallback-name"))
-                (timestamp (format-time-string "%Y%m%dT%H%M%S"))
-                (base-dir "~/Core/Otzar/llm-outputs/")
-                (filename (concat (file-name-as-directory (expand-file-name base-dir)) timestamp "--" clean-name ".md")))
-            (condition-case err
-                (progn
-                (make-directory base-dir t)
-                (write-region (point-min) (point-max) filename nil 'silent)
-                (message "Saved buffer to %s" filename))
-            (error
-            (message "Error saving file: %s" err)))))))
-
-
-#+end_src
-
-
-*** The =jw-emacs-ai.el= call to provide
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-ai.el" :mkdirp yes
-
-  (provide 'jw-emacs-ai)
 
 #+end_src
 
@@ -2775,50 +2891,12 @@ For debuggin,
 #+end_src
 
 * The custom libraries of my Emacs configuration (=jw-lisp/=)
-** The =jw-copy.el= library
+Currently empty --- =jw-copy.el= lived here until its two commands were found
+to duplicate built-ins: =jw-copy-file= wrapped =copy-file= (already interactive,
+and it *prompts* on an existing destination rather than refusing), and
+=jw-dired-get-file-path= duplicated =dired-copy-filename-as-kill= (=w= in Dired,
+=C-u 0 w= for the absolute path). Its =C-c p= binding in =dired-mode-map= also
+shadowed the global =C-c p= for =cursory-set-preset= inside Dired buffers.
 
-*** jw-dired-get-file-path
-
-Copy file path.
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-lisp/jw-copy.el" :mkdirp yes
-  (defun jw-dired-get-file-path ()
-    "Get the full path of the file at point in Dired mode and display it in the minibuffer."
-    (interactive)
-    (let ((file (dired-get-file-for-visit)))
-      (message file)
-      (kill-new file)))
-
-  (define-key dired-mode-map (kbd "C-c p") 'jw-dired-get-file-path)
-
-#+end_src
-
-*** jw-copy-file
-
-Copy a file.
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-lisp/jw-copy.el" :mkdirp yes
-
-  (defun jw-copy-file (source-file destination-file)
-    "Copy a file from SOURCE-FILE to DESTINATION-FILE."
-    (interactive "FSource file: \nFDestination file: ")
-    (if (file-exists-p source-file)
-        (let ((dest-dir (file-name-directory destination-file)))
-          (if (file-exists-p dest-dir)
-              (if (not (file-exists-p destination-file))
-                  (progn
-                    (copy-file source-file destination-file)
-                    (message "File copied successfully."))
-                (message "Destination file already exists. Choose another destination."))
-            (message "Destination directory does not exist.")))
-      (message "Source file does not exist.")))
-
-#+end_src
-
-*** The =jw-copy.el= call to provide
-
-#+begin_src emacs-lisp :tangle ".emacs.d/jw-lisp/jw-copy.el" :mkdirp yes
-
-  (provide 'jw-copy)
-
-#+end_src
+The =load-path= entry above is kept so this directory is ready for future
+libraries.

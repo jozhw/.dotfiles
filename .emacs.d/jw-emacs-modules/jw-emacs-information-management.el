@@ -1,3 +1,4 @@
+
 (use-package denote
                  :straight t)
 
@@ -7,11 +8,17 @@
   (make-directory denote-directory t))
 (setq denote-save-buffer-after-creation nil)
 
+
+
 (add-hook 'dired-mode-hook #'denote-dired-mode)
+
+
 
 (setq denote-known-keywords '("hf" "philosophy" "ministry" "journal"))
 (setq denote-infer-keywords t)
 (setq denote-sort-keywords t)
+
+
 
 (setq denote-file-type nil) ; Org is the default, set others here
 (setq denote-prompts '(subdirectory title keywords))
@@ -56,58 +63,80 @@
 ;; `context-menu-mode'.
 (add-hook 'context-menu-functions #'denote-context-menu)
 
+
+
 ;; Ensure denote.el is loaded
 (require 'denote)
 
-(defun jw-denote-weekly-tasks-filename ()
-"Generate a Denote filename for a weekly tasks Org file in a custom directory and ensure the file exists.
-The title is in the format 'YYYY: MONTH DD to DD', where DD to DD represents
-the start and end days of the current week. The filename follows the Denote
-convention with the '__tasks' tag."
-(let* ((custom-directory "~/Core/Otzar/Docs/agenda/")  ; Specify your custom directory here
-        (today (current-time))
-        ;; Calculate the start of the week (assuming Monday as the first day)
-        (start-of-week (time-subtract today (days-to-time (mod (nth 6 (decode-time today)) 7))))
-        ;; Calculate the end of the week (Sunday)
-        (end-of-week (time-add start-of-week (days-to-time 6)))
-        ;; Format the year and month from the start of the week
-        (year (format-time-string "%Y" start-of-week))
-        (month (format-time-string "%B" start-of-week))
-        (day-start (format-time-string "%d" start-of-week))
-        (day-end (format-time-string "%d" end-of-week))
-        ;; Create the title in the format "YYYY MONTH DD to DD"
-        (title (format "%s: %s %s to %s" year month day-start day-end))
-        ;; Generate the slug for the title
-        (slug (denote-sluggify-title title))
-        ;; Generate the timestamp for the Denote filename
-        (timestamp (format-time-string "%Y%m%dT%H%M%S" start-of-week))
-        ;; Construct the full filename with Denote convention
-        (filename (format "%s--%s__tasks.org" timestamp slug)))
-    ;; Ensure the custom directory exists
-    (make-directory custom-directory t)
-    ;; Generate the full file path
-    (let ((full-path (expand-file-name filename custom-directory)))
-    ;; Create an empty file with Denote metadata if it doesn't exist
-    (unless (file-exists-p full-path)
-        (with-temp-buffer
-          (insert (format "#+title:      %s\n#+date:       %s\n#+filetags:   :tasks:\n#+identifier: %s\n\n"
-                        title
-                        (format-time-string "[%Y-%m-%d %a %H:%M]" today)
-                        timestamp))
-        (write-file full-path)))
-    full-path)))
+(with-eval-after-load 'org-capture
+  (add-to-list 'org-capture-templates
+               `("t" "Todo (today)" entry
+                 (file ,jw-org-todo-file)
+                 "* TODO %?\nSCHEDULED: %t"
+                 :empty-lines 1)))
 
-;; Define the Org capture template
-(setq org-capture-templates
-    '(("w" "Weekly Tasks" entry
-        (file jw-denote-weekly-tasks-filename)
-        ""
-        :empty-lines 1
-        )))
+
+
+
+(use-package obsidian
+  :straight t
+  :demand t
+  :config
+  ;; Create the vault (and its subdirectories) before assigning the path:
+  ;; the `obsidian-directory' setter errors out on a missing directory.
+  (let ((vault (expand-file-name "~/Core/Otzar/Obsidian/")))
+    (dolist (dir (list vault
+                       (expand-file-name "notes" vault)
+                       (expand-file-name "daily-notes" vault)
+                       (expand-file-name "templates" vault)))
+      (unless (file-directory-p dir)
+        (make-directory dir t)))
+    ;; `obsidian-daily-note' calls `insert-file-contents' on the template
+    ;; without checking that it exists, so seed a minimal one -- a daily note
+    ;; is a landing strip, and prompts or fixed sections would only add a
+    ;; decision to something whose whole value is having none.
+    (let ((template (expand-file-name "templates/Daily Note Template.md" vault)))
+      (unless (file-exists-p template)
+        (with-temp-file template
+          (insert "# {{title}}\n\n"))))
+    (setopt obsidian-directory vault))
+  ;; Track vault files everywhere so links/tags resolve globally.
+  (global-obsidian-mode t))
+
+
+
+(setq obsidian-inbox-directory "notes")             ; destination for `obsidian-capture'
+(setq obsidian-daily-notes-directory "daily-notes") ; daily note file is YYYY-MM-DD.md
+(setq obsidian-templates-directory "templates")     ; note templates live here
+(setq obsidian-daily-note-template "Daily Note Template.md")
+;; When following a wiki-link whose target does not exist yet:
+;;   t   -> create it in `obsidian-inbox-directory'
+;;   nil -> create it alongside the current file (i.e. inside `daily-notes/')
+(setq obsidian-create-unfound-files-in-inbox t)
+
+
+
+;; Entry points: reachable from anywhere, not just from inside the vault.
+(global-set-key (kbd "C-c n n") #'obsidian-daily-note)
+(global-set-key (kbd "C-c n c") #'obsidian-capture)
+(global-set-key (kbd "C-c n j") #'obsidian-jump)
+(global-set-key (kbd "C-c n s") #'obsidian-search)
+(global-set-key (kbd "C-c n u") #'obsidian-update)
+(global-set-key (kbd "C-c n b") #'obsidian-backlinks-mode)
+
+(with-eval-after-load 'obsidian
+  (define-key obsidian-mode-map (kbd "C-c C-o") #'obsidian-follow-link-at-point)
+  (define-key obsidian-mode-map (kbd "C-c C-b") #'obsidian-backlink-jump)
+  (define-key obsidian-mode-map (kbd "C-c C-l") #'obsidian-insert-wikilink))
+
+
 
 (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
 
 (setq lock-file-name-transforms
     '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
 
+
+
 (provide 'jw-emacs-information-management)
+

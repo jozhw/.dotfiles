@@ -1,4 +1,5 @@
-;;; The Ef (εὖ) themes
+
+  ;;; The Ef (εὖ) themes
 
   ;; The themes are customisable.  Read the manual:
   ;; <https://protesilaos.com/emacs/ef-themes>.
