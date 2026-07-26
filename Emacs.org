@@ -1939,12 +1939,15 @@ length used to compute vault-relative names.
                          (expand-file-name "templates" vault)))
         (unless (file-directory-p dir)
           (make-directory dir t)))
-      ;; `obsidian-daily-note' inserts this file without checking that it
-      ;; exists, so seed a minimal one.
-      (let ((template (expand-file-name "templates/Daily Note Template.md" vault)))
-        (unless (file-exists-p template)
-          (with-temp-file template
-            (insert "# {{title}}\n\n"))))
+      ;; Seed the templates.  `obsidian-daily-note' inserts its one without
+      ;; checking that it exists; both are left alone once present, so they can
+      ;; be edited in the vault without this reverting them.
+      (pcase-dolist (`(,name . ,body)
+                     '(("Daily Note Template.md" . "# {{title}}\n\n")
+                       ("Note.md" . "---\ncreated: {{date}}\ntags: []\n---\n\n# {{title}}\n\n<!-- the claim, in one sentence -->\n\n## Why\n\n## Sources\n")))
+        (let ((file (expand-file-name (concat "templates/" name) vault)))
+          (unless (file-exists-p file)
+            (with-temp-file file (insert body)))))
       (setopt obsidian-directory vault))
     ;; Track vault files everywhere so links and tags resolve globally.
     (global-obsidian-mode t))
@@ -1975,6 +1978,27 @@ The capture folder is =notes/= rather than the usual =inbox/= because an inbox
 is an implicit promise to process it later; nothing here needs to graduate
 anywhere.
 
+Notes are read in the Obsidian GUI, which renders math with MathJax, but they
+are *written* here --- and =markdown-enable-math= defaults to =nil=, so =$...$=
+would otherwise get no syntax highlighting at all. It is buffer-local, hence
+=setq-default=.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
+
+  (setq-default markdown-enable-math t)
+
+#+end_src
+
+Note that LaTeX cannot produce phantom tags: =obsidian--tag-regex= requires the
+=#= to follow whitespace or start-of-line *and* be followed by at least two
+letter-like characters, so neither a =\newcommand= parameter (=#1=, digit) nor an
+escaped =\#= (preceded by a backslash) is picked up.
+
+In Obsidian, =\begin{...}= only renders inside =$$ ... $$= --- MathJax sees only
+what is between math delimiters, unlike real LaTeX where =align= is its own
+display environment. A blank line inside the block also terminates it, so
+multi-line derivations must use =\\= throughout with no empty lines.
+
 **** Keys
 
 Entry points are global so the vault is reachable from anywhere; link and
@@ -1984,11 +2008,11 @@ backlink commands are scoped to vault buffers, where they are the natural
 | Key       | Command                        | Does                                  |
 |-----------+--------------------------------+---------------------------------------|
 | =C-c n n= | =obsidian-daily-note=          | today's daily note, from the template |
-| =C-c n c= | =obsidian-capture=             | new named note in =notes/=            |
+| =C-c n c= | =jw-obsidian-capture=          | new named note in =notes/=, templated |
 | =C-c n j= | =obsidian-jump=                | fuzzy-jump to any note                |
 | =C-c n s= | =obsidian-search=              | full-text search the vault            |
 | =C-c n g= | =xeft=                         | search-as-you-type with context       |
-| =C-c n t= | =obsidian-insert-tag=          | insert a tag, completing on existing  |
+| =C-c n t= | =jw-obsidian-add-tag=          | add a tag, completing on existing     |
 | =C-c n f= | =obsidian-find-tag=            | list notes carrying a tag             |
 | =C-c n i= | =jw-obsidian-insert-template=  | insert a template into this buffer    |
 | =C-c n b= | =obsidian-backlinks-mode=      | toggle the backlinks panel            |
@@ -2001,10 +2025,10 @@ backlink commands are scoped to vault buffers, where they are the natural
 
   ;; Entry points: reachable from anywhere, not only from inside the vault.
   (global-set-key (kbd "C-c n n") #'obsidian-daily-note)
-  (global-set-key (kbd "C-c n c") #'obsidian-capture)
+  (global-set-key (kbd "C-c n c") #'jw-obsidian-capture)
   (global-set-key (kbd "C-c n j") #'obsidian-jump)
   (global-set-key (kbd "C-c n s") #'obsidian-search)
-  (global-set-key (kbd "C-c n t") #'obsidian-insert-tag)
+  (global-set-key (kbd "C-c n t") #'jw-obsidian-add-tag)
   (global-set-key (kbd "C-c n f") #'obsidian-find-tag)
   (global-set-key (kbd "C-c n i") #'jw-obsidian-insert-template)
   (global-set-key (kbd "C-c n b") #'obsidian-backlinks-mode)
@@ -2079,10 +2103,42 @@ subdirectory.
 
 **** Templates
 
-obsidian.el applies a template in exactly one place: =obsidian-daily-note=
-inserts =obsidian-daily-note-template= into a newly created daily note. Its
-=obsidian-apply-template= is not an interactive command, so there is no built-in
-way to use a template anywhere else. This adds one:
+obsidian.el applies a template in exactly one place. =obsidian-capture= and
+=obsidian-daily-note= are otherwise the same function --- prompt or date for a
+name, =find-file=, =save-buffer= --- but only the daily note goes on to check
+=obsidian-daily-note-template= and apply it. A captured note therefore starts
+completely empty, with no front matter, which would put the =created= date and
+=tags= on the wrong side of a manual step.
+
+The wrapper below adds the missing branch, reusing the daily note's own guard:
+apply the template only when the buffer is empty, so an existing note is never
+overwritten.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
+
+  (defvar jw-obsidian-note-template "Note.md"
+    "Template in `obsidian-templates-directory' applied by `jw-obsidian-capture'.")
+
+  (defun jw-obsidian-capture ()
+    "Capture a note like `obsidian-capture', then apply `jw-obsidian-note-template'.
+  `obsidian-capture' applies no template -- only `obsidian-daily-note' does --
+  so a captured note would otherwise start with no front matter at all."
+    (interactive)
+    (call-interactively #'obsidian-capture)
+    (when (and obsidian-templates-directory
+               jw-obsidian-note-template
+               (eq (buffer-size) 0))
+      (obsidian-apply-template
+       (expand-file-name jw-obsidian-note-template
+                         (expand-file-name obsidian-templates-directory
+                                           obsidian-directory)))
+      (save-buffer)))
+
+#+end_src
+
+=obsidian-apply-template= is also not an interactive command, so there is no
+built-in way to reach a template from an existing buffer --- for a note that
+started life without one, or to pull in a second template. This adds that:
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
@@ -2112,18 +2168,53 @@ progress rather than a reference. The daily note template seeded above is just
 structure to satisfy.
 
 A second template is worth it only for a shape that is genuinely repeated, and
-the one that pays here is the durable note, because it encodes the handoff rules
-below --- claim first, sources kept:
+the one that pays here is the durable note --- it encodes the handoff rules
+below (claim first, sources kept) and carries the small amount of front matter
+that is worth having. Both templates are seeded on first load, next to the vault
+directories.
 
-#+begin_example
-  # {{title}}
+***** What metadata is worth recording
 
-  <!-- one-sentence claim, stated flat -->
+Front matter is first-class in obsidian.el --- =obsidian--process-front-matter-tags=
+reads =tags:= from it, and =obsidian-insert-tag= notices when point is inside
+front matter and omits the =#=. But only two fields earn their place:
 
-  ## Why
+- =tags= --- the domain, per [[*Tags][Tags]]. Front matter keeps them in one place instead
+  of scattered through the prose. The template ships =tags: []=, which is the
+  correct empty value: obsidian.el parses it to an empty vector and returns no
+  tags silently, whereas a bare =tags:= parses to =:null= and warns "The key
+  'tags' cannot have an empty value in front matter".
+- =created= --- the filesystem does record a birth time, but copying, syncing and
+  =git checkout= all destroy it, and it cannot be reconstructed afterwards.
 
-  ## Sources
-#+end_example
+Two fields deliberately left out:
+
+- =title= --- =obsidian-file-title-function= reads =title:=, then falls back to
+  the first line, then the file name. Since the template's first line is
+  =# {{title}}=, a =title:= field only repeats the file name.
+- =updated= / =last edited= --- keeping it accurate means a hook rewriting the
+  file on every save, which turns each trivial edit into a diff and goes stale
+  silently as soon as a file is edited outside Emacs. Git already records this
+  exactly: =git log -1 --format=%cI -- <file>=. =created= is the one date git
+  cannot recover after a move or an import, which is why it is the one kept.
+
+***** Why filenames stay human
+
+Denote-style =YYYYMMDDTHHMMSS--name= filenames are deliberately *not* used in
+the vault. Wiki-links resolve by exact file name --- =obsidian--match-files=
+compares the link text against relative paths --- so =[[Basis Trade]]= finds
+=Basis Trade.md= and would not find =20260726T143022--basis-trade.md=.
+
+Aliases do not rescue it: =obsidian-jump= consults =obsidian--aliases-map=, but
+=obsidian-follow-wiki-link-at-point= goes through =obsidian--match-files=, which
+only sees file names. The result would be jumping that works while every
+=[[link]]= quietly creates a new empty note instead of finding the existing one.
+
+The difference is structural. Denote's timestamp *is* its identifier, so it has
+to be in the file name --- there is no other index. This vault's index is the
+link graph and its identifier is the human name. [[*denote.el][denote.el]] is already configured
+for when ID-stable, rename-safe notes are wanted; the vault should not become a
+second, weaker copy of it.
 
 **** Tags
 
@@ -2143,14 +2234,57 @@ practice means a handful of life domains. The same list is set as
 
 Three habits are enough to hold the line:
 
-1. *Insert tags with =C-c n t=, never by typing them.* =obsidian-insert-tag=
-   completes over tags already in the vault, so the path of least resistance is
-   reuse. Typing =#= by hand is how a second spelling gets in.
+1. *Add tags with =C-c n t=, never by typing them.* Completion over tags already
+   in the vault makes reuse the path of least resistance; typing =#= by hand is
+   how a second spelling gets in.
 2. *Keep the vocabulary memorable.* Roughly ten tags, few enough to recall
    without looking. Adding one should feel like a decision; if a new tag
    overlaps an old one, pick one and rename rather than keeping both.
 3. *One tag is usually right, three is a lot.* If a note needs many tags to be
    findable, it is really several notes, or it wants a link instead.
+
+=obsidian-insert-tag= only inserts at point --- its sole piece of intelligence
+is checking =obsidian-point-in-front-matter-p= to decide whether to prefix a
+=#=. It does not find the =tags:= list, so using the front matter with it means
+parking the cursor between the brackets and typing the commas by hand. Since the
+note template ships =tags: []=, that friction would land on every note; this
+merges into the list instead, and falls back to an inline =#tag= when there is
+no front matter to merge into:
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
+
+  (defun jw-obsidian-add-tag (tag)
+    "Add TAG to the front-matter `tags:' list, completing on tags in the vault.
+  Merges into the bracketed list rather than inserting at point, so the list
+  stays comma-separated and free of duplicates.  Falls back to inserting an
+  inline #TAG at point when the buffer has no front-matter `tags:' list.
+  Vault tags carry no leading `#', per the `obsidian-tags' docstring."
+    (interactive
+     (list (completing-read "Tag: " (sort (obsidian-tags) #'string<))))
+    (let ((merged
+           (save-excursion
+             (goto-char (point-min))
+             (when (looking-at-p "^---[ \t]*$")
+               (forward-line 1)
+               (when-let ((end (save-excursion
+                                 (re-search-forward "^---[ \t]*$" nil t))))
+                 (when (re-search-forward "^tags:[ \t]*\\[\\([^]]*\\)\\]" end t)
+                   (let* ((current (split-string (match-string 1) "[,[:space:]]+" t))
+                          (all (delete-dups (append current (list tag)))))
+                     (replace-match
+                      (concat "tags: [" (mapconcat #'identity all ", ") "]")
+                      t t)
+                     t)))))))
+      (unless merged
+        (insert (format "#%s" tag)))))
+
+#+end_src
+
+Front matter and body tags have opposite spelling rules, which is the other
+reason to go through a command rather than typing. In front matter a tag is bare
+(=tags: [hf, markets]=); =obsidian--process-front-matter-tags= silently drops any
+entry that starts with =#= or contains a space, warning "Found invalid tags in
+front matter". In the body it is the reverse --- =#hf=, hash required.
 
 The starting vocabulary:
 
@@ -2233,15 +2367,35 @@ trade that away for a problem =git log= already handles.
 
 ***** Writing for a future handoff
 
-The bank is meant to eventually be written up by someone else. A writer can turn
-a rough correct idea into good prose but *cannot* reconstruct why something was
-believed. So: *lead with the claim* (first line states the assertion, not the
-background), *do not polish* (prose is the part being outsourced), and *keep the
-sources* (links and citations cannot be recovered later).
+This vault is for *ideation*. The real quant knowledge base is a later, separate
+thing with a designated team and a technical librarian compiling it, so what
+transfers out of here is *content and provenance --- not structure*. Nothing
+should be arranged now for eventual compatibility with a system nobody has
+designed yet.
 
-One decision that is cheap now and near-impossible later: if a firm research
-bank ever becomes real, make it a *separate vault* --- not for tidiness, but for
-the moment other people get access.
+A writer can turn a rough correct idea into good prose but *cannot* reconstruct
+why something was believed. So: *lead with the claim* (first line states the
+assertion, not the background), *do not polish* (prose is the part being
+outsourced), and *keep the sources* (links and citations cannot be recovered
+later). A bare pasted URL counts --- capture beats formatting.
+
+Footnotes are deliberately unused, though both halves support them (Obsidian
+renders =[^1]= markers, and =markdown-insert-footnote= is on =C-c C-a f=). They
+are a presentation device for a reader who is not you, and the template's
+=## Sources= heading already holds provenance without anchors to maintain. A
+librarian can convert a source list into footnotes mechanically; nobody can
+recover a source that was never written down.
+
+The distinction worth keeping straight is footnote versus link, since only one
+of them is lossy. A wiki-link means "this deserves its own note and may be
+reached from elsewhere"; a footnote means "this supports this sentence and
+nowhere else". Footnoting something that deserved a link buries it where
+=obsidian-find-tag=, backlinks and xeft's title matching cannot see it --- the
+reverse mistake costs nothing.
+
+One decision that is cheap now and near-impossible later: when that firm bank
+becomes real, make it a *separate vault* --- not for tidiness, but for the
+moment other people get access.
 
 
 *** clean directories

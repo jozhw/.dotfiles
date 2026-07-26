@@ -92,12 +92,15 @@
                        (expand-file-name "templates" vault)))
       (unless (file-directory-p dir)
         (make-directory dir t)))
-    ;; `obsidian-daily-note' inserts this file without checking that it
-    ;; exists, so seed a minimal one.
-    (let ((template (expand-file-name "templates/Daily Note Template.md" vault)))
-      (unless (file-exists-p template)
-        (with-temp-file template
-          (insert "# {{title}}\n\n"))))
+    ;; Seed the templates.  `obsidian-daily-note' inserts its one without
+    ;; checking that it exists; both are left alone once present, so they can
+    ;; be edited in the vault without this reverting them.
+    (pcase-dolist (`(,name . ,body)
+                   '(("Daily Note Template.md" . "# {{title}}\n\n")
+                     ("Note.md" . "---\ncreated: {{date}}\ntags: []\n---\n\n# {{title}}\n\n<!-- the claim, in one sentence -->\n\n## Why\n\n## Sources\n")))
+      (let ((file (expand-file-name (concat "templates/" name) vault)))
+        (unless (file-exists-p file)
+          (with-temp-file file (insert body)))))
     (setopt obsidian-directory vault))
   ;; Track vault files everywhere so links and tags resolve globally.
   (global-obsidian-mode t))
@@ -114,12 +117,16 @@
 
 
 
+(setq-default markdown-enable-math t)
+
+
+
 ;; Entry points: reachable from anywhere, not only from inside the vault.
 (global-set-key (kbd "C-c n n") #'obsidian-daily-note)
-(global-set-key (kbd "C-c n c") #'obsidian-capture)
+(global-set-key (kbd "C-c n c") #'jw-obsidian-capture)
 (global-set-key (kbd "C-c n j") #'obsidian-jump)
 (global-set-key (kbd "C-c n s") #'obsidian-search)
-(global-set-key (kbd "C-c n t") #'obsidian-insert-tag)
+(global-set-key (kbd "C-c n t") #'jw-obsidian-add-tag)
 (global-set-key (kbd "C-c n f") #'obsidian-find-tag)
 (global-set-key (kbd "C-c n i") #'jw-obsidian-insert-template)
 (global-set-key (kbd "C-c n b") #'obsidian-backlinks-mode)
@@ -144,6 +151,26 @@
 
 
 
+(defvar jw-obsidian-note-template "Note.md"
+  "Template in `obsidian-templates-directory' applied by `jw-obsidian-capture'.")
+
+(defun jw-obsidian-capture ()
+  "Capture a note like `obsidian-capture', then apply `jw-obsidian-note-template'.
+`obsidian-capture' applies no template -- only `obsidian-daily-note' does --
+so a captured note would otherwise start with no front matter at all."
+  (interactive)
+  (call-interactively #'obsidian-capture)
+  (when (and obsidian-templates-directory
+             jw-obsidian-note-template
+             (eq (buffer-size) 0))
+    (obsidian-apply-template
+     (expand-file-name jw-obsidian-note-template
+                       (expand-file-name obsidian-templates-directory
+                                         obsidian-directory)))
+    (save-buffer)))
+
+
+
 (defun jw-obsidian-insert-template ()
   "Insert a template from `obsidian-templates-directory' into this buffer.
 Substitutes {{title}}, {{date}} and {{time}} the same way `obsidian-daily-note'
@@ -155,6 +182,33 @@ does, since it reuses `obsidian-apply-template'."
       (user-error "No templates in %s" dir))
     (obsidian-apply-template
      (expand-file-name (completing-read "Template: " templates) dir))))
+
+
+
+(defun jw-obsidian-add-tag (tag)
+  "Add TAG to the front-matter `tags:' list, completing on tags in the vault.
+Merges into the bracketed list rather than inserting at point, so the list
+stays comma-separated and free of duplicates.  Falls back to inserting an
+inline #TAG at point when the buffer has no front-matter `tags:' list.
+Vault tags carry no leading `#', per the `obsidian-tags' docstring."
+  (interactive
+   (list (completing-read "Tag: " (sort (obsidian-tags) #'string<))))
+  (let ((merged
+         (save-excursion
+           (goto-char (point-min))
+           (when (looking-at-p "^---[ \t]*$")
+             (forward-line 1)
+             (when-let ((end (save-excursion
+                               (re-search-forward "^---[ \t]*$" nil t))))
+               (when (re-search-forward "^tags:[ \t]*\\[\\([^]]*\\)\\]" end t)
+                 (let* ((current (split-string (match-string 1) "[,[:space:]]+" t))
+                        (all (delete-dups (append current (list tag)))))
+                   (replace-match
+                    (concat "tags: [" (mapconcat #'identity all ", ") "]")
+                    t t)
+                   t)))))))
+    (unless merged
+      (insert (format "#%s" tag)))))
 
 
 
