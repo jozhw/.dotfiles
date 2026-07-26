@@ -1369,6 +1369,93 @@ such failure mode.
 
 #+end_src
 
+**** History and archiving
+
+A single =todo.org= does not mean losing history --- the history is already
+being written, it just is not visible yet. =org-log-done= is =time= and the
+=WAIT=/=CANCEL=/=DONE= keywords carry =!=, so every state change stamps a
+=CLOSED:= line and a =LOGBOOK= drawer entry. Nothing extra needs recording; the
+only missing pieces are somewhere for finished work to go and a way to look at
+it.
+
+Archiving goes to =agenda/archive/=, *one file per year*, each holding a
+*datetree*. The =datetree/= prefix in =org-archive-location= is special: Org
+files each entry under a =YYYY / YYYY-MM month / YYYY-MM-DD day= heading, and
+=org-archive.el= takes that date from the entry's =CLOSED= property rather than
+from the clock. So the layout is:
+
+#+begin_example
+  agenda/
+    todo.org            <- the only agenda file
+    archive/
+      2026.org          <- * 2026 / ** 2026-07 July / *** 2026-07-26 Sunday
+      2027.org
+#+end_example
+
+Year is the file boundary and month/day are headings inside it. Splitting
+further --- a file per month --- was considered and rejected: it yields twelve
+files a year, sixty after five years, each a few hundred lines, which is worse
+for grepping and is exactly the kind of proliferation this setup exists to
+avoid. Year is also the only unit anyone actually retires as a whole.
+
+The *year comes from each entry's =CLOSED= date, not from today*. That is the
+detail that makes the whole thing safe to neglect: a sweep run in January still
+files December's work under =2026.org=, so the archive is accurate regardless of
+when it is run. Computing the file per entry (rather than once at startup) also
+avoids a session that stays open across New Year writing into the wrong year.
+
+Note that =org-archive-location= is deliberately *not* set globally --- it is
+bound only inside the command below. Setting it globally would redirect
+archiving from *every* Org file, including denote notes, into the agenda
+archive. Everything outside =todo.org= keeps Org's default of a
+=<file>.org_archive= sibling.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
+
+  (defvar jw-org-archive-directory
+    (expand-file-name "~/Core/Otzar/Docs/agenda/archive/")
+    "Directory holding one Org archive file per year.")
+
+  (defun jw-org-archive-location-for-entry ()
+    "Return an `org-archive-location' for the finished entry at point.
+  The year is taken from the entry's CLOSED timestamp so that a late sweep
+  still files work under the year it was actually finished."
+    (let* ((closed (org-entry-get nil "CLOSED" t))
+           (year (format-time-string
+                  "%Y"
+                  (if closed (org-time-string-to-time closed) (current-time)))))
+      (concat (expand-file-name (concat year ".org") jw-org-archive-directory)
+              "::datetree/")))
+
+  (defun jw-org-archive-done ()
+    "Archive every finished entry in `jw-org-todo-file' to the year datetrees.
+  `org-entry-is-done-p' tests membership in `org-done-keywords', so both DONE
+  and CANCEL qualify -- they sit after the `|' in `org-todo-keywords'."
+    (interactive)
+    (unless (file-directory-p jw-org-archive-directory)
+      (make-directory jw-org-archive-directory t))
+    (with-current-buffer (find-file-noselect jw-org-todo-file)
+      (let ((count 0))
+        (org-map-entries
+         (lambda ()
+           (when (org-entry-is-done-p)
+             ;; Bound per entry, not globally: see the note above.
+             (let ((org-archive-location (jw-org-archive-location-for-entry)))
+               (org-archive-subtree))
+             (setq count (1+ count))
+             ;; `org-archive-subtree' removes the entry, which leaves the
+             ;; mapper's saved position stale; `org-map-continue-from' is the
+             ;; documented way to tell it where to resume.
+             (setq org-map-continue-from (point))))
+         t 'file)
+        (save-buffer)
+        (message "Archived %d finished %s" count
+                 (if (= count 1) "entry" "entries")))))
+
+  (global-set-key (kbd "C-c A") #'jw-org-archive-done)
+
+#+end_src
+
 **** Working practice
 
 The whole loop is two keys:
@@ -1389,10 +1476,43 @@ sub-headings, per-week or per-project files, and refile targets. If a task
 needs more scaffolding than a single line, it is not a task --- it is a note,
 and it belongs in the vault (see [[*obsidian.el][obsidian.el]]).
 
-=todo.org= grows without bound because =DONE= items stay in the file, but they
-leave the agenda view immediately, so they cost nothing to read past. If it
-ever becomes genuinely unwieldy, =C-c C-x C-a= (=org-archive-subtree-default=)
-on the done items is enough; there is no need for a scheduled cleanup habit.
+***** Looking at what was done
+
+Two views, both built in, neither needing anything set up in advance:
+
+- =l= inside the agenda toggles =org-agenda-log-mode=, which shows entries
+  *closed* on the displayed day instead of the ones still open. With
+  =org-agenda-span= set to =day=, moving back with =b= and pressing =l= is a
+  read-out of what a given day actually looked like.
+- =v A= inside the agenda turns on =org-agenda-archives-mode= for archive
+  *files*, so a search or a log view reaches into the year files as well.
+  (Lowercase =v a= includes archived trees only; =v A= is the one that pulls in
+  separate files.)
+
+Failing both, the year files are ordinary Org files --- open one and fold the
+datetree to skim a month, or grep across =agenda/archive/= when the year is not
+known. Keeping the granularity at one file per year is what makes that grep
+worth running.
+
+***** Keeping =todo.org= lean
+
+=DONE= items leave the agenda view the moment they are marked, so they cost
+nothing day to day and there is no cleanup *habit* to maintain. When the file
+starts feeling heavy, =C-c A= (=jw-org-archive-done=) sweeps every finished
+entry into the datetree in one go.
+
+Doing this rarely is fine, and is in fact the intended use: because entries file
+under their own =CLOSED= date --- both into the right year file and the right
+day heading --- a sweep after two months of neglect produces exactly the same
+archive as sweeping every Friday. That is the whole reason to derive the layout
+from the data rather than from the calendar at run time: the accuracy of the
+history does not depend on the discipline of the person maintaining it.
+
+=C-c A= is the only archiving path for =todo.org=. =C-c C-x C-a= still works
+everywhere, but since =org-archive-location= is left at its default outside this
+command, in =todo.org= it would create a =todo.org_archive= sibling instead of
+filing into the year tree. Sweeping is not worth avoiding --- it only ever moves
+entries that are already finished.
 
 *** org-pomodoro
 

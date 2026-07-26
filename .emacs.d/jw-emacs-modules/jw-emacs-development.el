@@ -1,6 +1,4 @@
 
-
-
 (use-package tramp
   :straight t)
 (setq tramp-default-method "ssh")

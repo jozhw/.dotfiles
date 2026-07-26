@@ -77,7 +77,6 @@
 
 
 
-
 (use-package obsidian
   :straight t
   :demand t

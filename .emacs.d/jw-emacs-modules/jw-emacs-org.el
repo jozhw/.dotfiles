@@ -50,6 +50,50 @@ Referenced by the capture template in `jw-emacs-information-management'.")
 
 
 
+(defvar jw-org-archive-directory
+  (expand-file-name "~/Core/Otzar/Docs/agenda/archive/")
+  "Directory holding one Org archive file per year.")
+
+(defun jw-org-archive-location-for-entry ()
+  "Return an `org-archive-location' for the finished entry at point.
+The year is taken from the entry's CLOSED timestamp so that a late sweep
+still files work under the year it was actually finished."
+  (let* ((closed (org-entry-get nil "CLOSED" t))
+         (year (format-time-string
+                "%Y"
+                (if closed (org-time-string-to-time closed) (current-time)))))
+    (concat (expand-file-name (concat year ".org") jw-org-archive-directory)
+            "::datetree/")))
+
+(defun jw-org-archive-done ()
+  "Archive every finished entry in `jw-org-todo-file' to the year datetrees.
+`org-entry-is-done-p' tests membership in `org-done-keywords', so both DONE
+and CANCEL qualify -- they sit after the `|' in `org-todo-keywords'."
+  (interactive)
+  (unless (file-directory-p jw-org-archive-directory)
+    (make-directory jw-org-archive-directory t))
+  (with-current-buffer (find-file-noselect jw-org-todo-file)
+    (let ((count 0))
+      (org-map-entries
+       (lambda ()
+         (when (org-entry-is-done-p)
+           ;; Bound per entry, not globally: see the note above.
+           (let ((org-archive-location (jw-org-archive-location-for-entry)))
+             (org-archive-subtree))
+           (setq count (1+ count))
+           ;; `org-archive-subtree' removes the entry, which leaves the
+           ;; mapper's saved position stale; `org-map-continue-from' is the
+           ;; documented way to tell it where to resume.
+           (setq org-map-continue-from (point))))
+       t 'file)
+      (save-buffer)
+      (message "Archived %d finished %s" count
+               (if (= count 1) "entry" "entries")))))
+
+(global-set-key (kbd "C-c A") #'jw-org-archive-done)
+
+
+
 ;; on macos, fix "This Emacs binary lacks sound support" 
 ;; - https://github.com/leoliu/play-sound-osx/blob/master/play-sound.el
 ;; - update according to https://github.com/leoliu/play-sound-osx/issues/2#issuecomment-1088360638
