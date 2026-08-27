@@ -52,13 +52,15 @@ constitutes a matching tiling window manager."
       inhibit-startup-echo-area-message user-login-name ; read the docstring
       inhibit-startup-buffer-menu t)
 
-;; I do not use those graphical elements by default, but I do enable
-;; them from time-to-time for testing purposes or to demonstrate
-;; something.  NEVER tell a beginner to disable any of these.  They
-;; are helpful.
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
+  ;; I do not use those graphical elements by default, but I do enable
+  ;; them from time-to-time for testing purposes or to demonstrate
+  ;; something.  NEVER tell a beginner to disable any of these.  They
+  ;; are helpful.
+  (menu-bar-mode -1)
+  (when (fboundp 'scroll-bar-mode)
+  (scroll-bar-mode -1))
+  (when (fboundp 'tool-bar-mode)
+  (tool-bar-mode -1))
 
 
 
