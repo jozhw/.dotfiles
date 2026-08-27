@@ -1,3 +1,4 @@
+;;; jw-emacs-completion.el --- Completion frameworks -*- lexical-binding: t; -*-
 
 ;; for preserving minibuffer history
 (use-package savehist

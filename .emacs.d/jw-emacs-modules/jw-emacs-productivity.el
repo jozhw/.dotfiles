@@ -1,3 +1,4 @@
+;;; jw-emacs-productivity.el --- Productivity tools -*- lexical-binding: t; -*-
 
 (use-package pdf-tools
   :straight t

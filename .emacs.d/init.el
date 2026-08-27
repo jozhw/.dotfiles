@@ -1,3 +1,4 @@
+;;; init.el --- Main initialization -*- lexical-binding: t; -*-
 
 ;; installation of straight.el package manager
 (defvar bootstrap-version)

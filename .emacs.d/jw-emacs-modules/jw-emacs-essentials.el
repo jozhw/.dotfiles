@@ -1,3 +1,4 @@
+;;; jw-emacs-essentials.el --- Essential editor defaults -*- lexical-binding: t; -*-
 
 ;; Enable column numbers
 (column-number-mode)

@@ -1,3 +1,4 @@
+;;; jw-emacs-org.el --- Org mode configuration -*- lexical-binding: t; -*-
 
 (defun jw/org-mode-setup ()
   (org-indent-mode) ;; auto-indentation for headings

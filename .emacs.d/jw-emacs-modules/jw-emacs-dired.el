@@ -1,3 +1,4 @@
+;;; jw-emacs-dired.el --- Dired configuration -*- lexical-binding: t; -*-
 
 (setq dired-listing-switches "-alD")
 

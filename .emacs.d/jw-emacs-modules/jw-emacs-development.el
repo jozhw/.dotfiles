@@ -1,3 +1,4 @@
+;;; jw-emacs-development.el --- General development tooling -*- lexical-binding: t; -*-
 
 (use-package tramp
   :straight t)

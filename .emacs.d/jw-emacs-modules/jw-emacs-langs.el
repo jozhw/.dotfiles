@@ -1,3 +1,4 @@
+;;; jw-emacs-langs.el --- Language and tree-sitter configuration -*- lexical-binding: t; -*-
 
 (setq treesit-language-source-alist
       '((typescript .        ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
@@ -199,38 +200,38 @@
 
 
 ;; Dynamic server program functions
-(defun jw/python-lsp-program (&optional interactive)
+(defun jw/python-lsp-program (&optional _interactive)
 "Get Python LSP program."
 (if (file-remote-p default-directory)
     '("/home/jozhw/bin/pylsp-wrapper")
     '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
 
-    (defun jw/rust-lsp-program (&optional interactive)
+    (defun jw/rust-lsp-program (&optional _interactive)
     "Get Rust LSP program."
     (list (jw/find-rust-analyzer)))
 
-    (defun jw/clangd-lsp-program (&optional interactive)
+    (defun jw/clangd-lsp-program (&optional _interactive)
     "Get clangd LSP program."
     '("clangd"))
 
-    (defun jw/typescript-lsp-program (&optional interactive)
+    (defun jw/typescript-lsp-program (&optional _interactive)
     "Get TypeScript LSP program."
     '("typescript-language-server" "--stdio"))
 
-    (defun jw/marksman-lsp-program (&optional interactive)
+    (defun jw/marksman-lsp-program (&optional _interactive)
     "Get Marksman LSP program."
     '("marksman"))
 
-    (defun jw/astro-lsp-program (&optional interactive)
+    (defun jw/astro-lsp-program (&optional _interactive)
     "Get Astro LSP program."
     '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
 
-    (defun jw/tex-lsp-program (&optional interactive)
+    (defun jw/tex-lsp-program (&optional _interactive)
      "Get latex lsp program"
      '("texlab")
      )
 
-    (defun jw/r-lsp-program (&optional interactive)
+    (defun jw/r-lsp-program (&optional _interactive)
     "Get R LSP program."
     '("R" "--slave" "-e" "languageserver::run()"))
 
@@ -258,7 +259,7 @@
 (add-to-list 'eglot-server-programs 
             '(markdown-mode . jw/marksman-lsp-program))
 (add-to-list 'eglot-server-programs 
-            '((latex-mode tex-mode LaTex-mode) . jw/tex-lsp-program))
+            '((latex-mode tex-mode LaTeX-mode) . jw/tex-lsp-program))
 (add-to-list 'eglot-server-programs
             '(ess-r-mode . jw/r-lsp-program))
 (add-to-list 'eglot-server-programs 

@@ -1,3 +1,4 @@
+;;; jw-emacs-which-key.el --- which-key configuration -*- lexical-binding: t; -*-
 
 (use-package which-key
   :straight t

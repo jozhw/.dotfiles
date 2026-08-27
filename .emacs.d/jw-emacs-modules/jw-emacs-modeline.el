@@ -1,3 +1,4 @@
+;;; jw-emacs-modeline.el --- Mode line configuration -*- lexical-binding: t; -*-
 
 (setq-default mode-line-format (default-value 'mode-line-format))
 

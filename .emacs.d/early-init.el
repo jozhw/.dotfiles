@@ -1,3 +1,4 @@
+;;; early-init.el --- Early initialization -*- lexical-binding: t; -*-
 
 (defvar jw-emacs-tiling-window-manager-regexp "bspwm\\|herbstluftwm\\|i3"
   "Regular expression to  tiling window managers.
@@ -15,7 +16,15 @@ constitutes a matching tiling window manager."
 
 
 ;; prevent conflict with multiple versions of packages because useing straight
-(setq package-enable-at-startup nil) 
+(setq package-enable-at-startup nil)
+
+
+
+(require 'warnings)
+(dolist (jw--uncooked '("~/.emacs.d/var/elgrep-data.el"
+                        "~/.emacs.d/straight/build/org-noter-pdftools/org-noter-pdftools.el"))
+  (add-to-list 'warning-inhibit-types
+               (list 'files 'missing-lexbind-cookie jw--uncooked)))
 
 
 
@@ -52,8 +61,6 @@ constitutes a matching tiling window manager."
 (tool-bar-mode -1)
 
 
-
-;; -*- lexical-binding: t; -*-
 
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))

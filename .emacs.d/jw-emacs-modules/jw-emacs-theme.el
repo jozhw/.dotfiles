@@ -1,5 +1,4 @@
-
-;;; Theme setup and related
+;;; jw-emacs-theme.el --- Theme setup and related -*- lexical-binding: t; -*-
 
 ;;;; Load the desired theme module
 ;; These all reference my packages: `modus-themes', `ef-themes',

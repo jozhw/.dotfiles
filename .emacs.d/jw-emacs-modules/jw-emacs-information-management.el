@@ -1,3 +1,4 @@
+;;; jw-emacs-information-management.el --- Notes and information management -*- lexical-binding: t; -*-
 
 (use-package denote
                  :straight t)

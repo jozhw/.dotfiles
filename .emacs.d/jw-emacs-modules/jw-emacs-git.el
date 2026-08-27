@@ -1,3 +1,4 @@
+;;; jw-emacs-git.el --- Git and version control -*- lexical-binding: t; -*-
 
 (require 'package)
 (add-to-list 'package-archives
