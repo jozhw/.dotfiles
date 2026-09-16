@@ -4,6 +4,7 @@ import starlight from "@astrojs/starlight";
 
 // https://astro.build/config
 export default defineConfig({
+    site: "https://dotfiles.jozhw.com",
     integrations: [
         starlight({
             title: "Dotfiles",
@@ -47,7 +48,7 @@ export default defineConfig({
                             slug: "emacs/the-custom-libraries-of-my-emacs-configuration-jw-lisp",
                         },
                         {
-                            label: "Usage & LaTeX",
+                            label: "Usage, Agenda & LaTeX",
                             slug: "guides/emacs",
                         },
                     ],

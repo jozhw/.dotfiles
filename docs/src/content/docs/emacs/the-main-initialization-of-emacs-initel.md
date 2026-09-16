@@ -10,6 +10,10 @@ These installations do not require the package manager to be configured and are 
 ### straight.el
 
 ```emacs-lisp
+;;; init.el --- Main initialization -*- lexical-binding: t; -*-
+```
+
+```emacs-lisp
 ;; installation of straight.el package manager
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -276,8 +280,6 @@ Load the `jw-emacs-modules`.
 (require 'jw-emacs-langs)
 ```
 
-Load `jw-lisp`.
-
-```emacs-lisp
-(require 'jw-copy)
-```
+Nothing in `jw-lisp/` is loaded at the moment --- see
+the custom libraries section. The `load-path` entry set earlier means a new
+library only needs a `require` added here.

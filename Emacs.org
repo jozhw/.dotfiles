@@ -73,7 +73,7 @@ any other block targeting that file.
   See `prot-emacs-tiling-window-manager-regexp' for what
   constitutes a matching tiling window manager."
     (declare (indent 0))
-    `(when-let ((session (getenv "DESKTOP_SESSION"))
+    `(when-let* ((session (getenv "DESKTOP_SESSION"))
                 ((not (string-match-p session jw-emacs-tiling-window-manager-regexp))))
        ,@body))
 
@@ -192,7 +192,7 @@ block above — it only counts on line 1 of the tangled file.)
   I place a file in ~/.config/prot-xtwm-active-theme which contains
   a single word describing my system-wide theme.  This is part of
   my dotfiles.  Check my `delight' shell script for more."
-    (when-let ((file "~/.config/jw-xtwm-active-theme")
+    (when-let* ((file "~/.config/jw-xtwm-active-theme")
                ((file-exists-p file)))
         (string-match-p
          "dark"
@@ -210,7 +210,7 @@ block above — it only counts on line 1 of the tangled file.)
   Add this to `after-make-frame-functions' so that new frames do
   not retain the generic background set by the function
   `prot-emacs-avoid-initial-flash-of-light'."
-    (when-let ((theme (car custom-enabled-themes)))
+    (when-let* ((theme (car custom-enabled-themes)))
       (enable-theme theme)))
 
 #+end_src
@@ -1544,21 +1544,19 @@ and it belongs in the vault (see [[*obsidian.el][obsidian.el]]).
 
 ***** Looking at what was done
 
-Two views, both built in, neither needing anything set up in advance:
+The built-in log view needs no additional setup:
 
 - =l= inside the agenda toggles =org-agenda-log-mode=, which shows entries
   *closed* on the displayed day instead of the ones still open. With
   =org-agenda-span= set to =day=, moving back with =b= and pressing =l= is a
   read-out of what a given day actually looked like.
-- =v A= inside the agenda turns on =org-agenda-archives-mode= for archive
-  *files*, so a search or a log view reaches into the year files as well.
-  (Lowercase =v a= includes archived trees only; =v A= is the one that pulls in
-  separate files.)
 
-Failing both, the year files are ordinary Org files --- open one and fold the
-datetree to skim a month, or grep across =agenda/archive/= when the year is not
-known. Keeping the granularity at one file per year is what makes that grep
-worth running.
+Do not rely on =v A= for the custom yearly files.  That command discovers
+archive files from the active value of =org-archive-location=, while this setup
+intentionally binds the location only during =jw-org-archive-done=.  The year
+files are ordinary Org files: open one and fold its datetree to skim a month,
+or grep across =agenda/archive/= when the year is not known.  Keeping the
+granularity at one file per year is what makes that grep practical.
 
 ***** Keeping =todo.org= lean
 
@@ -2348,7 +2346,7 @@ no front matter to merge into:
              (goto-char (point-min))
              (when (looking-at-p "^---[ \t]*$")
                (forward-line 1)
-               (when-let ((end (save-excursion
+               (when-let* ((end (save-excursion
                                  (re-search-forward "^---[ \t]*$" nil t))))
                  (when (re-search-forward "^tags:[ \t]*\\[\\([^]]*\\)\\]" end t)
                    (let* ((current (split-string (match-string 1) "[,[:space:]]+" t))
@@ -2700,7 +2698,7 @@ Cache passwords until the end of the emacs session, which is default.
     "Memoize a value if the key is a remote path."
     (if (and key
             (file-remote-p key))
-        (if-let ((current (assoc key (symbol-value cache))))
+        (if-let* ((current (assoc key (symbol-value cache))))
             (cdr current)
             (let ((current (apply orig-fn args)))
             (set cache (cons (cons key current) (symbol-value cache)))
@@ -2914,7 +2912,7 @@ Set language sources for treesit.
    ;; one bad grammar cannot block the rest.
    (dolist (source treesit-language-source-alist)
      (let ((lang (car source)))
-       (unless (treesit-ready-p lang t) ; t = probe quietly, no warning
+       (unless (treesit-language-available-p lang)
          (condition-case err
              (treesit-install-language-grammar lang)
            (error

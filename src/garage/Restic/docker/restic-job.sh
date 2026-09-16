@@ -1,16 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
-exec 9>/tmp/restic-job.lock
 JOB="${1:-}"
 
-# backup: skip if busy; prune/check: wait
-if [[ "$JOB" == "backup" ]]; then
-  flock -n 9 || exit 0
-else
-  flock 9
-fi
-
+# Each target script owns the shared lock.  Locking here as well would make
+# the child contend with its parent: backup would skip and prune/check would
+# wait forever.
 case "$JOB" in
   backup) /volume2/docker/restic/backup.sh ;;
   prune)  /volume2/docker/restic/prune.sh ;;

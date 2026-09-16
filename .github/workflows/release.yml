@@ -12,10 +12,12 @@ jobs:
   create-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: taiki-e/create-gh-release-action@v1
         with:
           # (optional) Path to changelog.
           changelog: CHANGELOG.md
+          # Only release commits that have landed on main.
+          branch: main
           # (required) GitHub token for creating GitHub Releases.
           token: ${{ secrets.GITHUB_TOKEN }}

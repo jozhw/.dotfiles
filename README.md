@@ -6,48 +6,31 @@
 To keep all of the commits organized, I suggest for my own reference to use the following commit syntax. The first is the action (i.e. fix, add, rm) and then the functionality that was changed (i.e. emacs, readme, stow) followed by the commit message.
 
 ```bash
-  <ACTION>/<FUNCTIONALITY_CHANGED>: "MESSAGE HERE"
+<ACTION>/<FUNCTIONALITY_CHANGED>: MESSAGE HERE
 ```
 
+The repo uses `git` and Git LFS. Make sure `git lfs` is installed before cloning; `.gitattributes` records the file types managed by LFS. There are currently no active Git submodules.
 
-The repo uses `git` and `git lfs` to keep versioning control. Make sure that you have `git lfs` installed (should be installed by the setup scripts). To see which files are being tracked by `git lfs`, check the `.gitattributes` file.
-
-To see which files are being tracked by `git submodule`, see the `.gitmodules` file in the root directory.
-
-The following paths are submodules:
-
-### =./.emacs.d/elpa=
-
-Contains all of the emacs packages that I use.
-
-The reason for this submodule is to avoid breaking changes on updates and can revert to previous versionings.
-
-### =./.emacs.d/fonts/=
-
-This directory contains the fonts that I currently use and VC is linked to the repo for the respective fonts to faciliate updates.
-
-### =Iosevka=
-
-Font face that I currently do not use, but I use Prot's updated version of the Iosevka typeface
+Releases use semantic-version tags with a leading `v`. See the [release checklist](https://dotfiles.jozhw.com/guides/site/#cutting-a-release) before pushing a tag.
 
 
 ## Setting Up
 
 ### brew
 
-All of the brew scripts are within the brew dir. The path relative to this project's root directory is as follows: =./brew/scripts=.
+All Homebrew scripts live under `.config/brew/scripts/`.
 
 #### brew.sh
 
 The script was heavily inspired from [[https://github.com/mathiasbynens/dotfiles/blob/main/brew.sh][mathiasbynens dotfiles github repo]], but adjusted to suit my needs. A notable difference between my "brew.sh" is that it is modularized with the brew.sh being the wrapper that will download all of the brew files.
 
-Make sure that permissions are added by running =chmod +x brew.sh= in your command line.
+Make sure the wrapper is executable by running `chmod +x .config/brew/scripts/brew.sh`.
 
 To run the script:
 
 #+begin_src shell
 
-  ./brew.sh
+./.config/brew/scripts/brew.sh
 
 #+end_src
 
@@ -80,15 +63,15 @@ To stow (create symbolic links), after installing gnu stow, run the script in th
 
 ## Configurations
 
-Please see the `ConfigInfo.org` file for more detailing of particular configurations.
+See the [documentation site](https://dotfiles.jozhw.com) for configuration and operational notes.
 
 ### emacs
 
 All emacs configurations are written via a literate configuration in `org-mode` named `Emacs.org`. Each section in `Emacs.org` is modularized via =tangle= upon saving the file. All of the modularized configs are stored within the =.emacs.d= directory.
 
-### elpa
+### Emacs packages
 
-The elpa directory contains all of the emacs packages that I use for my configuration. The reason why this is seperate and vc'd is to preserve the configuration for emacs, and to decrease the liklihood of errors in setting up. Furthermore, certain packages may have breaking changes that will be in need for fixes, which could be a major hassle. Thus, if a package is accidently updated, then it can be revered to the previous version.
+Emacs packages are managed with `straight.el`. Package checkouts and build artifacts under `.emacs.d/straight/` are local generated state; the package declarations live in `Emacs.org`.
 
 ### .profile
 

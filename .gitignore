@@ -9,6 +9,15 @@
 .emacs.d/transient/*
 .emacs.d/tree-sitter/*
 .emacs.d/dape-breakpoints
+.emacs.d/straight/
+
+# ignore machine-local application state
+.config/beets/state.pickle
+.config/cagent/.cagent_first_run
+.config/cagent/user-uuid
+.config/iterm2/AppSupport
+.config/qBittorrent/
+.config/varlock/config.json
 
 # ignore sensitve signed files
 *.signed
@@ -16,9 +25,6 @@
 # ignore all compiled elisp
 *.elc
 *.gif
-
-# Include only files and directories matching the pattern
-!.emacs.d/elpa/[a-zA-Z0-9_@+-]*-[0-9]*.**
 
 # ignore artifacts for docs
 docs/resources/

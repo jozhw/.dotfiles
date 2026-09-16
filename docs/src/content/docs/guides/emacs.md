@@ -3,7 +3,39 @@ title: Emacs
 description: Emacs information for quick reference
 ---
 
-The vast majority of configuration help and troublshooting should be in the literate configuration file `Emacs.org`. The purpose of this document is help with usage of the configuration.
+The vast majority of configuration help and troubleshooting is in the literate configuration file `Emacs.org`. This page is the shorter operational reference.
+
+## Org Agenda
+
+The agenda is deliberately a daily worklist, not a project-management system. It uses one permanent file:
+
+```text
+~/Core/Otzar/Docs/agenda/todo.org
+```
+
+### Daily workflow
+
+1. Press `C-c c t` to capture a task for today.
+2. Type the task and press `C-c C-c` to save the capture.
+3. Press `C-c a a` to open today's agenda.
+4. In the agenda, press `t` on a task to move it through `TODO`, `WAIT`, `DONE`, or `CANCEL`.
+
+Captured tasks receive a `SCHEDULED` timestamp for today automatically. A task written manually without a schedule appears in the global TODO list (`C-c a t`), but not necessarily in the daily agenda.
+
+Useful keys inside the agenda:
+
+| Key | Action |
+| --- | --- |
+| `RET` | Visit the task in `todo.org` |
+| `t` | Change its TODO state |
+| `g` | Refresh the agenda |
+| `f` / `b` | Move forward or backward one day |
+| `l` | Toggle the log of tasks completed on the displayed day |
+| `q` | Close the agenda |
+
+`DONE` and `CANCEL` tasks disappear from the normal daily view immediately, but their timestamps remain in `todo.org`. Run `C-c A` occasionally to sweep finished tasks into yearly files under `~/Core/Otzar/Docs/agenda/archive/`. Those custom yearly archives are not automatically discovered by the agenda's `v A` command; open the relevant year directly or search that directory.
+
+The full rationale and implementation are in the `org-agenda` section of `Emacs.org` and the generated **Editor → Modules** page.
 
 ## Packages
 
@@ -93,4 +125,3 @@ These commands consists of third-party and native commands. Since it is my confi
 ### `org-todo.el` and `org-agenda.el`
 
 To create a percentage completion rate simply add `[/][%]` and then do the command `C-c C-c`.
-

@@ -63,7 +63,7 @@
 "Memoize a value if the key is a remote path."
 (if (and key
         (file-remote-p key))
-    (if-let ((current (assoc key (symbol-value cache))))
+    (if-let* ((current (assoc key (symbol-value cache))))
         (cdr current)
         (let ((current (apply orig-fn args)))
         (set cache (cons (cons key current) (symbol-value cache)))

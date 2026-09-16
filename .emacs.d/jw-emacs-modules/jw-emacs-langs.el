@@ -26,7 +26,7 @@
 ;; one bad grammar cannot block the rest.
 (dolist (source treesit-language-source-alist)
   (let ((lang (car source)))
-    (unless (treesit-ready-p lang t) ; t = probe quietly, no warning
+    (unless (treesit-language-available-p lang)
       (condition-case err
           (treesit-install-language-grammar lang)
         (error

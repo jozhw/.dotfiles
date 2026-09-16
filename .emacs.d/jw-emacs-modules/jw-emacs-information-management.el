@@ -199,7 +199,7 @@ Vault tags carry no leading `#', per the `obsidian-tags' docstring."
            (goto-char (point-min))
            (when (looking-at-p "^---[ \t]*$")
              (forward-line 1)
-             (when-let ((end (save-excursion
+             (when-let* ((end (save-excursion
                                (re-search-forward "^---[ \t]*$" nil t))))
                (when (re-search-forward "^tags:[ \t]*\\[\\([^]]*\\)\\]" end t)
                  (let* ((current (split-string (match-string 1) "[,[:space:]]+" t))

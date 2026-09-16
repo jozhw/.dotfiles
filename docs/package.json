@@ -1,7 +1,9 @@
 {
-  "name": "",
+  "name": "dotfiles-docs",
+  "private": true,
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.1.0",
+  "license": "MIT",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",

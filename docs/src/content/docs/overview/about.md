@@ -18,10 +18,10 @@ This repository holds my personal configuration (dotfiles), the services I run i
 
 This is a personal reference, not a tutorial for others. The guiding rule is to **document what the source can't document itself**: operational runbooks, recovery steps, and cross-cutting troubleshooting that won't survive in memory. Where the config is already readable (the literate Emacs file, shell rc files), the docs only mirror or summarize it rather than duplicating it.
 
-For the reasoning behind how this site is organized, see the `design/DESIGN_PHILOSOPHY.md` file in the repository root.
+For the reasoning behind how this site is organized, see `design/DESIGN_PHILOSOPHY.md` in the repository root.
 
 ## Conventions
 
 Commits follow a simple `<action>/<area>: message` syntax — for example `fix/emacs: correct theme hook` or `add/garage: immich runbook`. Common actions are `add`, `fix`, `rm`, `refactor`, and `update`.
 
-The repo uses `git` with `git lfs` (see `.gitattributes`) and submodules (see `.gitmodules`).
+The repo uses `git` and Git LFS (see `.gitattributes`). There are currently no active Git submodules.

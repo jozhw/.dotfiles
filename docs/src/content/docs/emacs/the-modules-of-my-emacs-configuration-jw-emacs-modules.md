@@ -8,8 +8,10 @@ description: "Enable line numbers globally, but not in the following modes: org,
 ### jw-emacs-load-theme-family
 
 ```emacs-lisp
-;;; Theme setup and related
+;;; jw-emacs-theme.el --- Theme setup and related -*- lexical-binding: t; -*-
+```
 
+```emacs-lisp
 ;;;; Load the desired theme module
 ;; These all reference my packages: `modus-themes', `ef-themes',
 ;; `standard-themes'.
@@ -24,8 +26,10 @@ description: "Enable line numbers globally, but not in the following modes: org,
 #### jw-emacs-modus-themes.el
 
 ```emacs-lisp
-;;; The Modus themes
+;;; jw-emacs-modus-themes.el --- The Modus themes -*- lexical-binding: t; -*-
+```
 
+```emacs-lisp
 ;; The themes are highly customisable.  Read the manual:
 ;; <https://protesilaos.com/emacs/modus-themes>.
 (use-package modus-themes
@@ -60,40 +64,43 @@ description: "Enable line numbers globally, but not in the following modes: org,
 #### jw-emacs-ef-themes.el
 
 ```emacs-lisp
-  ;;; The Ef (εὖ) themes
+;;; jw-emacs-ef-themes.el --- The Ef (εὖ) themes -*- lexical-binding: t; -*-
+```
 
-  ;; The themes are customisable.  Read the manual:
-  ;; <https://protesilaos.com/emacs/ef-themes>.
-  (use-package ef-themes
-    :straight t
-    :demand t
-    :bind ("<f5>" . ef-themes-select)
-    :config
-    (setq ef-themes-variable-pitch-ui t
-          ef-themes-mixed-fonts t
-          ef-themes-headings ; read the manual's entry of the doc string
-          '((0 . (variable-pitch light 1.9))
-            (1 . (variable-pitch light 1.8))
-            (2 . (variable-pitch regular 1.7))
-            (3 . (variable-pitch regular 1.6))
-            (4 . (variable-pitch regular 1.5))
-            (5 . (variable-pitch 1.4)) ; absence of weight means `bold'
-            (6 . (variable-pitch 1.3))
-            (7 . (variable-pitch 1.2))
-            (agenda-date . (semilight 1.5))
-            (agenda-structure . (variable-pitch light 1.9))
-            (t . (variable-pitch 1.1))))
+```emacs-lisp
+;; The themes are customisable.  Read the manual:
+;; <https://protesilaos.com/emacs/ef-themes>.
+(use-package ef-themes
+  :straight t
+  :demand t
+  :bind ("<f5>" . ef-themes-select)
+  :config
+  (setq ef-themes-variable-pitch-ui t
+        ef-themes-mixed-fonts t
+        ef-themes-headings ; read the manual's entry of the doc string
+        '((0 . (variable-pitch light 1.9))
+          (1 . (variable-pitch light 1.8))
+          (2 . (variable-pitch regular 1.7))
+          (3 . (variable-pitch regular 1.6))
+          (4 . (variable-pitch regular 1.5))
+          (5 . (variable-pitch 1.4)) ; absence of weight means `bold'
+          (6 . (variable-pitch 1.3))
+          (7 . (variable-pitch 1.2))
+          (agenda-date . (semilight 1.5))
+          (agenda-structure . (variable-pitch light 1.9))
+          (t . (variable-pitch 1.1))))
 
-    ;; The `ef-themes' provide lots of themes.  I want to pick one at
-    ;; random when I start Emacs.  Newer ef-themes replaced the old
-    ;; `(ef-themes-load-random 'light|'dark)' Lisp call with the dedicated,
-    ;; zero-argument commands `ef-themes-load-random-light' and
-    ;; `ef-themes-load-random-dark'.  I just check with my desktop
-    ;; environment to determine which variant to pick.  Those functions are
-    ;; in my init.el.
-    (if (jw-emacs-theme-environment-dark-p)
-        (ef-themes-load-random-dark)
-      (ef-themes-load-random-light)))
+  ;; The `ef-themes' provide lots of themes.  I want to pick one at
+  ;; random when I start Emacs.  Newer ef-themes replaced the old
+  ;; `(ef-themes-load-random 'light|'dark)' Lisp call with the dedicated,
+  ;; zero-argument commands `ef-themes-load-random-light' and
+  ;; `ef-themes-load-random-dark'.  I just check with my desktop
+  ;; environment to determine which variant to pick.  Those functions are
+  ;; in my init.el.
+  (if (jw-emacs-theme-environment-dark-p)
+      (ef-themes-load-random-dark)
+    (ef-themes-load-random-light)))
+
 (provide 'jw-emacs-ef-themes)
 ```
 
@@ -268,8 +275,9 @@ description: "Enable line numbers globally, but not in the following modes: org,
                :afternoon (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)
                :evening   (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)))))
 
-    (when (or modus-themes-p ef-themes-p)
-      (theme-buffet-timer-hours 1))))
+    ;; Theme selection stays fixed after startup.  Use the theme commands
+    ;; explicitly when a change is wanted.
+    ))
 ```
 
 ### fontaine.el
@@ -437,6 +445,10 @@ Enable line numbers globally, but not in the following modes: org, term, shell, 
 In addition to line numbers, the column number will also be displayed. 
 
 ```emacs-lisp
+;;; jw-emacs-essentials.el --- Essential editor defaults -*- lexical-binding: t; -*-
+```
+
+```emacs-lisp
 ;; Enable column numbers
 (column-number-mode)
 
@@ -485,6 +497,10 @@ Since `fill-paragraph` wraps `fill-column`, we adjust the size of the `fill-colu
 ### enable the mode-line
 
 The mode-line was disabled earlier (The `init.el` conditional to remove display of mode-line) so that the startup UI would look smooth
+
+```emacs-lisp
+;;; jw-emacs-modeline.el --- Mode line configuration -*- lexical-binding: t; -*-
+```
 
 ```emacs-lisp
 (setq-default mode-line-format (default-value 'mode-line-format))
@@ -563,6 +579,10 @@ Display the virtual environment version.
 
 ## The `jw-emacs-completion.el` module
 ### savehist.el
+
+```emacs-lisp
+;;; jw-emacs-completion.el --- Completion frameworks -*- lexical-binding: t; -*-
+```
 
 ```emacs-lisp
 ;; for preserving minibuffer history
@@ -726,6 +746,10 @@ For completion notations.
 Set up Org Mode with a baseline configuration. The following sections will add more things to it.
 
 ```emacs-lisp
+;;; jw-emacs-org.el --- Org mode configuration -*- lexical-binding: t; -*-
+```
+
+```emacs-lisp
 (defun jw/org-mode-setup ()
   (org-indent-mode) ;; auto-indentation for headings
   (variable-pitch-mode 1) ;; cause fonts to vary by proportionality
@@ -746,15 +770,12 @@ Set up Org Mode with a baseline configuration. The following sections will add m
 
 ### org-agenda
 
-The agenda is deliberately a **single file** that never rotates. Anything that
-files tasks into per-week or per-project files buys structure at the cost of a
-decision every time you capture, and tasks whose lifespan is one day do not
-earn that. Add a line, it shows up today; mark it `DONE`, it disappears.
-
-Note also that the previous version computed `org-agenda-files` once at startup
-with `directory-files-recursively`, so a task file created mid-session was
-invisible to the agenda until Emacs restarted. A fixed one-element list has no
-such failure mode.
+The agenda is deliberately a **single file** that never rotates. Per-week or
+per-project files buy structure at the cost of a decision on every capture, and
+tasks whose lifespan is one day do not earn that. Add a line, it shows up today;
+mark it `DONE`, it disappears. Naming the file explicitly (rather than scanning
+a directory at startup) also means a file created mid-session is never missing
+from the agenda.
 
 ```emacs-lisp
 (defvar jw-org-todo-file
@@ -781,10 +802,89 @@ Referenced by the capture template in `jw-emacs-information-management'.")
 (setq org-agenda-span 'day)
 (setq org-agenda-start-on-weekday nil)
 
-;; Neither of these was bound anywhere, which made the whole flow an `M-x'
-;; away.  `C-c c' matches the note left on `cursory' above.
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
+```
+
+#### History and archiving
+
+A single `todo.org` does not mean losing history --- the history is already
+being written, it just is not visible yet. `org-log-done` is `time` and the
+`WAIT`*`CANCEL`*`DONE` keywords carry `!`, so every state change stamps a
+`CLOSED:` line and a `LOGBOOK` drawer entry. Nothing extra needs recording; the
+only missing pieces are somewhere for finished work to go and a way to look at
+it.
+
+Archiving goes to `agenda/archive/`, **one file per year**, each holding a
+**datetree**. The `datetree/` prefix in `org-archive-location` is special: Org
+files each entry under a `YYYY / YYYY-MM month / YYYY-MM-DD day` heading, and
+`org-archive.el` takes that date from the entry's `CLOSED` property rather than
+from the clock. So the layout is:
+
+  agenda/
+    todo.org            <- the only agenda file
+    archive/
+      2026.org          <- * 2026 / ** 2026-07 July / *** 2026-07-26 Sunday
+      2027.org
+
+Year is the file boundary; month and day are headings inside it. A file per
+month would give sixty files after five years, which is worse for grepping and
+is the proliferation this setup exists to avoid --- and a year is the only unit
+anyone ever retires whole.
+
+The **year comes from each entry's `CLOSED` date, not from today**. That is what
+makes the archive safe to neglect: a sweep run in January still files December's
+work under `2026.org`. Computing it per entry also keeps a session left open
+across New Year from writing into the wrong file.
+
+`org-archive-location` is deliberately **not** set globally --- it is bound only
+inside the command below. Set globally it would redirect archiving from **every**
+Org file, including denote notes, into the agenda archive. Everything outside
+`todo.org` keeps Org's default of a
+`<file>.org_archive` sibling.
+
+```emacs-lisp
+(defvar jw-org-archive-directory
+  (expand-file-name "~/Core/Otzar/Docs/agenda/archive/")
+  "Directory holding one Org archive file per year.")
+
+(defun jw-org-archive-location-for-entry ()
+  "Return an `org-archive-location' for the finished entry at point.
+The year is taken from the entry's CLOSED timestamp so that a late sweep
+still files work under the year it was actually finished."
+  (let* ((closed (org-entry-get nil "CLOSED" t))
+         (year (format-time-string
+                "%Y"
+                (if closed (org-time-string-to-time closed) (current-time)))))
+    (concat (expand-file-name (concat year ".org") jw-org-archive-directory)
+            "::datetree/")))
+
+(defun jw-org-archive-done ()
+  "Archive every finished entry in `jw-org-todo-file' to the year datetrees.
+`org-entry-is-done-p' tests membership in `org-done-keywords', so both DONE
+and CANCEL qualify -- they sit after the `|' in `org-todo-keywords'."
+  (interactive)
+  (unless (file-directory-p jw-org-archive-directory)
+    (make-directory jw-org-archive-directory t))
+  (with-current-buffer (find-file-noselect jw-org-todo-file)
+    (let ((count 0))
+      (org-map-entries
+       (lambda ()
+         (when (org-entry-is-done-p)
+           ;; Bound per entry, not globally: see the note above.
+           (let ((org-archive-location (jw-org-archive-location-for-entry)))
+             (org-archive-subtree))
+           (setq count (1+ count))
+           ;; `org-archive-subtree' removes the entry, which leaves the
+           ;; mapper's saved position stale; `org-map-continue-from' is the
+           ;; documented way to tell it where to resume.
+           (setq org-map-continue-from (point))))
+       t 'file)
+      (save-buffer)
+      (message "Archived %d finished %s" count
+               (if (= count 1) "entry" "entries")))))
+
+(global-set-key (kbd "C-c A") #'jw-org-archive-done)
 ```
 
 #### Working practice
@@ -807,10 +907,41 @@ sub-headings, per-week or per-project files, and refile targets. If a task
 needs more scaffolding than a single line, it is not a task --- it is a note,
 and it belongs in the vault (see obsidian.el).
 
-`todo.org` grows without bound because `DONE` items stay in the file, but they
-leave the agenda view immediately, so they cost nothing to read past. If it
-ever becomes genuinely unwieldy, `C-c C-x C-a` (`org-archive-subtree-default`)
-on the done items is enough; there is no need for a scheduled cleanup habit.
+##### Looking at what was done
+
+The built-in log view needs no additional setup:
+
+- `l` inside the agenda toggles `org-agenda-log-mode`, which shows entries
+  **closed** on the displayed day instead of the ones still open. With
+  `org-agenda-span` set to `day`, moving back with `b` and pressing `l` is a
+  read-out of what a given day actually looked like.
+
+Do not rely on `v A` for the custom yearly files.  That command discovers
+archive files from the active value of `org-archive-location`, while this setup
+intentionally binds the location only during `jw-org-archive-done`.  The year
+files are ordinary Org files: open one and fold its datetree to skim a month,
+or grep across `agenda/archive/` when the year is not known.  Keeping the
+granularity at one file per year is what makes that grep practical.
+
+##### Keeping `todo.org` lean
+
+`DONE` items leave the agenda view the moment they are marked, so they cost
+nothing day to day and there is no cleanup **habit** to maintain. When the file
+starts feeling heavy, `C-c A` (`jw-org-archive-done`) sweeps every finished
+entry into the datetree in one go.
+
+Doing this rarely is fine, and is in fact the intended use: because entries file
+under their own `CLOSED` date --- both into the right year file and the right
+day heading --- a sweep after two months of neglect produces exactly the same
+archive as sweeping every Friday. That is the whole reason to derive the layout
+from the data rather than from the calendar at run time: the accuracy of the
+history does not depend on the discipline of the person maintaining it.
+
+`C-c A` is the only archiving path for `todo.org`. `C-c C-x C-a` still works
+everywhere, but since `org-archive-location` is left at its default outside this
+command, in `todo.org` it would create a `todo.org_archive` sibling instead of
+filing into the year tree. Sweeping is not worth avoiding --- it only ever moves
+entries that are already finished.
 
 ### org-pomodoro
 
@@ -1005,6 +1136,10 @@ To execute or export code in `org-mode` code blocks, you'll need to set up `org-
 ### magit.el
 
 ```emacs-lisp
+;;; jw-emacs-git.el --- Git and version control -*- lexical-binding: t; -*-
+```
+
+```emacs-lisp
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
@@ -1042,6 +1177,10 @@ When on the commit buffer, the argument for `gpg-signing` or `-S` may not be dis
 ### dired display
 
 ```emacs-lisp
+;;; jw-emacs-dired.el --- Dired configuration -*- lexical-binding: t; -*-
+```
+
+```emacs-lisp
 (setq dired-listing-switches "-alD")
 ```
 
@@ -1064,6 +1203,10 @@ For macos, make sure to have `coreutils` installed. To install run, `brew instal
 ### denote.el
 
 ```emacs-lisp
+;;; jw-emacs-information-management.el --- Notes and information management -*- lexical-binding: t; -*-
+```
+
+```emacs-lisp
 (use-package denote
                  :straight t)
 
@@ -1080,8 +1223,20 @@ Enable the denote dired mode for all files so that the components can easily be 
 (add-hook 'dired-mode-hook #'denote-dired-mode)
 ```
 
+Keywords are the same vocabulary used for tags in the Obsidian vault --- see
+Tags for what each one covers and why the list is short. One vocabulary across
+both tools means one thing to remember; two would guarantee drift.
+
+`journal` is not in the list: denote notes that are a dated log are better served
+by the vault's `daily-notes/`, and a keyword that duplicates a location earns
+nothing.
+
 ```emacs-lisp
-(setq denote-known-keywords '("hf" "philosophy" "ministry" "journal"))
+(setq denote-known-keywords
+      '("math" "markets" "hf" "code" "infra"
+        "philosophy" "ministry" "health" "people" "writing"))
+;; Offer keywords already present in the notes, not only the list above, so
+;; the vocabulary can drift without editing this file.
 (setq denote-infer-keywords t)
 (setq denote-sort-keywords t)
 ```
@@ -1156,36 +1311,21 @@ it depending on load order.
 
 ### obsidian.el
 
-[obsidian.el](https://github.com/licht1stein/obsidian.el) brings an [Obsidian](https://obsidian.md) vault into Emacs: it treats a
-directory of Markdown files as a knowledge base, understands `[[wiki-links]]`
-and `#tags`, and provides jumping, capturing, searching, and a backlinks panel.
-It complements denote.el --- use denote for Org-based notes and obsidian.el
-when you want to live inside an existing Markdown vault.
+[obsidian.el](https://github.com/licht1stein/obsidian.el) treats a directory of Markdown files as a knowledge base:
+`[[wiki-links]]`, `#tags`, jumping, search, and a backlinks panel. This vault is
+the **knowledge bank** --- things worth referencing later. Tasks live in
+org-agenda; denote.el holds Org-format notes.
 
-Install via `straight.el`. `:demand t` is used because `global-obsidian-mode`
-needs to be active as soon as a vault file is opened.
-
-Ordering here is load-bearing, and the previous version got it wrong three ways:
-
-1. `obsidian-directory` is a `defcustom`, not a function. Writing
-   `(obsidian-directory "...")` evaluated as a **function call** and signalled
-   `void-function`, which aborted the rest of `:config` --- so
-   `global-obsidian-mode` never turned on and the vault path stayed `"".`
-2. That `defcustom` has a `:set` handler that calls `user-error` when the
-   directory does not exist, so the vault must be created **before** it is
-   assigned, not after.
-3. `obsidian-backlinks-mode` was enabled before the vault path was known.
-
-`setopt` is what runs the `:set` handler; a plain `setq` would set the value
-but skip the bookkeeping that populates `obsidian--relative-path-length`.
+The vault directories are created before the path is assigned because
+`obsidian-directory` has a `:set` handler that refuses a missing directory.
+`setopt` (not `setq`) is what runs that handler, which also records the path
+length used to compute vault-relative names.
 
 ```emacs-lisp
 (use-package obsidian
   :straight t
   :demand t
   :config
-  ;; Create the vault (and its subdirectories) before assigning the path:
-  ;; the `obsidian-directory' setter errors out on a missing directory.
   (let ((vault (expand-file-name "~/Core/Otzar/Obsidian/")))
     (dolist (dir (list vault
                        (expand-file-name "notes" vault)
@@ -1193,99 +1333,94 @@ but skip the bookkeeping that populates `obsidian--relative-path-length`.
                        (expand-file-name "templates" vault)))
       (unless (file-directory-p dir)
         (make-directory dir t)))
-    ;; `obsidian-daily-note' calls `insert-file-contents' on the template
-    ;; without checking that it exists, so seed a minimal one -- a daily note
-    ;; is a landing strip, and prompts or fixed sections would only add a
-    ;; decision to something whose whole value is having none.
-    (let ((template (expand-file-name "templates/Daily Note Template.md" vault)))
-      (unless (file-exists-p template)
-        (with-temp-file template
-          (insert "# {{title}}\n\n"))))
+    ;; Seed the templates.  `obsidian-daily-note' inserts its one without
+    ;; checking that it exists; both are left alone once present, so they can
+    ;; be edited in the vault without this reverting them.
+    (pcase-dolist (`(,name . ,body)
+                   '(("Daily Note Template.md" . "# {{title}}\n\n")
+                     ("Note.md" . "---\ncreated: {{date}}\ntags: []\n---\n\n# {{title}}\n\n<!-- the claim, in one sentence -->\n\n## Why\n\n## Sources\n")))
+      (let ((file (expand-file-name (concat "templates/" name) vault)))
+        (unless (file-exists-p file)
+          (with-temp-file file (insert body)))))
     (setopt obsidian-directory vault))
-  ;; Track vault files everywhere so links/tags resolve globally.
+  ;; Track vault files everywhere so links and tags resolve globally.
   (global-obsidian-mode t))
 ```
 
-`obsidian-backlinks-mode` is deliberately **not** enabled here. It is a `:global`
-minor mode whose activation body calls `obsidian-open-backlinks-panel`
-immediately and adds `obsidian--populate-backlinks-buffer` to
-`buffer-list-update-hook`, so turning it on at load time means a side window on
-every Emacs start --- including sessions that never touch the vault --- plus a
-hook that runs on every buffer switch.
+Backlinks are a **toggle**, not a default. `obsidian-backlinks-mode` is a global
+minor mode that opens its side window the instant it is enabled and hooks
+`buffer-list-update-hook`, so enabling it at load time puts a panel in every
+session --- including ones that never touch the vault. `C-c n b` when it is
+actually wanted.
 
-Backlinks are worth **asking** for rather than always having, so it is bound to a
-toggle below instead. (To go back to always-on, add `(obsidian-backlinks-mode 1)`
-to the `:config` above; to get it only inside the vault, hang it on
-`obsidian-mode-hook` --- though note it stays on globally once triggered.)
-
-Vault-relative directories used for capture, daily notes, and templates. All
-paths are relative to `obsidian-directory`; leave a variable `nil` to disable
-that feature.
-
-The vault has exactly two real buckets, split by **what indexes them**:
-
-- `daily-notes/` --- indexed by **when**. An append-only log: what happened, what
-  was read, what was thought. Created by `obsidian-daily-note`, which asks no
-  questions, so the cost of capturing is zero.
-- `notes/` --- indexed by **what**. Named notes, flat; `[[wiki-links]]` and
-  `#tags` do the organising rather than a folder hierarchy.
-
-The rule that decides between them: *if you can name it, it is a note; if you
-cannot, it goes in today's daily note.* That maps onto the commands themselves,
-since `obsidian-capture` prompts for a title and `obsidian-daily-note` does not.
-
-The folder is `notes/` rather than the conventional `inbox/` on purpose. An
-inbox is an implicit promise to process it later, and an unprocessed inbox
-becomes a graveyard plus a second thing to search. Nothing in `notes/` needs to
-graduate anywhere.
-
-Note that `obsidian-wiki-link-create-file-in-inbox` --- set here previously ---
-does not exist in this package; the real variable is
-`obsidian-create-unfound-files-in-inbox`, so the old line only interned a stray
-symbol and had no effect. Left at `t`: following a `[[wiki-link]]` from a daily
-note drops the new file in `notes/`, which is right, because writing the link
-means it has already been named.
+Vault-relative directories; `nil` disables a feature.
 
 ```emacs-lisp
 (setq obsidian-inbox-directory "notes")             ; destination for `obsidian-capture'
 (setq obsidian-daily-notes-directory "daily-notes") ; daily note file is YYYY-MM-DD.md
 (setq obsidian-templates-directory "templates")     ; note templates live here
 (setq obsidian-daily-note-template "Daily Note Template.md")
-;; When following a wiki-link whose target does not exist yet:
-;;   t   -> create it in `obsidian-inbox-directory'
-;;   nil -> create it alongside the current file (i.e. inside `daily-notes/')
+;; Following a wiki-link to a note that does not exist yet creates it in
+;; `obsidian-inbox-directory' rather than beside the current file.
 (setq obsidian-create-unfound-files-in-inbox t)
 ```
 
-Keybindings split by whether the command is an **entry point** into the vault or
-an operation **within** it. Previously everything lived in `obsidian-mode-map`,
-which meant `obsidian-jump` and `obsidian-capture` were only reachable from a
-buffer already inside the vault --- of no use when the whole point is getting
-there from somewhere else. Those move to a global `C-c n` prefix.
+The capture folder is `notes/` rather than the usual `inbox/` because an inbox
+is an implicit promise to process it later; nothing here needs to graduate
+anywhere.
 
-Entry points (global):
-
-- `obsidian-daily-note` --- open today's daily note, creating it from the template. The default landing spot.
-- `obsidian-capture` --- create a named note in `notes/`.
-- `obsidian-jump` --- fuzzy-jump to any note in the vault.
-- `obsidian-search` --- full-text search across the vault.
-- `obsidian-update` --- re-scan the vault after adding files outside Emacs.
-- `obsidian-backlinks-mode` --- toggle the backlinks side panel on demand.
-
-Within a vault buffer (`obsidian-mode-map`):
-
-- `obsidian-follow-link-at-point` --- follow the `[[wiki-link]]` or Markdown link under point.
-- `obsidian-backlink-jump` --- open the backlinks panel and jump to a note that links here.
-- `obsidian-insert-wikilink` --- insert a `[[wiki]]` link.
+Notes are read in the Obsidian GUI, which renders math with MathJax, but they
+are **written** here --- and `markdown-enable-math` defaults to `nil`, so `$...$`
+would otherwise get no syntax highlighting at all. It is buffer-local, hence
+`setq-default`.
 
 ```emacs-lisp
-;; Entry points: reachable from anywhere, not just from inside the vault.
+(setq-default markdown-enable-math t)
+```
+
+Note that LaTeX cannot produce phantom tags: `obsidian--tag-regex` requires the
+`#` to follow whitespace or start-of-line **and** be followed by at least two
+letter-like characters, so neither a `\newcommand` parameter (`#1`, digit) nor an
+escaped `\#` (preceded by a backslash) is picked up.
+
+In Obsidian, `\begin{...}` only renders inside `$$ ... $$` --- MathJax sees only
+what is between math delimiters, unlike real LaTeX where `align` is its own
+display environment. A blank line inside the block also terminates it, so
+multi-line derivations must use `\\` throughout with no empty lines.
+
+#### Keys
+
+Entry points are global so the vault is reachable from anywhere; link and
+backlink commands are scoped to vault buffers, where they are the natural
+`C-c C-*` verbs.
+
+| Key       | Command                        | Does                                  |
+|-----------+--------------------------------+---------------------------------------|
+| `C-c n n` | `obsidian-daily-note`          | today's daily note, from the template |
+| `C-c n c` | `jw-obsidian-capture`          | new named note in `notes/`, templated |
+| `C-c n j` | `obsidian-jump`                | fuzzy-jump to any note                |
+| `C-c n s` | `obsidian-search`              | full-text search the vault            |
+| `C-c n g` | `xeft`                         | search-as-you-type with context       |
+| `C-c n t` | `jw-obsidian-add-tag`          | add a tag, completing on existing     |
+| `C-c n f` | `obsidian-find-tag`            | list notes carrying a tag             |
+| `C-c n i` | `jw-obsidian-insert-template`  | insert a template into this buffer    |
+| `C-c n b` | `obsidian-backlinks-mode`      | toggle the backlinks panel            |
+| `C-c n u` | `obsidian-update`              | re-scan after edits made outside Emacs |
+| `C-c C-o` | `obsidian-follow-link-at-point` | follow the link under point          |
+| `C-c C-b` | `obsidian-backlink-jump`       | jump to a note linking here           |
+| `C-c C-l` | `obsidian-insert-wikilink`     | insert a `[[wiki]]` link              |
+
+```emacs-lisp
+;; Entry points: reachable from anywhere, not only from inside the vault.
 (global-set-key (kbd "C-c n n") #'obsidian-daily-note)
-(global-set-key (kbd "C-c n c") #'obsidian-capture)
+(global-set-key (kbd "C-c n c") #'jw-obsidian-capture)
 (global-set-key (kbd "C-c n j") #'obsidian-jump)
 (global-set-key (kbd "C-c n s") #'obsidian-search)
-(global-set-key (kbd "C-c n u") #'obsidian-update)
+(global-set-key (kbd "C-c n t") #'jw-obsidian-add-tag)
+(global-set-key (kbd "C-c n f") #'obsidian-find-tag)
+(global-set-key (kbd "C-c n i") #'jw-obsidian-insert-template)
 (global-set-key (kbd "C-c n b") #'obsidian-backlinks-mode)
+(global-set-key (kbd "C-c n u") #'obsidian-update)
 
 (with-eval-after-load 'obsidian
   (define-key obsidian-mode-map (kbd "C-c C-o") #'obsidian-follow-link-at-point)
@@ -1293,80 +1428,353 @@ Within a vault buffer (`obsidian-mode-map`):
   (define-key obsidian-mode-map (kbd "C-c C-l") #'obsidian-insert-wikilink))
 ```
 
-#### Working practice
+#### Search: xeft
 
-The config above only creates folders. What keeps the vault usable is the
-practice, so it is written down here rather than left to be re-derived later.
+`obsidian-search` is a one-shot grep: type a phrase, get a hit list. [xeft](https://sr.ht/~casouri/xeft/) is
+search-as-you-type across the whole vault, showing each match with its
+surrounding context, and `RET` on a phrase with no match creates a note by that
+name. For a knowledge bank whose main failure mode is *not remembering what a
+note was called*, that live-filtering loop is the more useful retrieval path ---
+so both are kept, on adjacent keys.
+
+obsidian.el supplies the two functions that make xeft vault-aware:
+`obsidian-file-p` excludes anything that is not a vault Markdown file, and
+`obsidian-file-title-function` reads a `title:` from front matter, falling back
+to the first line and then the file name. Deriving `xeft-directory` from
+`obsidian-directory` keeps one source of truth for the vault path; =:after
+obsidian= is what guarantees that variable is already set.
+
+Upstream binds this to `C-c C-g` in `obsidian-mode-map`. It is bound globally
+here instead --- searching is how you **get into** the vault, so a binding that
+only works once you are already in it is backwards. (`C-c C-g` also means
+"refresh" inside xeft's own buffer, so reusing it for entry reads oddly.)
+
+```emacs-lisp
+(use-package xeft
+  :straight t
+  :after obsidian
+  :bind ("C-c n g" . xeft)
+  :custom
+  (xeft-directory obsidian-directory)
+  (xeft-recursive t)                            ; notes/, daily-notes/, ...
+  (xeft-file-filter #'obsidian-file-p)
+  (xeft-title-function #'obsidian-file-title-function))
+```
+
+##### Prerequisites
+
+xeft searches through a Xapian index, which means a **dynamic module** --- this is
+the one piece of the config with a dependency outside Emacs:
+
+```sh
+brew install xapian
+```
+
+Emacs must also have been built with module support, and a C++ compiler and
+`make` must be present. The first `M-x xeft` calls `xeft--require-xapian-lite`,
+which finds no module and offers three choices: compile locally, download a
+prebuilt binary, or quit. Compiling is the honest option once `xapian` is
+installed; it runs `make` in xeft's own directory and is a one-time cost.
+
+If it cannot proceed it says =Cannot start xeft because required dynamic module
+is missing= --- that message means the module, not the package, so the fix is
+`brew install xapian` and re-running the compile prompt rather than reinstalling
+xeft.
+
+Note that `templates/` is indexed along with everything else, so template files
+surface in results. With one or two templates that is not worth filtering; if it
+becomes noise, wrap `obsidian-file-p` in a predicate that rejects that
+subdirectory.
+
+#### Templates
+
+obsidian.el applies a template in exactly one place. `obsidian-capture` and
+`obsidian-daily-note` are otherwise the same function --- prompt or date for a
+name, `find-file`, `save-buffer` --- but only the daily note goes on to check
+`obsidian-daily-note-template` and apply it. A captured note therefore starts
+completely empty, with no front matter, which would put the `created` date and
+`tags` on the wrong side of a manual step.
+
+The wrapper below adds the missing branch, reusing the daily note's own guard:
+apply the template only when the buffer is empty, so an existing note is never
+overwritten.
+
+```emacs-lisp
+(defvar jw-obsidian-note-template "Note.md"
+  "Template in `obsidian-templates-directory' applied by `jw-obsidian-capture'.")
+
+(defun jw-obsidian-capture ()
+  "Capture a note like `obsidian-capture', then apply `jw-obsidian-note-template'.
+`obsidian-capture' applies no template -- only `obsidian-daily-note' does --
+so a captured note would otherwise start with no front matter at all."
+  (interactive)
+  (call-interactively #'obsidian-capture)
+  (when (and obsidian-templates-directory
+             jw-obsidian-note-template
+             (eq (buffer-size) 0))
+    (obsidian-apply-template
+     (expand-file-name jw-obsidian-note-template
+                       (expand-file-name obsidian-templates-directory
+                                         obsidian-directory)))
+    (save-buffer)))
+```
+
+`obsidian-apply-template` is also not an interactive command, so there is no
+built-in way to reach a template from an existing buffer --- for a note that
+started life without one, or to pull in a second template. This adds that:
+
+```emacs-lisp
+(defun jw-obsidian-insert-template ()
+  "Insert a template from `obsidian-templates-directory' into this buffer.
+Substitutes {{title}}, {{date}} and {{time}} the same way `obsidian-daily-note'
+does, since it reuses `obsidian-apply-template'."
+  (interactive)
+  (let* ((dir (expand-file-name obsidian-templates-directory obsidian-directory))
+         (templates (directory-files dir nil "\\.md\\'")))
+    (unless templates
+      (user-error "No templates in %s" dir))
+    (obsidian-apply-template
+     (expand-file-name (completing-read "Template: " templates) dir))))
+```
+
+The substitutions available are `\{\{title\}\}` (the file name), `\{\{date\}\}`
+and `\{\{time\}\}`. There is no prompting and no cursor placement --- these are
+skeletons, not Org capture templates.
+
+Keep them few and nearly empty. A template's cost is not writing it, it is that
+**every section in it becomes an obligation**: headings that get left blank
+accumulate across hundreds of notes and make the vault look like work in
+progress rather than a reference. The daily note template seeded above is just
+`# {{title}}` for exactly this reason --- a daily note's value is having no
+structure to satisfy.
+
+A second template is worth it only for a shape that is genuinely repeated, and
+the one that pays here is the durable note --- it encodes the handoff rules
+below (claim first, sources kept) and carries the small amount of front matter
+that is worth having. Both templates are seeded on first load, next to the vault
+directories.
+
+##### What metadata is worth recording
+
+Front matter is first-class in obsidian.el --- `obsidian--process-front-matter-tags`
+reads `tags:` from it, and `obsidian-insert-tag` notices when point is inside
+front matter and omits the `#`. But only two fields earn their place:
+
+- `tags` --- the domain, per Tags. Front matter keeps them in one place instead
+  of scattered through the prose. The template ships `tags: []`, which is the
+  correct empty value: obsidian.el parses it to an empty vector and returns no
+  tags silently, whereas a bare `tags:` parses to `:null` and warns "The key
+  'tags' cannot have an empty value in front matter".
+- `created` --- the filesystem does record a birth time, but copying, syncing and
+  `git checkout` all destroy it, and it cannot be reconstructed afterwards.
+
+Two fields deliberately left out:
+
+- `title` --- `obsidian-file-title-function` reads `title:`, then falls back to
+  the first line, then the file name. Since the template's first line is
+  `# {{title}}`, a `title:` field only repeats the file name.
+- `updated` / `last edited` --- keeping it accurate means a hook rewriting the
+  file on every save, which turns each trivial edit into a diff and goes stale
+  silently as soon as a file is edited outside Emacs. Git already records this
+  exactly: `git log -1 --format`%cI -- <file>`. `created= is the one date git
+  cannot recover after a move or an import, which is why it is the one kept.
+
+##### Why filenames stay human
+
+Denote-style `YYYYMMDDTHHMMSS--name` filenames are deliberately **not** used in
+the vault. Wiki-links resolve by exact file name --- `obsidian--match-files`
+compares the link text against relative paths --- so `[[Basis Trade]]` finds
+`Basis Trade.md` and would not find `20260726T143022--basis-trade.md`.
+
+Aliases do not rescue it: `obsidian-jump` consults `obsidian--aliases-map`, but
+`obsidian-follow-wiki-link-at-point` goes through `obsidian--match-files`, which
+only sees file names. The result would be jumping that works while every
+`[[link]]` quietly creates a new empty note instead of finding the existing one.
+
+The difference is structural. Denote's timestamp **is** its identifier, so it has
+to be in the file name --- there is no other index. This vault's index is the
+link graph and its identifier is the human name. denote.el is already configured
+for when ID-stable, rename-safe notes are wanted; the vault should not become a
+second, weaker copy of it.
+
+#### Tags
+
+The rule that keeps tags from turning into chaos: *tags carry the domain, links
+carry the topic.*
+
+Links are unbounded and cost nothing --- every `[[wiki-link]]` is one more
+retrieval path, and a wrong one is harmless. Tags are the opposite: a tag is
+only useful if many notes share it, so every new tag slightly devalues the
+existing ones. `#trading`, `#trades` and `#markets` as three separate tags means
+none of them reliably returns everything.
+
+So topics are never tags. What a note is **about** belongs in its title and its
+links. Tags answer only "which pile do I want to walk through?", which in
+practice means a handful of life domains. The same list is set as
+`denote-known-keywords` above, so both tools share one vocabulary.
+
+Three habits are enough to hold the line:
+
+1. **Add tags with `C-c n t`, never by typing them.** Completion over tags already
+   in the vault makes reuse the path of least resistance; typing `#` by hand is
+   how a second spelling gets in.
+2. **Keep the vocabulary memorable.** Roughly ten tags, few enough to recall
+   without looking. Adding one should feel like a decision; if a new tag
+   overlaps an old one, pick one and rename rather than keeping both.
+3. **One tag is usually right, three is a lot.** If a note needs many tags to be
+   findable, it is really several notes, or it wants a link instead.
+
+`obsidian-insert-tag` only inserts at point --- its sole piece of intelligence
+is checking `obsidian-point-in-front-matter-p` to decide whether to prefix a
+`#`. It does not find the `tags:` list, so using the front matter with it means
+parking the cursor between the brackets and typing the commas by hand. Since the
+note template ships `tags: []`, that friction would land on every note; this
+merges into the list instead, and falls back to an inline `#tag` when there is
+no front matter to merge into:
+
+```emacs-lisp
+(defun jw-obsidian-add-tag (tag)
+  "Add TAG to the front-matter `tags:' list, completing on tags in the vault.
+Merges into the bracketed list rather than inserting at point, so the list
+stays comma-separated and free of duplicates.  Falls back to inserting an
+inline #TAG at point when the buffer has no front-matter `tags:' list.
+Vault tags carry no leading `#', per the `obsidian-tags' docstring."
+  (interactive
+   (list (completing-read "Tag: " (sort (obsidian-tags) #'string<))))
+  (let ((merged
+         (save-excursion
+           (goto-char (point-min))
+           (when (looking-at-p "^---[ \t]*$")
+             (forward-line 1)
+             (when-let* ((end (save-excursion
+                               (re-search-forward "^---[ \t]*$" nil t))))
+               (when (re-search-forward "^tags:[ \t]*\\[\\([^]]*\\)\\]" end t)
+                 (let* ((current (split-string (match-string 1) "[,[:space:]]+" t))
+                        (all (delete-dups (append current (list tag)))))
+                   (replace-match
+                    (concat "tags: [" (mapconcat #'identity all ", ") "]")
+                    t t)
+                   t)))))))
+    (unless merged
+      (insert (format "#%s" tag)))))
+```
+
+Front matter and body tags have opposite spelling rules, which is the other
+reason to go through a command rather than typing. In front matter a tag is bare
+(`tags: [hf, markets]`); `obsidian--process-front-matter-tags` silently drops any
+entry that starts with `#` or contains a space, warning "Found invalid tags in
+front matter". In the body it is the reverse --- `#hf`, hash required.
+
+The starting vocabulary:
+
+| Tag          | Covers                                                     |
+|--------------+------------------------------------------------------------|
+| `math`       | math, statistics, probability, optimization                |
+| `markets`    | instruments, microstructure, macro, execution mechanics    |
+| `hf`         | the fund itself --- strategy, thesis, ops, building it     |
+| `code`       | programming, languages, libraries, tooling                 |
+| `infra`      | homelab, servers, backups, self-hosting                    |
+| `philosophy` | analytic reasoning, ethics, metaphysics                    |
+| `ministry`   | faith, practice, teaching                                  |
+| `health`     | training, sleep, food                                      |
+| `people`     | thinkers, contacts, who believes what                      |
+| `writing`    | drafts and arguments in progress                           |
+
+The test for whether two candidates should be one tag: *can you name a case
+where seeing the other pile would be noise?* Statistics is folded into `math`
+because the answer is no --- both are wanted on essentially every search, and
+splitting them puts a filing decision on exactly the boundary cases (stochastic
+calculus, measure-theoretic probability) where it is hardest to make.
+
+`hf` and `markets` are the closest call in the other direction. They stay apart
+because merging them would put one tag on most of the vault, and a tag matching
+60% of notes filters nothing --- the same failure as a tag matching one note.
+The line is **learned versus built**: how a limit order book works is `markets`;
+how this fund's strategy works is `hf`. That is also where the separate-vault
+split would fall if the firm bank ever becomes real.
+
+Deliberately absent is `journal`: daily notes already live in `daily-notes/`, and
+tagging what the location already says is pure noise. The last two rows are the
+least certain --- domains are discovered from use rather than designed up front,
+so treat any row that stays unused after a few months as a slot to reclaim.
+
+This list is documentation, not configuration. Keep the living copy as a note in
+the vault so it is visible while writing; a vocabulary meant to drift slowly
+should not need a re-tangle to change.
+
+Retrieval is `C-c n f` (`obsidian-find-tag`) for a domain, then
+`obsidian-backlink-jump` (`C-c C-b`) to walk outward through links. The tag
+narrows to a pile; the links do the actual navigating.
+
+#### Working practice
 
 ##### Which bucket does this go in?
 
 **If you can name it, it is a note. If you cannot, it goes in today's daily note.**
 
-Naming is the only filing decision in the whole system, and it is one that can
-be made instantly or not at all. The rule maps onto the commands themselves:
-`obsidian-capture` (`C-c n c`) asks for a title, `obsidian-daily-note`
-(`C-c n n`) asks nothing.
+Naming is the only filing decision in the system, and it can be made instantly
+or not at all. The commands mirror it: `obsidian-capture` (`C-c n c`) asks for a
+title, `obsidian-daily-note` (`C-c n n`) asks nothing.
 
 The asymmetry that matters: **an inbox carries debt and a daily note does not.**
-A staging folder is an implicit promise to process it later; miss that for a
-few weeks and it becomes a graveyard plus a second place to search. An
-unprocessed daily note is still a perfectly good log --- it was never going to
-become anything else. That is why the capture folder here is named `notes/`
-rather than the conventional `inbox/`: nothing in it needs to graduate anywhere.
+An unprocessed daily note is still a perfectly good log --- it was never going
+to become anything else.
 
 ##### Promotion happens through links, not filing
 
 There is no review step and no "process the inbox" ritual. When a line in a
 daily note keeps recurring, write it as a `[[wiki-link]]` and follow it with
-`C-c C-o`. Since `obsidian-create-unfound-files-in-inbox` is `t`, that creates
-the note in `notes/`. Writing the link **is** the promotion, and it is correct by
-construction, because writing the link means it has already been named.
-
-Structure within `notes/` comes from `#tags` and links, never folders. Use
-`obsidian-backlink-jump` (`C-c C-b`) to see what already points at a note ---
-that is the real index.
+`C-c C-o`; the note gets created in `notes/`. Writing the link **is** the
+promotion, and it is correct by construction, because writing the link means it
+has already been named.
 
 ##### Editing: mechanics get overwritten, judgments get logged
 
-Notes are **edited in place**, not superseded by later iterations. Keeping
-"Basis Trade", "Basis Trade v2" and "Basis Trade (revised)" side by side means
-reconstructing the truth by reading three documents in order and diffing them,
-which is the failure this whole setup exists to avoid.
+Notes are **edited in place**, not superseded by later iterations. Keeping "Basis
+Trade", "Basis Trade v2" and "Basis Trade (revised)" side by side means
+reconstructing the truth by reading three documents and diffing them.
 
-The split:
-
-- **Mechanics** --- how a thing works, a definition, a procedure. When the
-  understanding sharpens, overwrite it. There should be exactly one note and it
-  should be currently correct.
-- **Judgments** --- a view, a thesis, a call. Here the evolution **is** the
-  content, so keep a dated log inside the single note: thought X in March
-  because Y, revised in June because Z.
+- **Mechanics** --- how something works, a definition, a procedure. Overwrite it.
+  There should be one note and it should be currently correct.
+- **Judgments** --- a view, a thesis, a call. Here the evolution **is** the content,
+  so keep a dated log inside the single note.
 
 Append-only feels like discipline, but its real motivation is fear of losing
-provenance --- and that is already solved. **Keep the vault under git.** It is a
-directory of Markdown files; `git log` gives every prior iteration, dated and
-diffable, without polluting what has to be read to get an answer. A knowledge
-bank is measured by the cost of retrieving a correct answer, and append-only
-trades that away for a problem version control already handles.
+provenance, and that is already solved: **keep the vault under git**. A knowledge
+bank is measured by the cost of retrieving a correct answer, and versioned notes
+trade that away for a problem `git log` already handles.
 
 ##### Writing for a future handoff
 
-The bank is intended to eventually be written up by someone else. That changes
-what is worth optimising: a writer can turn a rough correct idea into good
-prose, but **cannot** reconstruct why something was believed. Therefore:
+This vault is for **ideation**. The real quant knowledge base is a later, separate
+thing with a designated team and a technical librarian compiling it, so what
+transfers out of here is **content and provenance --- not structure**. Nothing
+should be arranged now for eventual compatibility with a system nobody has
+designed yet.
 
-- **Lead with the claim.** The first line of a durable note states the assertion,
-  not the background. This is what makes a note handoff-able.
-- **Do not polish.** Prose is the part being outsourced; time spent on it is the
-  lowest-return activity in the vault.
-- **Keep the sources.** Links and citations are what a writer needs and cannot
-  recover.
+A writer can turn a rough correct idea into good prose but **cannot** reconstruct
+why something was believed. So: **lead with the claim** (first line states the
+assertion, not the background), **do not polish** (prose is the part being
+outsourced), and **keep the sources** (links and citations cannot be recovered
+later). A bare pasted URL counts --- capture beats formatting.
 
-One decision that is cheap now and near-impossible later: if a firm/research
-knowledge bank ever becomes real, make it a **separate vault**. Not for tidiness
---- for the moment other people get access. Separating private thinking from
-shared research inside one directory after the fact is genuinely miserable, and
-drawing the line while both are empty costs nothing.
+Footnotes are deliberately unused, though both halves support them (Obsidian
+renders `[^1]` markers, and `markdown-insert-footnote` is on `C-c C-a f`). They
+are a presentation device for a reader who is not you, and the template's
+`## Sources` heading already holds provenance without anchors to maintain. A
+librarian can convert a source list into footnotes mechanically; nobody can
+recover a source that was never written down.
+
+The distinction worth keeping straight is footnote versus link, since only one
+of them is lossy. A wiki-link means "this deserves its own note and may be
+reached from elsewhere"; a footnote means "this supports this sentence and
+nowhere else". Footnoting something that deserved a link buries it where
+`obsidian-find-tag`, backlinks and xeft's title matching cannot see it --- the
+reverse mistake costs nothing.
+
+One decision that is cheap now and near-impossible later: when that firm bank
+becomes real, make it a **separate vault** --- not for tidiness, but for the
+moment other people get access.
 
 ### clean directories
 
@@ -1390,6 +1798,10 @@ Move the `#<FILE>#` to a temporary directory instead of root directory.
 ### pdf-tools.el
 
 Make sure to run `M-x pdf-tools-install` after installation.
+
+```emacs-lisp
+;;; jw-emacs-productivity.el --- Productivity tools -*- lexical-binding: t; -*-
+```
 
 ```emacs-lisp
 (use-package pdf-tools
@@ -1482,6 +1894,10 @@ If you receive the option to rebuild the `epdfserver` and you agree to building 
 ### tramp.el --native
 
 ```emacs-lisp
+;;; jw-emacs-development.el --- General development tooling -*- lexical-binding: t; -*-
+```
+
+```emacs-lisp
 (use-package tramp
   :straight t)
 (setq tramp-default-method "ssh")
@@ -1557,7 +1973,7 @@ Cache passwords until the end of the emacs session, which is default.
 "Memoize a value if the key is a remote path."
 (if (and key
         (file-remote-p key))
-    (if-let ((current (assoc key (symbol-value cache))))
+    (if-let* ((current (assoc key (symbol-value cache))))
         (cdr current)
         (let ((current (apply orig-fn args)))
         (set cache (cons (cons key current) (symbol-value cache)))
@@ -1693,6 +2109,10 @@ There is a user option in my setup to load this module ([The init.el option to e
 When the `which-key-mode` is enabled, any incomplete key sequence will produce a popup at the lower part of the Emacs frame showing keys that complete the current sequence together with the name of the command they are invoking.
 
 ```emacs-lisp
+;;; jw-emacs-which-key.el --- which-key configuration -*- lexical-binding: t; -*-
+```
+
+```emacs-lisp
 (use-package which-key
   :straight t
   :hook (after-init . which-key-mode)
@@ -1712,7 +2132,11 @@ When the `which-key-mode` is enabled, any incomplete key sequence will produce a
 
 ### treesitter
 
-Set language sources for treesit
+Set language sources for treesit.
+
+```emacs-lisp
+;;; jw-emacs-langs.el --- Language and tree-sitter configuration -*- lexical-binding: t; -*-
+```
 
 ```emacs-lisp
 (setq treesit-language-source-alist
@@ -1741,7 +2165,7 @@ Set language sources for treesit
 ;; one bad grammar cannot block the rest.
 (dolist (source treesit-language-source-alist)
   (let ((lang (car source)))
-    (unless (treesit-ready-p lang t) ; t = probe quietly, no warning
+    (unless (treesit-language-available-p lang)
       (condition-case err
           (treesit-install-language-grammar lang)
         (error
@@ -1817,20 +2241,15 @@ Auto install grammars when missing
   (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
   (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
 
-  (add-hook 'LaTeX-mode-hook
-            (lambda ()
-              (add-hook 'after-save-hook
-                        (lambda ()
-                          (when (TeX-master-file)
-                            (TeX-command-run-all nil)))
-                        nil t)))
-
   (setq reftex-plug-into-AUCTeX t))
 ```
 
 #### commands
 
-`C-c C-a` (`TeX-command-run-all`): compiles tex document and auto opens in the pdf viewer
+Saving a `.tex` file does not compile it; project Makefiles own the build.
+
+`C-c C-a` (`TeX-command-run-all`) remains available when an ad-hoc AUCTeX
+compile is useful.  On macOS, that manual command opens the result in Skim.
 
 ### python
 
@@ -1964,38 +2383,38 @@ Make sure you have the necessary packages installed.
 
 ```emacs-lisp
 ;; Dynamic server program functions
-(defun jw/python-lsp-program (&optional interactive)
+(defun jw/python-lsp-program (&optional _interactive)
 "Get Python LSP program."
 (if (file-remote-p default-directory)
     '("/home/jozhw/bin/pylsp-wrapper")
     '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
 
-    (defun jw/rust-lsp-program (&optional interactive)
+    (defun jw/rust-lsp-program (&optional _interactive)
     "Get Rust LSP program."
     (list (jw/find-rust-analyzer)))
 
-    (defun jw/clangd-lsp-program (&optional interactive)
+    (defun jw/clangd-lsp-program (&optional _interactive)
     "Get clangd LSP program."
     '("clangd"))
 
-    (defun jw/typescript-lsp-program (&optional interactive)
+    (defun jw/typescript-lsp-program (&optional _interactive)
     "Get TypeScript LSP program."
     '("typescript-language-server" "--stdio"))
 
-    (defun jw/marksman-lsp-program (&optional interactive)
+    (defun jw/marksman-lsp-program (&optional _interactive)
     "Get Marksman LSP program."
     '("marksman"))
 
-    (defun jw/astro-lsp-program (&optional interactive)
+    (defun jw/astro-lsp-program (&optional _interactive)
     "Get Astro LSP program."
     '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
 
-    (defun jw/tex-lsp-program (&optional interactive)
+    (defun jw/tex-lsp-program (&optional _interactive)
      "Get latex lsp program"
      '("texlab")
      )
 
-    (defun jw/r-lsp-program (&optional interactive)
+    (defun jw/r-lsp-program (&optional _interactive)
     "Get R LSP program."
     '("R" "--slave" "-e" "languageserver::run()"))
 ```
@@ -2024,7 +2443,7 @@ Add to `eglot` server list and setup hook after eglot is loaded.
 (add-to-list 'eglot-server-programs 
             '(markdown-mode . jw/marksman-lsp-program))
 (add-to-list 'eglot-server-programs 
-            '((latex-mode tex-mode LaTex-mode) . jw/tex-lsp-program))
+            '((latex-mode tex-mode LaTeX-mode) . jw/tex-lsp-program))
 (add-to-list 'eglot-server-programs
             '(ess-r-mode . jw/r-lsp-program))
 (add-to-list 'eglot-server-programs 
@@ -2078,6 +2497,14 @@ Add the hook to auto start `eglot` depending on configured language.
 ### dape.el
 
 For debuggin,
+
+`dape` depends on `jsonrpc`. Pin it to Emacs' built-in copy instead of
+letting straight clone GNU ELPA's older one, which shadows the
+built-in `jsonrpc.el` that `eglot.el` needs and breaks completion.
+
+```emacs-lisp
+(straight-use-package '(jsonrpc :type built-in))
+```
 
 ```emacs-lisp
 (use-package dape

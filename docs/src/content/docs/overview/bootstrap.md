@@ -9,13 +9,13 @@ The high-level path for a fresh machine: install packages with Homebrew, then sy
 
 ## 1. Install packages with Homebrew
 
-All brew installs live in `.config/brew/scripts/`, split into category files. The wrapper `brew.sh` iterates over every `brew_<category>.sh` script in that directory, so you only run one command.
+All brew installs live in `.config/brew/scripts/`, split into category files. The wrapper iterates over every `brew_<NN>_<category>.sh` script in that directory, so you only run one command.
 
 Make the wrapper executable and run it:
 
 ```shell
-chmod +x brew.sh
-./brew.sh
+chmod +x .config/brew/scripts/brew.sh
+./.config/brew/scripts/brew.sh
 ```
 
 `brew.sh` is adapted from [mathiasbynens' dotfiles](https://github.com/mathiasbynens/dotfiles/blob/main/brew.sh), modularized so each category is its own file.
