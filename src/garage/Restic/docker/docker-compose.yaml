@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  restic:
+    image: restic/restic:latest
+    container_name: restic
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - RESTIC_PASSWORD_FILE=/run/secrets/restic-pass.txt
+      - RESTIC_CACHE_DIR=/cache
+    volumes:
+      - /volume1/Trove:/data:ro
+      - ./password:/run/secrets:ro
+      - ./cache:/cache
+      - ./excludes.txt:/excludes.txt:ro
+    entrypoint: ["sleep", "infinity"]

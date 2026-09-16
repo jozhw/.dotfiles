@@ -1,0 +1,5 @@
+**/#recycle/**
+**/#snapshot/**
+**/@eaDir/**
+**/.DS_Store
+**/Thumbs.db

@@ -1,4 +1,4 @@
-;;; The Modus themes
+;;; jw-emacs-modus-themes.el --- The Modus themes -*- lexical-binding: t; -*-
 
 ;; The themes are highly customisable.  Read the manual:
 ;; <https://protesilaos.com/emacs/modus-themes>.
@@ -29,3 +29,4 @@
     (modus-themes-load-theme (cadr modus-themes-to-toggle))
     (modus-themes-load-theme (car modus-themes-to-toggle)))
  (provide 'jw-emacs-modus-themes)
+

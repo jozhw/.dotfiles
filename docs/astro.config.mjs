@@ -4,6 +4,7 @@ import starlight from "@astrojs/starlight";
 
 // https://astro.build/config
 export default defineConfig({
+    site: "https://dotfiles.jozhw.com",
     integrations: [
         starlight({
             title: "Dotfiles",
@@ -16,11 +17,11 @@ export default defineConfig({
             ],
             sidebar: [
                 {
-                    label: "Overview",
+                    label: "Start Here",
                     autogenerate: { directory: "overview" },
                 },
                 {
-                    label: "Emacs",
+                    label: "Editor (Emacs)",
                     items: [
                         {
                             label: "Inspirations",
@@ -46,28 +47,36 @@ export default defineConfig({
                             label: "Custom Libraries",
                             slug: "emacs/the-custom-libraries-of-my-emacs-configuration-jw-lisp",
                         },
+                        {
+                            label: "Usage, Agenda & LaTeX",
+                            slug: "guides/emacs",
+                        },
                     ],
                 },
                 {
-                    label: "Development",
-                    autogenerate: { directory: "development" },
+                    label: "Shell & CLI",
+                    autogenerate: { directory: "shell" },
                 },
                 {
-                    label: "Configurations",
-                    autogenerate: { directory: "configurations" },
-                },
-                {
-                    label: "Atzlan",
-                    autogenerate: { directory: "atzlan" },
-                },
-
-                {
-                    label: "Garage",
+                    label: "Homelab",
                     autogenerate: { directory: "garage" },
+                },
+                {
+                    label: "Scripts (Atzlan)",
+                    autogenerate: { directory: "atzlan" },
                 },
                 {
                     label: "Reference",
                     autogenerate: { directory: "reference" },
+                },
+                {
+                    label: "Meta",
+                    items: [
+                        {
+                            label: "Editing This Site",
+                            slug: "guides/site",
+                        },
+                    ],
                 },
             ],
         }),

@@ -1,450 +1,439 @@
 ---
-title: The modules of my Emacs configuration (`jw-emacs-modules/`)
-description: Documentation for The modules of my Emacs configuration (`jw-emacs-modules/`)
+title: "The modules of my Emacs configuration (`jw-emacs-modules/`)"
+description: "Enable line numbers globally, but not in the following modes: org, term, shell, and eshell."
 ---
-
 
 ## The `jw-emacs-theme.el` module
 
 ### jw-emacs-load-theme-family
 
 ```emacs-lisp
+;;; jw-emacs-theme.el --- Theme setup and related -*- lexical-binding: t; -*-
+```
 
-  ;;; Theme setup and related
-
-  ;;;; Load the desired theme module
-  ;; These all reference my packages: `modus-themes', `ef-themes',
-  ;; `standard-themes'.
-  (when jw-emacs-load-theme-family
-    (require
-     (pcase jw-emacs-load-theme-family
-       ('ef 'jw-emacs-ef-themes)
-       ('modus 'jw-emacs-modus-themes)
-       ('standard 'jw-emacs-standard-themes))))
-
+```emacs-lisp
+;;;; Load the desired theme module
+;; These all reference my packages: `modus-themes', `ef-themes',
+;; `standard-themes'.
+(when jw-emacs-load-theme-family
+  (require
+   (pcase jw-emacs-load-theme-family
+     ('ef 'jw-emacs-ef-themes)
+     ('modus 'jw-emacs-modus-themes)
+     ('standard 'jw-emacs-standard-themes))))
 ```
 
 #### jw-emacs-modus-themes.el
 
 ```emacs-lisp
+;;; jw-emacs-modus-themes.el --- The Modus themes -*- lexical-binding: t; -*-
+```
 
-  ;;; The Modus themes
+```emacs-lisp
+;; The themes are highly customisable.  Read the manual:
+;; <https://protesilaos.com/emacs/modus-themes>.
+(use-package modus-themes
+  :straight t
+  :demand t
+  :bind (("<f5>" . modus-themes-toggle)
+         ("C-<f5>" . modus-themes-select))
+  :config
+  (setq modus-themes-custom-auto-reload nil
+        modus-themes-to-toggle '(modus-operandi modus-vivendi)
+        ;; modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted)
+        ;; modus-themes-to-toggle '(modus-operandi-deuteranopia modus-vivendi-deuteranopia)
+        ;; modus-themes-to-toggle '(modus-operandi-tritanopia modus-vivendi-tritanopia)
+        modus-themes-mixed-fonts t
+        modus-themes-variable-pitch-ui t
+        modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil
+        modus-themes-completions '((t . (extrabold)))
+        modus-themes-prompts '(extrabold)
+        modus-themes-headings
+        '((agenda-structure . (variable-pitch light 2.2))
+          (agenda-date . (variable-pitch regular 1.3))
+          (t . (regular 1.15))))
 
-  ;; The themes are highly customisable.  Read the manual:
-  ;; <https://protesilaos.com/emacs/modus-themes>.
-  (use-package modus-themes
-    :straight t
-    :demand t
-    :bind (("<f5>" . modus-themes-toggle)
-           ("C-<f5>" . modus-themes-select))
-    :config
-    (setq modus-themes-custom-auto-reload nil
-          modus-themes-to-toggle '(modus-operandi modus-vivendi)
-          ;; modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted)
-          ;; modus-themes-to-toggle '(modus-operandi-deuteranopia modus-vivendi-deuteranopia)
-          ;; modus-themes-to-toggle '(modus-operandi-tritanopia modus-vivendi-tritanopia)
-          modus-themes-mixed-fonts t
-          modus-themes-variable-pitch-ui t
-          modus-themes-italic-constructs t
-          modus-themes-bold-constructs nil
-          modus-themes-completions '((t . (extrabold)))
-          modus-themes-prompts '(extrabold)
-          modus-themes-headings
-          '((agenda-structure . (variable-pitch light 2.2))
-            (agenda-date . (variable-pitch regular 1.3))
-            (t . (regular 1.15))))
-
-    (setq modus-themes-common-palette-overrides nil))
-    (if (jw-emacs-theme-environment-dark-p)
-      (modus-themes-load-theme (cadr modus-themes-to-toggle))
-      (modus-themes-load-theme (car modus-themes-to-toggle)))
-   (provide 'jw-emacs-modus-themes)
-
+  (setq modus-themes-common-palette-overrides nil))
+  (if (jw-emacs-theme-environment-dark-p)
+    (modus-themes-load-theme (cadr modus-themes-to-toggle))
+    (modus-themes-load-theme (car modus-themes-to-toggle)))
+ (provide 'jw-emacs-modus-themes)
 ```
 
 #### jw-emacs-ef-themes.el
 
 ```emacs-lisp
+;;; jw-emacs-ef-themes.el --- The Ef (εὖ) themes -*- lexical-binding: t; -*-
+```
 
-  ;;; The Ef (εὖ) themes
+```emacs-lisp
+;; The themes are customisable.  Read the manual:
+;; <https://protesilaos.com/emacs/ef-themes>.
+(use-package ef-themes
+  :straight t
+  :demand t
+  :bind ("<f5>" . ef-themes-select)
+  :config
+  (setq ef-themes-variable-pitch-ui t
+        ef-themes-mixed-fonts t
+        ef-themes-headings ; read the manual's entry of the doc string
+        '((0 . (variable-pitch light 1.9))
+          (1 . (variable-pitch light 1.8))
+          (2 . (variable-pitch regular 1.7))
+          (3 . (variable-pitch regular 1.6))
+          (4 . (variable-pitch regular 1.5))
+          (5 . (variable-pitch 1.4)) ; absence of weight means `bold'
+          (6 . (variable-pitch 1.3))
+          (7 . (variable-pitch 1.2))
+          (agenda-date . (semilight 1.5))
+          (agenda-structure . (variable-pitch light 1.9))
+          (t . (variable-pitch 1.1))))
 
-  ;; The themes are customisable.  Read the manual:
-  ;; <https://protesilaos.com/emacs/ef-themes>.
-  (use-package ef-themes
-    :straight t
-    :demand t
-    :bind ("<f5>" . ef-themes-select)
-    :config
-    (setq ef-themes-variable-pitch-ui t
-          ef-themes-mixed-fonts t
-          ef-themes-headings ; read the manual's entry of the doc string
-          '((0 . (variable-pitch light 1.9))
-            (1 . (variable-pitch light 1.8))
-            (2 . (variable-pitch regular 1.7))
-            (3 . (variable-pitch regular 1.6))
-            (4 . (variable-pitch regular 1.5))
-            (5 . (variable-pitch 1.4)) ; absence of weight means `bold'
-            (6 . (variable-pitch 1.3))
-            (7 . (variable-pitch 1.2))
-            (agenda-date . (semilight 1.5))
-            (agenda-structure . (variable-pitch light 1.9))
-            (t . (variable-pitch 1.1))))
+  ;; The `ef-themes' provide lots of themes.  I want to pick one at
+  ;; random when I start Emacs.  Newer ef-themes replaced the old
+  ;; `(ef-themes-load-random 'light|'dark)' Lisp call with the dedicated,
+  ;; zero-argument commands `ef-themes-load-random-light' and
+  ;; `ef-themes-load-random-dark'.  I just check with my desktop
+  ;; environment to determine which variant to pick.  Those functions are
+  ;; in my init.el.
+  (if (jw-emacs-theme-environment-dark-p)
+      (ef-themes-load-random-dark)
+    (ef-themes-load-random-light)))
 
-    ;; The `ef-themes' provide lots of themes.  I want to pick one at
-    ;; random when I start Emacs: the `ef-themes-load-random' does just
-    ;; that (it can be called interactively as well).  I just check with
-    ;; my desktop environment to determine if the choice should be about
-    ;; a light or a dark theme.  Those functions are in my init.el.
-    (if (jw-emacs-theme-environment-dark-p)
-        (ef-themes-load-random 'dark)
-      (ef-themes-load-random 'light)))
 (provide 'jw-emacs-ef-themes)
 ```
 
 ### pulsar.el
 
 ```emacs-lisp
+;;;; Pulsar
+;; Read the pulsar manual: <https://protesilaos.com/emacs/pulsar>.
+(use-package pulsar
+  :straight t
+  :config
+  (setopt pulsar-pulse t
+          pulsar-delay 0.055
+          pulsar-iterations 10
+          pulsar-face 'pulsar-magenta
+          pulsar-highlight-face 'pulsar-cyan)
 
-  ;;;; Pulsar
-  ;; Read the pulsar manual: <https://protesilaos.com/emacs/pulsar>.
-  (use-package pulsar
-    :straight t
-    :config
-    (setopt pulsar-pulse t
-            pulsar-delay 0.055
-            pulsar-iterations 10
-            pulsar-face 'pulsar-magenta
-            pulsar-highlight-face 'pulsar-cyan)
-
-    (pulsar-global-mode 1)
-    :hook
-    ;; There are convenience functions/commands which pulse the line using
-    ;; a specific colour: `pulsar-pulse-line-red' is one of them.
-    ((next-error . (pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
-     (minibuffer-setup . pulsar-pulse-line-red))
-    :bind
-    ;; pulsar does not define any key bindings.  This is just my personal
-    ;; preference.  Remember to read the manual on the matter.  Evaluate:
-    ;;
-    ;; (info "(elisp) Key Binding Conventions")
-    (("C-x l" . pulsar-pulse-line) ; override `count-lines-page'
-     ("C-x L" . pulsar-highlight-dwim))) ; or use `pulsar-highlight-line'
+  (pulsar-global-mode 1)
+  :hook
+  ;; There are convenience functions/commands which pulse the line using
+  ;; a specific colour: `pulsar-pulse-line-red' is one of them.
+  ((next-error . (pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
+   (minibuffer-setup . pulsar-pulse-line-red))
+  :bind
+  ;; pulsar does not define any key bindings.  This is just my personal
+  ;; preference.  Remember to read the manual on the matter.  Evaluate:
+  ;;
+  ;; (info "(elisp) Key Binding Conventions")
+  (("C-x l" . pulsar-pulse-line) ; override `count-lines-page'
+   ("C-x L" . pulsar-highlight-dwim))) ; or use `pulsar-highlight-line'
 ```
 
 ### lin.el
 
 ```emacs-lisp
-
-  ;;;; Lin
-  ;; Read the lin manual: <https://protesilaos.com/emacs/lin>.
-  (use-package lin
-    :straight t
-    :hook (after-init . lin-global-mode) ; applies to all `lin-mode-hooks'
-    :config
-    ;; You can use this to live update the face:
-    ;;
-    ;; (customize-set-variable 'lin-face 'lin-green)
-    ;;
-    ;; Or `setopt' on Emacs 29: (setopt lin-face 'lin-yellow)
-    ;;
-    ;; I still prefer `setq' for consistency.
-    (setq lin-face 'lin-magenta))
-
+;;;; Lin
+;; Read the lin manual: <https://protesilaos.com/emacs/lin>.
+(use-package lin
+  :straight t
+  :hook (after-init . lin-global-mode) ; applies to all `lin-mode-hooks'
+  :config
+  ;; You can use this to live update the face:
+  ;;
+  ;; (customize-set-variable 'lin-face 'lin-green)
+  ;;
+  ;; Or `setopt' on Emacs 29: (setopt lin-face 'lin-yellow)
+  ;;
+  ;; I still prefer `setq' for consistency.
+  (setq lin-face 'lin-magenta))
 ```
 
 ### spacious-padding.el
 
 ```emacs-lisp
+;;;; Increase padding of windows/frames
+;; Yet another one of my packages:
+;; <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>.
+(use-package spacious-padding
+  :straight t
+  :if (display-graphic-p)
+  :hook (after-init . spacious-padding-mode)
+  :bind ("<f8>" . spacious-padding-mode)
+  :init
+  ;; These are the defaults, but I keep it here for visiibility.
+  (setq spacious-padding-widths
+        '( :internal-border-width 15
+           :header-line-width 4
+           :mode-line-width 6
+           :tab-width 4
+           :right-divider-width 1
+           :scroll-bar-width 8
+           :left-fringe-width 20
+           :right-fringe-width 20))
 
-  ;;;; Increase padding of windows/frames
-  ;; Yet another one of my packages:
-  ;; <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>.
-  (use-package spacious-padding
-    :straight t
-    :if (display-graphic-p)
-    :hook (after-init . spacious-padding-mode)
-    :bind ("<f8>" . spacious-padding-mode)
-    :init
-    ;; These are the defaults, but I keep it here for visiibility.
-    (setq spacious-padding-widths
-          '( :internal-border-width 15
-             :header-line-width 4
-             :mode-line-width 6
-             :tab-width 4
-             :right-divider-width 1
-             :scroll-bar-width 8
-             :left-fringe-width 20
-             :right-fringe-width 20))
-
-    ;; Read the doc string of `spacious-padding-subtle-mode-line' as
-    ;; it is very flexible.
-    (setq spacious-padding-subtle-mode-line
-          `( :mode-line-active ,(if (or (eq jw-emacs-load-theme-family 'modus)
-                                        (eq jw-emacs-load-theme-family 'standard))
-                                    'default
-                                  'help-key-binding)
-             :mode-line-inactive window-divider)))
-
+  ;; Read the doc string of `spacious-padding-subtle-mode-line' as
+  ;; it is very flexible.
+  (setq spacious-padding-subtle-mode-line
+        `( :mode-line-active ,(if (or (eq jw-emacs-load-theme-family 'modus)
+                                      (eq jw-emacs-load-theme-family 'standard))
+                                  'default
+                                'help-key-binding)
+           :mode-line-inactive window-divider)))
 ```
 
 ### cursory.el
 
 ```emacs-lisp
+;;; Cursor appearance (cursory)
+;; Read the manual: <https://protesilaos.com/emacs/cursory>.
+(use-package cursory
+  :straight t
+  :demand t
+  :if (display-graphic-p)
+  :config
+  (setq cursory-presets
+        '((box
+           :blink-cursor-interval 1.2)
+          (box-no-blink
+           :blink-cursor-mode -1)
+          (bar
+           :cursor-type (bar . 2)
+           :blink-cursor-interval 0.8)
+          (bar-no-other-window
+           :inherit bar
+           :cursor-in-non-selected-windows nil)
+          (bar-no-blink
+           :cursor-type (bar . 2)
+           :blink-cursor-mode -1)
+          (underscore
+           :cursor-type (hbar . 3)
+           :blink-cursor-blinks 50)
+          (underscore-thin-other-window
+           :inherit underscore
+           :cursor-in-non-selected-windows (hbar . 1))
+          (underscore-thick
+           :cursor-type (hbar . 8)
+           :blink-cursor-interval 0.3
+           :blink-cursor-blinks 50
+           :cursor-in-non-selected-windows (hbar . 3))
+          (underscore-thick-no-blink
+           :blink-cursor-mode -1
+           :cursor-type (hbar . 8)
+           :cursor-in-non-selected-windows (hbar . 3))
+          (t ; the default values
+           :cursor-type box
+           :cursor-in-non-selected-windows hollow
+           :blink-cursor-mode 1
+           :blink-cursor-blinks 10
+           :blink-cursor-interval 0.2
+           :blink-cursor-delay 0.2)))
 
-  ;;; Cursor appearance (cursory)
-  ;; Read the manual: <https://protesilaos.com/emacs/cursory>.
-  (use-package cursory
-    :straight t
-    :demand t
-    :if (display-graphic-p)
-    :config
-    (setq cursory-presets
-          '((box
-             :blink-cursor-interval 1.2)
-            (box-no-blink
-             :blink-cursor-mode -1)
-            (bar
-             :cursor-type (bar . 2)
-             :blink-cursor-interval 0.8)
-            (bar-no-other-window
-             :inherit bar
-             :cursor-in-non-selected-windows nil)
-            (bar-no-blink
-             :cursor-type (bar . 2)
-             :blink-cursor-mode -1)
-            (underscore
-             :cursor-type (hbar . 3)
-             :blink-cursor-blinks 50)
-            (underscore-thin-other-window
-             :inherit underscore
-             :cursor-in-non-selected-windows (hbar . 1))
-            (underscore-thick
-             :cursor-type (hbar . 8)
-             :blink-cursor-interval 0.3
-             :blink-cursor-blinks 50
-             :cursor-in-non-selected-windows (hbar . 3))
-            (underscore-thick-no-blink
-             :blink-cursor-mode -1
-             :cursor-type (hbar . 8)
-             :cursor-in-non-selected-windows (hbar . 3))
-            (t ; the default values
-             :cursor-type box
-             :cursor-in-non-selected-windows hollow
-             :blink-cursor-mode 1
-             :blink-cursor-blinks 10
-             :blink-cursor-interval 0.2
-             :blink-cursor-delay 0.2)))
+  ;; I am using the default values of `cursory-latest-state-file'.
 
-    ;; I am using the default values of `cursory-latest-state-file'.
-
-    ;; Set last preset or fall back to desired style from `cursory-presets'.
-    (cursory-set-preset (or (cursory-restore-latest-preset) 'box))
-    :hook
-    ;; The other side of `cursory-restore-latest-preset'.
-    (kill-emacs . cursory-store-latest-preset)
-    :bind
-    ;; We have to use the "point" mnemonic, because C-c c is often the
-    ;; suggested binding for `org-capture' and is the one I use as well.
-    ("C-c p" . cursory-set-preset))
+  ;; Set last preset or fall back to desired style from `cursory-presets'.
+  (cursory-set-preset (or (cursory-restore-latest-preset) 'box))
+  :hook
+  ;; The other side of `cursory-restore-latest-preset'.
+  (kill-emacs . cursory-store-latest-preset)
+  :bind
+  ;; We have to use the "point" mnemonic, because C-c c is often the
+  ;; suggested binding for `org-capture' and is the one I use as well.
+  ("C-c p" . cursory-set-preset))
 ```
 
 ### theme-buffet.el
 
 ```emacs-lisp
+ ;;;; Theme buffet
+(use-package theme-buffet
+  :straight t
+  :after (:any modus-themes ef-themes)
+  :defer 1
+  :config
+  (let ((modus-themes-p (featurep 'modus-themes))
+        (ef-themes-p (featurep 'ef-themes)))
+    (setq theme-buffet-menu 'end-user)
+    (setq theme-buffet-end-user
+          (cond
+           ((and modus-themes-p ef-themes-p)
+            '( :night     (modus-vivendi ef-dark ef-winter ef-autumn ef-night ef-duo-dark ef-symbiosis)
+               :morning   (modus-operandi ef-light ef-cyprus ef-spring ef-frost ef-duo-light)
+               :afternoon (modus-operandi-tinted ef-arbutus ef-day ef-kassio ef-summer ef-elea-light ef-maris-light ef-melissa-light ef-trio-light ef-reverie)
+               :evening   (modus-vivendi-tinted ef-rosa ef-elea-dark ef-maris-dark ef-melissa-dark ef-trio-dark ef-dream)))
+           (ef-themes-p
+            '( :night     (ef-dark ef-winter ef-autumn ef-night ef-duo-dark ef-symbiosis)
+               :morning   (ef-light ef-cyprus ef-spring ef-frost ef-duo-light)
+               :afternoon (ef-arbutus ef-day ef-kassio ef-summer ef-elea-light ef-maris-light ef-melissa-light ef-trio-light ef-reverie)
+               :evening   (ef-rosa ef-elea-dark ef-maris-dark ef-melissa-dark ef-trio-dark ef-dream)))
+           (modus-themes-p
+            '( :night     (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)
+               :morning   (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)
+               :afternoon (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)
+               :evening   (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)))))
 
-   ;;;; Theme buffet
-  (use-package theme-buffet
-    :straight t
-    :after (:any modus-themes ef-themes)
-    :defer 1
-    :config
-    (let ((modus-themes-p (featurep 'modus-themes))
-          (ef-themes-p (featurep 'ef-themes)))
-      (setq theme-buffet-menu 'end-user)
-      (setq theme-buffet-end-user
-            (cond
-             ((and modus-themes-p ef-themes-p)
-              '( :night     (modus-vivendi ef-dark ef-winter ef-autumn ef-night ef-duo-dark ef-symbiosis)
-                 :morning   (modus-operandi ef-light ef-cyprus ef-spring ef-frost ef-duo-light)
-                 :afternoon (modus-operandi-tinted ef-arbutus ef-day ef-kassio ef-summer ef-elea-light ef-maris-light ef-melissa-light ef-trio-light ef-reverie)
-                 :evening   (modus-vivendi-tinted ef-rosa ef-elea-dark ef-maris-dark ef-melissa-dark ef-trio-dark ef-dream)))
-             (ef-themes-p
-              '( :night     (ef-dark ef-winter ef-autumn ef-night ef-duo-dark ef-symbiosis)
-                 :morning   (ef-light ef-cyprus ef-spring ef-frost ef-duo-light)
-                 :afternoon (ef-arbutus ef-day ef-kassio ef-summer ef-elea-light ef-maris-light ef-melissa-light ef-trio-light ef-reverie)
-                 :evening   (ef-rosa ef-elea-dark ef-maris-dark ef-melissa-dark ef-trio-dark ef-dream)))
-             (modus-themes-p
-              '( :night     (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)
-                 :morning   (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)
-                 :afternoon (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)
-                 :evening   (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)))))
-
-      (when (or modus-themes-p ef-themes-p)
-        (theme-buffet-timer-hours 1))))
-
+    ;; Theme selection stays fixed after startup.  Use the theme commands
+    ;; explicitly when a change is wanted.
+    ))
 ```
 
 ### fontaine.el
 
 ```emacs-lisp
+;;;; Fontaine (font configurations)
+;; Read the manual: <https://protesilaos.com/emacs/fontaine>
+(use-package fontaine
+  :straight t
+  :if (display-graphic-p)
+  :hook
+  ;; Persist the latest font preset when closing/starting Emacs.
+  ((after-init . fontaine-mode)
+   (after-init . (lambda ()
+                   ;; Set last preset or fall back to desired style from `fontaine-presets'.
+                   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
+  :bind (("C-c f" . fontaine-set-preset)
+         ("C-c F" . fontaine-toggle-preset))
+  :config
+  ;; And this is for Emacs28.
+  (setq-default text-scale-remap-header-line t)
 
-  ;;;; Fontaine (font configurations)
-  ;; Read the manual: <https://protesilaos.com/emacs/fontaine>
-  (use-package fontaine
-    :straight t
-    :if (display-graphic-p)
-    :hook
-    ;; Persist the latest font preset when closing/starting Emacs.
-    ((after-init . fontaine-mode)
-     (after-init . (lambda ()
-                     ;; Set last preset or fall back to desired style from `fontaine-presets'.
-                     (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
-    :bind (("C-c f" . fontaine-set-preset)
-           ("C-c F" . fontaine-toggle-preset))
-    :config
-    ;; And this is for Emacs28.
-    (setq-default text-scale-remap-header-line t)
+  ;; This is the default value.  Just including it here for
+  ;; completeness.
+  (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
 
-    ;; This is the default value.  Just including it here for
-    ;; completeness.
-    (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
+  ;; The font family is my design: <https://github.com/protesilaos/aporetic>.
+  (setq fontaine-presets
+        '((small
+           :default-height 80)
+          (regular) ; like this it uses all the fallback values and is named `regular'
+          (medium
+           :default-family "Aporetic Serif Mono"
+           :default-height 115
+           :fixed-pitch-family "Aporetic Serif Mono"
+           :variable-pitch-family "Aporetic Sans")
+          (large
+           :default-height 150)
+          (presentation
+           :default-height 180)
+          (jumbo
+           :inherit medium
+           :default-height 260)
+          (t
+           ;; I keep all properties for didactic purposes, but most can be
+           ;; omitted.  See the fontaine manual for the technicalities:
+           ;; <https://protesilaos.com/emacs/fontaine>.
+           :default-family "Aporetic Sans Mono"
+           :default-weight regular
+           :default-slant normal
+           :default-width normal
+           :default-height 100
 
-    ;; The font family is my design: <https://github.com/protesilaos/aporetic>.
-    (setq fontaine-presets
-          '((small
-             :default-height 80)
-            (regular) ; like this it uses all the fallback values and is named `regular'
-            (medium
-             :default-family "Aporetic Serif Mono"
-             :default-height 115
-             :fixed-pitch-family "Aporetic Serif Mono"
-             :variable-pitch-family "Aporetic Sans")
-            (large
-             :default-height 150)
-            (presentation
-             :default-height 180)
-            (jumbo
-             :inherit medium
-             :default-height 260)
-            (t
-             ;; I keep all properties for didactic purposes, but most can be
-             ;; omitted.  See the fontaine manual for the technicalities:
-             ;; <https://protesilaos.com/emacs/fontaine>.
-             :default-family "Aporetic Sans Mono"
-             :default-weight regular
-             :default-slant normal
-             :default-width normal
-             :default-height 100
+           :fixed-pitch-family "Aporetic Sans Mono"
+           :fixed-pitch-weight nil
+           :fixed-pitch-slant nil
+           :fixed-pitch-width nil
+           :fixed-pitch-height 1.0
 
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight nil
-             :fixed-pitch-slant nil
-             :fixed-pitch-width nil
-             :fixed-pitch-height 1.0
+           :fixed-pitch-serif-family nil
+           :fixed-pitch-serif-weight nil
+           :fixed-pitch-serif-slant nil
+           :fixed-pitch-serif-width nil
+           :fixed-pitch-serif-height 1.0
 
-             :fixed-pitch-serif-family nil
-             :fixed-pitch-serif-weight nil
-             :fixed-pitch-serif-slant nil
-             :fixed-pitch-serif-width nil
-             :fixed-pitch-serif-height 1.0
+           :variable-pitch-family "Aporetic Serif"
+           :variable-pitch-weight nil
+           :variable-pitch-slant nil
+           :variable-pitch-width nil
+           :variable-pitch-height 1.0
 
-             :variable-pitch-family "Aporetic Serif"
-             :variable-pitch-weight nil
-             :variable-pitch-slant nil
-             :variable-pitch-width nil
-             :variable-pitch-height 1.0
+           :mode-line-active-family nil
+           :mode-line-active-weight nil
+           :mode-line-active-slant nil
+           :mode-line-active-width nil
+           :mode-line-active-height 1.0
 
-             :mode-line-active-family nil
-             :mode-line-active-weight nil
-             :mode-line-active-slant nil
-             :mode-line-active-width nil
-             :mode-line-active-height 1.0
+           :mode-line-inactive-family nil
+           :mode-line-inactive-weight nil
+           :mode-line-inactive-slant nil
+           :mode-line-inactive-width nil
+           :mode-line-inactive-height 1.0
 
-             :mode-line-inactive-family nil
-             :mode-line-inactive-weight nil
-             :mode-line-inactive-slant nil
-             :mode-line-inactive-width nil
-             :mode-line-inactive-height 1.0
+           :header-line-family nil
+           :header-line-weight nil
+           :header-line-slant nil
+           :header-line-width nil
+           :header-line-height 1.0
 
-             :header-line-family nil
-             :header-line-weight nil
-             :header-line-slant nil
-             :header-line-width nil
-             :header-line-height 1.0
+           :line-number-family nil
+           :line-number-weight nil
+           :line-number-slant nil
+           :line-number-width nil
+           :line-number-height 1.0
 
-             :line-number-family nil
-             :line-number-weight nil
-             :line-number-slant nil
-             :line-number-width nil
-             :line-number-height 1.0
+           :tab-bar-family nil
+           :tab-bar-weight nil
+           :tab-bar-slant nil
+           :tab-bar-width nil
+           :tab-bar-height 1.0
 
-             :tab-bar-family nil
-             :tab-bar-weight nil
-             :tab-bar-slant nil
-             :tab-bar-width nil
-             :tab-bar-height 1.0
+           :tab-line-family nil
+           :tab-line-weight nil
+           :tab-line-slant nil
+           :tab-line-width nil
+           :tab-line-height 1.0
 
-             :tab-line-family nil
-             :tab-line-weight nil
-             :tab-line-slant nil
-             :tab-line-width nil
-             :tab-line-height 1.0
+           :bold-family nil
+           :bold-slant nil
+           :bold-weight bold
+           :bold-width nil
+           :bold-height 1.0
 
-             :bold-family nil
-             :bold-slant nil
-             :bold-weight bold
-             :bold-width nil
-             :bold-height 1.0
+           :italic-family nil
+           :italic-weight nil
+           :italic-slant italic
+           :italic-width nil
+           :italic-height 1.0
 
-             :italic-family nil
-             :italic-weight nil
-             :italic-slant italic
-             :italic-width nil
-             :italic-height 1.0
+           :line-spacing nil)))
 
-             :line-spacing nil)))
-
-    (with-eval-after-load 'pulsar
-      (add-hook 'fontaine-set-preset-hook #'pulsar-pulse-line)))
-
-
+  (with-eval-after-load 'pulsar
+    (add-hook 'fontaine-set-preset-hook #'pulsar-pulse-line)))
 ```
 
 ### variable-pitch-mode.el --native
 
 ```emacs-lisp
-
-    ;;;;; `variable-pitch-mode' setup
-  (use-package face-remap
-    :straight nil
-    :functions jw/enable-variable-pitch
-    :bind ( :map ctl-x-x-map
-            ("v" . variable-pitch-mode))
-    :hook ((text-mode notmuch-show-mode elfeed-show-mode) . jw/enable-variable-pitch)
-    :config
-    ;; NOTE 2022-11-20: This may not cover every case, though it works
-    ;; fine in my workflow.  I am still undecided by EWW.
-    (defun jw/enable-variable-pitch ()
-      (unless (derived-mode-p 'mhtml-mode 'nxml-mode 'yaml-mode)
-        (variable-pitch-mode 1)))
-  ;;;;; Resize keys with global effect
-    :bind
-    ;; Emacs 29 introduces commands that resize the font across all
-    ;; buffers (including the minibuffer), which is what I want, as
-    ;; opposed to doing it only in the current buffer.  The keys are the
-    ;; same as the defaults.
-    (("C-x C-=" . global-text-scale-adjust)
-     ("C-x C-+" . global-text-scale-adjust)
-     ("C-x C-0" . global-text-scale-adjust)))
-
+  ;;;;; `variable-pitch-mode' setup
+(use-package face-remap
+  :straight nil
+  :functions jw/enable-variable-pitch
+  :bind ( :map ctl-x-x-map
+          ("v" . variable-pitch-mode))
+  :hook ((text-mode notmuch-show-mode elfeed-show-mode) . jw/enable-variable-pitch)
+  :config
+  ;; NOTE 2022-11-20: This may not cover every case, though it works
+  ;; fine in my workflow.  I am still undecided by EWW.
+  (defun jw/enable-variable-pitch ()
+    (unless (derived-mode-p 'mhtml-mode 'nxml-mode 'yaml-mode)
+      (variable-pitch-mode 1)))
+;;;;; Resize keys with global effect
+  :bind
+  ;; Emacs 29 introduces commands that resize the font across all
+  ;; buffers (including the minibuffer), which is what I want, as
+  ;; opposed to doing it only in the current buffer.  The keys are the
+  ;; same as the defaults.
+  (("C-x C-=" . global-text-scale-adjust)
+   ("C-x C-+" . global-text-scale-adjust)
+   ("C-x C-0" . global-text-scale-adjust)))
 ```
 
 ### The `jw-emacs-theme.el` call to provide
 
 ```emacs-lisp
-
-  (provide 'jw-emacs-theme)
-
+(provide 'jw-emacs-theme)
 ```
 
 ## The `jw-emacs-essentials.el` module
@@ -456,84 +445,77 @@ Enable line numbers globally, but not in the following modes: org, term, shell, 
 In addition to line numbers, the column number will also be displayed. 
 
 ```emacs-lisp
+;;; jw-emacs-essentials.el --- Essential editor defaults -*- lexical-binding: t; -*-
+```
 
-  ;; Enable column numbers
-  (column-number-mode)
+```emacs-lisp
+;; Enable column numbers
+(column-number-mode)
 
-  (global-display-line-numbers-mode t)
+(global-display-line-numbers-mode t)
 
-  ;; Disable line numbers for some modes
-  (dolist (mode '(org-mode-hook
-                  markdown-mode-hook
-                  term-mode-hook
-                  shell-mode-hook
-                  eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
-
+;; Disable line numbers for some modes
+(dolist (mode '(org-mode-hook
+                markdown-mode-hook
+                term-mode-hook
+                shell-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 ```
 
 Since `fill-paragraph` wraps `fill-column`, we adjust the size of the `fill-column` variable.
 
 ```emacs-lisp
-
-  (setq-default fill-column 80)
-
+(setq-default fill-column 80)
 ```
 
 ### helpful.el
 
-[Helpful](https:/*github.com*Wilfred/helpful) adds a lot of very helpful (get it?) information to Emacs' `describe-` command buffers.  For example, if you use `describe-function`, you will not only get the documentation about the function, you will also see the source code of the function and where it gets used in other places in the Emacs configuration.  It is very useful for figuring out how things work in Emacs.
+[Helpful](https://github.com/Wilfred/helpful) adds a lot of very helpful (get it?) information to Emacs' `describe-` command buffers.  For example, if you use `describe-function`, you will not only get the documentation about the function, you will also see the source code of the function and where it gets used in other places in the Emacs configuration.  It is very useful for figuring out how things work in Emacs.
 
 ```emacs-lisp
-
-  (use-package helpful
-    :bind
-    ([remap describe-command] . helpful-command)
-    ([remap describe-key] . helpful-key))
-
+(use-package helpful
+  :bind
+  ([remap describe-command] . helpful-command)
+  ([remap describe-key] . helpful-key))
 ```
 
 ### auth-sources.el -- native
 
-
 ```emacs-lisp
-
-  (setq auth-sources '("~/.authinfo" "~/.netrc"))
-
+(setq auth-sources '("~/.authinfo" "~/.netrc"))
 ```
 
 ### The `jw-emacs-essentials.el` call to provide
 
 ```emacs-lisp
-
-  (provide 'jw-emacs-essentials)
-
+(provide 'jw-emacs-essentials)
 ```
 
 ## The `jw-emacs-modeline.el` module
 
 ### enable the mode-line
 
-The mode-line was disabled earlier ([The `init.el` conditional to remove display of mode-line](*The `init.el` conditional to remove display of mode-line)) so that the startup UI would look smooth
+The mode-line was disabled earlier (The `init.el` conditional to remove display of mode-line) so that the startup UI would look smooth
 
 ```emacs-lisp
+;;; jw-emacs-modeline.el --- Mode line configuration -*- lexical-binding: t; -*-
+```
 
-  (setq-default mode-line-format (default-value 'mode-line-format))
-
+```emacs-lisp
+(setq-default mode-line-format (default-value 'mode-line-format))
 ```
 
 ### basic user interface
 
 ```emacs-lisp
-
-  (setq display-time-format "%l:%M %p %b %y"
-        display-time-default-load-average nil)
-
+(setq display-time-format "%l:%M %p %b %y"
+      display-time-default-load-average nil)
 ```
 
 ### doom-modeline.el
 
-[doom-modeline](https:/*github.com*seagle0128*doom-modeline) is a very attractive and rich (yet still minimal) mode line configuration for Emacs.  The default configuration is quite good but you can check out the [configuration options](https:**github.com*seagle0128/doom-modeline#customize) for more things you can enable or disable.
+[doom-modeline](https://github.com/seagle0128/doom-modeline) is a very attractive and rich (yet still minimal) mode line configuration for Emacs.  The default configuration is quite good but you can check out the [configuration options](https://github.com/seagle0128/doom-modeline#customize) for more things you can enable or disable.
 
 If you are running in the `macos` terminal, then you have to make sure that you set the font to `Droid Sans Mono Nerd Font Complete 18`. You can do this by the following steps:
 
@@ -543,91 +525,77 @@ If you are running in the `macos` terminal, then you have to make sure that you 
 - Under the `Font` menu click on `Change`
 - Select the appropriate font
 
-
 ```emacs-lisp
-
-  (use-package doom-modeline
-    :straight t
-    :init (doom-modeline-mode 1)
-    :custom ((doom-modeline-height 15)))
-
+(use-package doom-modeline
+  :straight t
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 15)))
 ```
-
 
 `doom-modeline` icons rely on `nerd-icons`. Thus, you must install the `nerd-icons` if you want to use the icons on the modeline.
 
-IMPORTANT: must run the following command — `Mx - nerd-icons-install-fonts` for the icons to populate. See the github issue here: [Doom Emacs Issue #7368](https:/*github.com*doomemacs*doomemacs*issues/7368#issuecomment-1689292109)
+IMPORTANT: must run the following command — `Mx - nerd-icons-install-fonts` for the icons to populate. See the github issue here: [Doom Emacs Issue #7368](https://github.com/doomemacs/doomemacs/issues/7368#issuecomment-1689292109)
 
 ```emacs-lisp
-
-  (use-package nerd-icons
-    ;; :custom
-    ;; The Nerd Font you want to use in GUI
-    ;; "Symbols Nerd Font Mono" is the default and is recommended
-    ;; but you can use any other Nerd Font if you want
-    ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
-    )
-
+(use-package nerd-icons
+  ;; :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  )
 ```
-
 
 To turn off icons uncomment the following:
 
 ```emacs-lisp
-
-  ;; (setq doom-modeline-icon nil)
-
+;; (setq doom-modeline-icon nil)
 ```
-
 
 The following contains configurations of the `doom-modeline`. All the configurations here use the `setq`.
 
 ```emacs-lisp
+;; If non-nil, a word count will be added to the selection-info modeline segment.
+(setq doom-modeline-enable-word-count t)
 
-  ;; If non-nil, a word count will be added to the selection-info modeline segment.
-  (setq doom-modeline-enable-word-count t)
-
-  ;; Major modes in which to display word count continuously.
-  ;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
-  ;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
-  ;; remove the modes from `doom-modeline-continuous-word-count-modes'.
-  (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
-
+;; Major modes in which to display word count continuously.
+;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
+;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
+;; remove the modes from `doom-modeline-continuous-word-count-modes'.
+(setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
 ```
 
 Display the virtual environment version.
 
 ```emacs-lisp
-
-  (setq doom-modeline-env-version t)
-
+(setq doom-modeline-env-version t)
 ```
 
 ### The `jw-emacs-modeline.el` call to provide
 
 ```emacs-lisp
-
-  (provide 'jw-emacs-modeline)
-
+(provide 'jw-emacs-modeline)
 ```
 
 ## The `jw-emacs-completion.el` module
 ### savehist.el
 
 ```emacs-lisp
+;;; jw-emacs-completion.el --- Completion frameworks -*- lexical-binding: t; -*-
+```
 
-  ;; for preserving minibuffer history
-  (use-package savehist
-    :straight t
-    :config
-    (setq history-length 25)
-    (savehist-mode 1))
+```emacs-lisp
+;; for preserving minibuffer history
+(use-package savehist
+  :straight t
+  :config
+  (setq history-length 25)
+  (savehist-mode 1))
 
-    ;; Individual history elements can be configured separately
-    ;;(put 'minibuffer-history 'history-length 25)
-    ;;(put 'evil-ex-history 'history-length 50)
-    ;;(put 'kill-ring 'history-length 25))
-
+  ;; Individual history elements can be configured separately
+  ;;(put 'minibuffer-history 'history-length 25)
+  ;;(put 'evil-ex-history 'history-length 50)
+  ;;(put 'kill-ring 'history-length 25))
 ```
 
 ### vertico.el
@@ -635,104 +603,97 @@ Display the virtual environment version.
 Completions with `vertico.el`
 
 ```emacs-lisp
+(defun jw/minibuffer-backward-kill (arg)
+  "When minibuffer is completing a file name delete up to parent
+folder, otherwise delete a word"
+  (interactive "p")
+  (if minibuffer-completing-file-name
+      ;; Borrowed from https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
+      (if (string-match-p "/." (minibuffer-contents))
+          (zap-up-to-char (- arg) ?/)
+        (delete-minibuffer-contents))
+      (delete-word (- arg))))
 
-  (defun jw/minibuffer-backward-kill (arg)
-    "When minibuffer is completing a file name delete up to parent
-  folder, otherwise delete a word"
-    (interactive "p")
-    (if minibuffer-completing-file-name
-        ;; Borrowed from https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
-        (if (string-match-p "/." (minibuffer-contents))
-            (zap-up-to-char (- arg) ?/)
-          (delete-minibuffer-contents))
-        (delete-word (- arg))))
-
-  (use-package vertico
-    :straight t
-    :bind (:map vertico-map
-           ("C-j" . vertico-next)
-           ("C-k" . vertico-previous)
-           ("C-f" . vertico-exit)
-           :map minibuffer-local-map
-           ("M-h" . jw/minibuffer-backward-kill))
-    :custom
-    (vertico-cycle t)
-    :init
-    (vertico-mode))
-
+(use-package vertico
+  :straight t
+  :bind (:map vertico-map
+         ("C-j" . vertico-next)
+         ("C-k" . vertico-previous)
+         ("C-f" . vertico-exit)
+         :map minibuffer-local-map
+         ("M-h" . jw/minibuffer-backward-kill))
+  :custom
+  (vertico-cycle t)
+  :init
+  (vertico-mode))
 ```
-
 
 ### corfu.el
 
 Completions in region with `corfu.el`.
 ```emacs-lisp
-  (use-package corfu
-    :straight t
-    ;; Optional customizations
-    :custom
-    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-    (corfu-auto t)                 ;; Enable auto completion
-    (corfu-auto-prefix 2)
-    (corfu-auto-delay 0.8)
-    (corfu-popinfo-delay '(0.5 . 0.2))
-    (corfu-preview-current 'insert) ; insert previewed candidate
-    (corfu-preselect 'prompt)
-    ;; (corfu-separator ?\s)          ;; Orderless field separator
-    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-    ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-    ;; (corfu-preview-current nil)    ;; Disable current candidate preview
-    ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
-    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
-    ;; (corfu-scroll-margin 5)        ;; Use scroll margin
-    :bind (:map corfu-map
-         ("C-j" . corfu-next)
-         ("C-k" . corfu-previous)
-         ("C-f" . corfu-insert))
-    ;; Enable Corfu only for certain modes.
-    ;; :hook ((prog-mode . corfu-mode)
-    ;;        (shell-mode . corfu-mode)
-    ;;        (eshell-mode . corfu-mode))
+(use-package corfu
+  :straight t
+  ;; Optional customizations
+  :custom
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  (corfu-auto-prefix 2)
+  (corfu-auto-delay 0.8)
+  (corfu-popinfo-delay '(0.5 . 0.2))
+  (corfu-preview-current 'insert) ; insert previewed candidate
+  (corfu-preselect 'prompt)
+  ;; (corfu-separator ?\s)          ;; Orderless field separator
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+  :bind (:map corfu-map
+       ("C-j" . corfu-next)
+       ("C-k" . corfu-previous)
+       ("C-f" . corfu-insert))
+  ;; Enable Corfu only for certain modes.
+  ;; :hook ((prog-mode . corfu-mode)
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
 
-    ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
-    ;; be used globally (M-/).  See also the customization variable
-    ;; `global-corfu-modes' to exclude certain modes.
-    :init
-    (global-corfu-mode))
-
+  ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+  ;; be used globally (M-/).  See also the customization variable
+  ;; `global-corfu-modes' to exclude certain modes.
+  :init
+  (global-corfu-mode))
 ```
 
 ### company.el
 
 Since `corfu.el` does not support running emacs in the terminal, I will just stick with `company.el` instead of `corfu-terminal`.
 
-[Company Mode](http:/*company-mode.github.io*) provides a nicer in-buffer completion interface than `completion-at-point` which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (`TAB` now completes the selection and initiates completion at the current location if needed).
+[Company Mode](http://company-mode.github.io/) provides a nicer in-buffer completion interface than `completion-at-point` which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (`TAB` now completes the selection and initiates completion at the current location if needed).
 
-We also use [company-box](https:/*github.com*sebastiencs/company-box) to further enhance the look of the completions with icons and better overall presentation.
-
+We also use [company-box](https://github.com/sebastiencs/company-box) to further enhance the look of the completions with icons and better overall presentation.
 
 ```emacs-lisp
+(unless (display-graphic-p)
+    (progn
+      ;; Configuration for GUI mode
+      (use-package company
+        :after eglot
+        :hook (eglot--managed-mode . company-mode)
+        :bind (:map company-active-map
+               ("<tab>" . company-complete-selection))
+              (:map eglot-mode-map
+               ("<tab>" . company-indent-or-complete-common))
+        :custom
+        (company-minimum-prefix-length 1)
+        (company-idle-delay 0.0))
 
-  (unless (display-graphic-p)
-      (progn
-        ;; Configuration for GUI mode
-        (use-package company
-          :after eglot
-          :hook (eglot--managed-mode . company-mode)
-          :bind (:map company-active-map
-                 ("<tab>" . company-complete-selection))
-                (:map eglot-mode-map
-                 ("<tab>" . company-indent-or-complete-common))
-          :custom
-          (company-minimum-prefix-length 1)
-          (company-idle-delay 0.0))
-      
-        (use-package company-box
-          :hook (company-mode . company-box-mode)))
-    ;; Configuration for terminal mode (optional)
-    ;; Add your terminal mode specific configuration here
-    )
-
+      (use-package company-box
+        :hook (company-mode . company-box-mode)))
+  ;; Configuration for terminal mode (optional)
+  ;; Add your terminal mode specific configuration here
+  )
 ```
 
 ### cape.el
@@ -740,13 +701,11 @@ We also use [company-box](https:/*github.com*sebastiencs/company-box) to further
 Additional completions in region with `cape.el`.
 
 ```emacs-lisp
-
-  (use-package cape
-    :straight t
-    :init
-    (add-to-list 'completion-at-point-functions #'cape-file)
-    (add-to-list 'completion-at-point-functions #'cape-dabbrev))
-
+(use-package cape
+  :straight t
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev))
 ```
 
 ### orderless.el
@@ -754,13 +713,11 @@ Additional completions in region with `cape.el`.
 For candidate filtering.
 
 ```emacs-lisp
-
-  (use-package orderless
-    :init
-    (setq completion-styles '(orderless)
-          completion-category-defaults nil
-          completion-category-overrides '((file (styles . (partial-completion))))))
-
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion))))))
 ```
 
 ### marginalia.el
@@ -768,133 +725,280 @@ For candidate filtering.
 For completion notations.
 
 ```emacs-lisp
-
 ;;; Detailed completion annotations (marginalia.el)
 (use-package marginalia
   :straight t
   :hook (after-init . marginalia-mode)
   :config
   (setq marginalia-max-relative-age 0)) ; absolute time
-
 ```
 
 ### The `jw-emacs-completion.el` call to provide
 
 ```emacs-lisp
-
-  (provide 'jw-emacs-completion)
-
+(provide 'jw-emacs-completion)
 ```
 
 ## The `jw-emacs-org.el` module
-:PROPERTIES:
-:ID:       77434357-7761-4049-9F64-1808E10E549D
-:END:
 
 ### org-mode setup
 
 Set up Org Mode with a baseline configuration. The following sections will add more things to it.
 
 ```emacs-lisp
+;;; jw-emacs-org.el --- Org mode configuration -*- lexical-binding: t; -*-
+```
 
-  (defun jw/org-mode-setup ()
-    (org-indent-mode) ;; auto-indentation for headings
-    (variable-pitch-mode 1) ;; cause fonts to vary by proportionality
-    (visual-line-mode 1)) ;; wrap the text so that it does not go out of view
+```emacs-lisp
+(defun jw/org-mode-setup ()
+  (org-indent-mode) ;; auto-indentation for headings
+  (variable-pitch-mode 1) ;; cause fonts to vary by proportionality
+  (visual-line-mode 1)) ;; wrap the text so that it does not go out of view
 
-  (use-package org
-    :hook (org-mode . jw/org-mode-setup)
-    :config
-    (setq org-ellipsis " ▾") ;; when org headings closed down arrow instead of ellipsis
-    (setq org-M-RET-may-split-line '((default . nil))) ;; when auto generating subsequent headings, avoid splitting the line
-    (setq org-insert-heading-respect-content t) ;; when creating new heading respects the content of which heading it was originally
-    (setq org-log-done 'time)
-    (setq org-log-into-drawer t) ;; task change is in drawer instead of content
-    ;; keywords for org task states
+(use-package org
+  :hook (org-mode . jw/org-mode-setup)
+  :config
+  (setq org-ellipsis " ▾") ;; when org headings closed down arrow instead of ellipsis
+  (setq org-M-RET-may-split-line '((default . nil))) ;; when auto generating subsequent headings, avoid splitting the line
+  (setq org-insert-heading-respect-content t) ;; when creating new heading respects the content of which heading it was originally
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t) ;; task change is in drawer instead of content
+  ;; keywords for org task states
 
-    )
-
-
+  )
 ```
 
 ### org-agenda
-:PROPERTIES:
-:ID:       43652950-B9D2-4FAF-8F0C-75D1496E85FE
-:END:
+
+The agenda is deliberately a **single file** that never rotates. Per-week or
+per-project files buy structure at the cost of a decision on every capture, and
+tasks whose lifespan is one day do not earn that. Add a line, it shows up today;
+mark it `DONE`, it disappears. Naming the file explicitly (rather than scanning
+a directory at startup) also means a file created mid-session is never missing
+from the agenda.
 
 ```emacs-lisp
+(defvar jw-org-todo-file
+  (expand-file-name "~/Core/Otzar/Docs/agenda/todo.org")
+  "The one and only agenda file.
+Referenced by the capture template in `jw-emacs-information-management'.")
 
-  ;; setting dir of tasks
-  (setq org-agenda-files (directory-files-recursively "~/Otzar/Docs/agenda/" "\\.org$"))
-  (setq org-todo-keywords
-      '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)"))) 
+;; Create the directory and the file on a fresh machine so that both
+;; `org-agenda' and `org-capture' work without any manual setup.
+(let ((agenda-dir (file-name-directory jw-org-todo-file)))
+  (unless (file-directory-p agenda-dir)
+    (make-directory agenda-dir t)))
+(unless (file-exists-p jw-org-todo-file)
+  (with-temp-file jw-org-todo-file
+    (insert "#+title: Todo\n\n")))
 
+(setq org-agenda-files (list jw-org-todo-file))
+
+(setq org-todo-keywords
+    '((sequence "TODO(t)" "WAIT(w!)" "|" "CANCEL(c!)" "DONE(d!)")))
+
+;; Show today, not the week ahead -- the agenda is a day's worklist, not a
+;; project plan.
+(setq org-agenda-span 'day)
+(setq org-agenda-start-on-weekday nil)
+
+(global-set-key (kbd "C-c a") #'org-agenda)
+(global-set-key (kbd "C-c c") #'org-capture)
 ```
+
+#### History and archiving
+
+A single `todo.org` does not mean losing history --- the history is already
+being written, it just is not visible yet. `org-log-done` is `time` and the
+`WAIT`*`CANCEL`*`DONE` keywords carry `!`, so every state change stamps a
+`CLOSED:` line and a `LOGBOOK` drawer entry. Nothing extra needs recording; the
+only missing pieces are somewhere for finished work to go and a way to look at
+it.
+
+Archiving goes to `agenda/archive/`, **one file per year**, each holding a
+**datetree**. The `datetree/` prefix in `org-archive-location` is special: Org
+files each entry under a `YYYY / YYYY-MM month / YYYY-MM-DD day` heading, and
+`org-archive.el` takes that date from the entry's `CLOSED` property rather than
+from the clock. So the layout is:
+
+  agenda/
+    todo.org            <- the only agenda file
+    archive/
+      2026.org          <- * 2026 / ** 2026-07 July / *** 2026-07-26 Sunday
+      2027.org
+
+Year is the file boundary; month and day are headings inside it. A file per
+month would give sixty files after five years, which is worse for grepping and
+is the proliferation this setup exists to avoid --- and a year is the only unit
+anyone ever retires whole.
+
+The **year comes from each entry's `CLOSED` date, not from today**. That is what
+makes the archive safe to neglect: a sweep run in January still files December's
+work under `2026.org`. Computing it per entry also keeps a session left open
+across New Year from writing into the wrong file.
+
+`org-archive-location` is deliberately **not** set globally --- it is bound only
+inside the command below. Set globally it would redirect archiving from **every**
+Org file, including denote notes, into the agenda archive. Everything outside
+`todo.org` keeps Org's default of a
+`<file>.org_archive` sibling.
+
+```emacs-lisp
+(defvar jw-org-archive-directory
+  (expand-file-name "~/Core/Otzar/Docs/agenda/archive/")
+  "Directory holding one Org archive file per year.")
+
+(defun jw-org-archive-location-for-entry ()
+  "Return an `org-archive-location' for the finished entry at point.
+The year is taken from the entry's CLOSED timestamp so that a late sweep
+still files work under the year it was actually finished."
+  (let* ((closed (org-entry-get nil "CLOSED" t))
+         (year (format-time-string
+                "%Y"
+                (if closed (org-time-string-to-time closed) (current-time)))))
+    (concat (expand-file-name (concat year ".org") jw-org-archive-directory)
+            "::datetree/")))
+
+(defun jw-org-archive-done ()
+  "Archive every finished entry in `jw-org-todo-file' to the year datetrees.
+`org-entry-is-done-p' tests membership in `org-done-keywords', so both DONE
+and CANCEL qualify -- they sit after the `|' in `org-todo-keywords'."
+  (interactive)
+  (unless (file-directory-p jw-org-archive-directory)
+    (make-directory jw-org-archive-directory t))
+  (with-current-buffer (find-file-noselect jw-org-todo-file)
+    (let ((count 0))
+      (org-map-entries
+       (lambda ()
+         (when (org-entry-is-done-p)
+           ;; Bound per entry, not globally: see the note above.
+           (let ((org-archive-location (jw-org-archive-location-for-entry)))
+             (org-archive-subtree))
+           (setq count (1+ count))
+           ;; `org-archive-subtree' removes the entry, which leaves the
+           ;; mapper's saved position stale; `org-map-continue-from' is the
+           ;; documented way to tell it where to resume.
+           (setq org-map-continue-from (point))))
+       t 'file)
+      (save-buffer)
+      (message "Archived %d finished %s" count
+               (if (= count 1) "entry" "entries")))))
+
+(global-set-key (kbd "C-c A") #'jw-org-archive-done)
+```
+
+#### Working practice
+
+The whole loop is two keys:
+
+- `C-c c t` --- capture a task. Type it, `C-c C-c` to file. The template stamps
+  `SCHEDULED: %t` (today), so it appears in the agenda with no further action.
+- `C-c a a` --- open the day's agenda. `t` on a line cycles its state, `RET`
+  jumps to it in `todo.org`.
+
+The states are `TODO -> WAIT -> CANCEL/DONE`. `WAIT`, `CANCEL` and `DONE` all
+have `!` in their definition, so switching to them logs a timestamp into a
+`LOGBOOK` drawer (`org-log-into-drawer` is `t` above) --- history without
+cluttering the visible outline.
+
+Things that are deliberately **not** here, because each one buys structure at the
+cost of a decision per capture: priorities, effort estimates, projects,
+sub-headings, per-week or per-project files, and refile targets. If a task
+needs more scaffolding than a single line, it is not a task --- it is a note,
+and it belongs in the vault (see obsidian.el).
+
+##### Looking at what was done
+
+The built-in log view needs no additional setup:
+
+- `l` inside the agenda toggles `org-agenda-log-mode`, which shows entries
+  **closed** on the displayed day instead of the ones still open. With
+  `org-agenda-span` set to `day`, moving back with `b` and pressing `l` is a
+  read-out of what a given day actually looked like.
+
+Do not rely on `v A` for the custom yearly files.  That command discovers
+archive files from the active value of `org-archive-location`, while this setup
+intentionally binds the location only during `jw-org-archive-done`.  The year
+files are ordinary Org files: open one and fold its datetree to skim a month,
+or grep across `agenda/archive/` when the year is not known.  Keeping the
+granularity at one file per year is what makes that grep practical.
+
+##### Keeping `todo.org` lean
+
+`DONE` items leave the agenda view the moment they are marked, so they cost
+nothing day to day and there is no cleanup **habit** to maintain. When the file
+starts feeling heavy, `C-c A` (`jw-org-archive-done`) sweeps every finished
+entry into the datetree in one go.
+
+Doing this rarely is fine, and is in fact the intended use: because entries file
+under their own `CLOSED` date --- both into the right year file and the right
+day heading --- a sweep after two months of neglect produces exactly the same
+archive as sweeping every Friday. That is the whole reason to derive the layout
+from the data rather than from the calendar at run time: the accuracy of the
+history does not depend on the discipline of the person maintaining it.
+
+`C-c A` is the only archiving path for `todo.org`. `C-c C-x C-a` still works
+everywhere, but since `org-archive-location` is left at its default outside this
+command, in `todo.org` it would create a `todo.org_archive` sibling instead of
+filing into the year tree. Sweeping is not worth avoiding --- it only ever moves
+entries that are already finished.
 
 ### org-pomodoro
 
 Configure for macos to play sound:
 
 ```emacs-lisp
+;; on macos, fix "This Emacs binary lacks sound support" 
+;; - https://github.com/leoliu/play-sound-osx/blob/master/play-sound.el
+;; - update according to https://github.com/leoliu/play-sound-osx/issues/2#issuecomment-1088360638
+(when (eq system-type 'darwin)
+  (unless (and (fboundp 'play-sound-internal)
+               (subrp (symbol-function 'play-sound-internal)))
+    (defun play-sound-internal (sound)
+      "Internal function for `play-sound' (which see)."
+      (or (eq (car-safe sound) 'sound)
+          (signal 'wrong-type-argument (list sound)))
 
-  ;; on macos, fix "This Emacs binary lacks sound support" 
-  ;; - https://github.com/leoliu/play-sound-osx/blob/master/play-sound.el
-  ;; - update according to https://github.com/leoliu/play-sound-osx/issues/2#issuecomment-1088360638
-  (when (eq system-type 'darwin)
-    (unless (and (fboundp 'play-sound-internal)
-                 (subrp (symbol-function 'play-sound-internal)))
-      (defun play-sound-internal (sound)
-        "Internal function for `play-sound' (which see)."
-        (or (eq (car-safe sound) 'sound)
-            (signal 'wrong-type-argument (list sound)))
- 
-        (cl-destructuring-bind (&key file data volume device)
-            (cdr sound)
- 
-          (and (or data device)
-               (error "DATA and DEVICE arg not supported"))
- 
-          (apply #'start-process "afplay" nil
-                 "afplay" (append (and volume (list "-v" volume))
-                                  (list (expand-file-name file data-directory))))))))
+      (cl-destructuring-bind (&key file data volume device)
+          (cdr sound)
 
+        (and (or data device)
+             (error "DATA and DEVICE arg not supported"))
 
+        (apply #'start-process "afplay" nil
+               "afplay" (append (and volume (list "-v" volume))
+                                (list (expand-file-name file data-directory))))))))
 ```
-
 
 ```emacs-lisp
-
-  (setq org-clock-sound "~/.dotfiles/.assets/sounds/mixkit-alert-quick-chime-766.wav")
-
+(setq org-clock-sound "~/.dotfiles/.assets/sounds/mixkit-alert-quick-chime-766.wav")
 ```
-
 
 The following is for sound support,
 
 Usually this is a problem for macos and I found a snippet of code that enables sound support. The way to tell is by running `M-x play-sound-file` and navigating to the `.wav` file will ouput "This Emacs binary lacks sound support."
 
 ```emacs-lisp
-  ;; on macos, fix "This Emacs binary lacks sound support" 
-  ;; - https://github.com/leoliu/play-sound-osx/blob/master/play-sound.el
-  ;; - update according to https://github.com/leoliu/play-sound-osx/issues/2#issuecomment-1088360638
-  (when (eq system-type 'darwin)
-    (unless (and (fboundp 'play-sound-internal)
-                 (subrp (symbol-function 'play-sound-internal)))
-      (defun play-sound-internal (sound)
-        "Internal function for `play-sound' (which see)."
-        (or (eq (car-safe sound) 'sound)
-            (signal 'wrong-type-argument (list sound)))
-      
-        (cl-destructuring-bind (&key file data volume device)
-            (cdr sound)
-        
-          (and (or data device)
-               (error "DATA and DEVICE arg not supported"))
-        
-          (apply #'start-process "afplay" nil
-                 "afplay" (append (and volume (list "-v" volume))
-                                  (list (expand-file-name file data-directory))))))))
+;; on macos, fix "This Emacs binary lacks sound support" 
+;; - https://github.com/leoliu/play-sound-osx/blob/master/play-sound.el
+;; - update according to https://github.com/leoliu/play-sound-osx/issues/2#issuecomment-1088360638
+(when (eq system-type 'darwin)
+  (unless (and (fboundp 'play-sound-internal)
+               (subrp (symbol-function 'play-sound-internal)))
+    (defun play-sound-internal (sound)
+      "Internal function for `play-sound' (which see)."
+      (or (eq (car-safe sound) 'sound)
+          (signal 'wrong-type-argument (list sound)))
 
+      (cl-destructuring-bind (&key file data volume device)
+          (cdr sound)
+
+        (and (or data device)
+             (error "DATA and DEVICE arg not supported"))
+
+        (apply #'start-process "afplay" nil
+               "afplay" (append (and volume (list "-v" volume))
+                                (list (expand-file-name file data-directory))))))))
 ```
 
 ### org-links
@@ -902,10 +1006,8 @@ Usually this is a problem for macos and I found a snippet of code that enables s
 As recommended by the official `org` manual to have these keys bound.
 
 ```emacs-lisp
-
-  (global-set-key (kbd "C-c l") 'org-store-link)
-  (global-set-key (kbd "C-c C-l") 'org-insert-link)
-
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c C-l") 'org-insert-link)
 ```
 
 Instead of relying on just the path/etc, allow orgmode to use unique IDs to create internal links that can point to specific headings in org files.
@@ -913,9 +1015,7 @@ Instead of relying on just the path/etc, allow orgmode to use unique IDs to crea
 With the `create-if-interactive` setting, it only creates in interactive settings.
 
 ```emacs-lisp
-
-  (setq org-id-link-to-org-use-id 'create-if-interactive)
-
+(setq org-id-link-to-org-use-id 'create-if-interactive)
 ```
 
 ### bullet aesthetics
@@ -923,26 +1023,20 @@ With the `create-if-interactive` setting, it only creates in interactive setting
 Customize the heading bullets to make it consistent and nicer.
 
 ```emacs-lisp
-
-  (use-package org-bullets
-    :after org
-    :hook (org-mode . org-bullets-mode)
-    :custom
-    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
-
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 ```
 
 ### inline images
 
-
 ```emacs-lisp
-
-  (setq org-image-actual-width nil)
-  (setq org-startup-with-inline-images t)
-  (add-hook 'org-mode-hook 'org-display-inline-images)
-
+(setq org-image-actual-width nil)
+(setq org-startup-with-inline-images t)
+(add-hook 'org-mode-hook 'org-display-inline-images)
 ```
-
 
 ### org-tempo.el --native
 
@@ -951,7 +1045,6 @@ to use the template simply type `<` followed by the abbreviation of the language
 hit the `TAB` button. For example, the python snippit would be `<py TAB`.
 
 ```emacs-lisp
-
 ;; This is needed as of Org 9.2
 (require 'org-tempo)
 
@@ -960,7 +1053,6 @@ hit the `TAB` button. For example, the python snippit would be `<py TAB`.
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 (add-to-list 'org-structure-template-alist '("clang" . "src c"))
 (add-to-list 'org-structure-template-alist '("cpp" . "src cpp"))
-
 ```
 
 ### org-babel.el
@@ -968,30 +1060,26 @@ hit the `TAB` button. For example, the python snippit would be `<py TAB`.
 This snippet adds a hook to `org-mode` buffers so that `jw/org-babel-tangle-config` gets executed each time such a buffer gets saved.  This function checks to see if the file being saved is the Emacs.org file you're looking at right now, and if so, automatically exports the configuration here to the associated output files.
 
 ```emacs-lisp
+;; Automatically tangle our Emacs.org config file when we save it
+(defun jw/org-babel-tangle-config ()
+  (when (string-equal (buffer-file-name)
+                      (expand-file-name "~/.dotfiles/Emacs.org"))
+    ;; Dynamic scoping to the rescue
+    (let ((org-confirm-babel-evaluate nil))
+      (org-babel-tangle))))
 
-  ;; Automatically tangle our Emacs.org config file when we save it
-  (defun jw/org-babel-tangle-config ()
-    (when (string-equal (buffer-file-name)
-                        (expand-file-name "~/.dotfiles/Emacs.org"))
-      ;; Dynamic scoping to the rescue
-      (let ((org-confirm-babel-evaluate nil))
-        (org-babel-tangle))))
-
-  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'jw/org-babel-tangle-config)))
-
+(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'jw/org-babel-tangle-config)))
 ```
 
-To execute or export code in `org-mode` code blocks, you'll need to set up `org-babel-load-languages` for each language you'd like to use. [This page](https:/*orgmode.org*worg*org-contrib*babel/languages.html) documents all of the languages that you can use with `org-babel`.
+To execute or export code in `org-mode` code blocks, you'll need to set up `org-babel-load-languages` for each language you'd like to use. [This page](https://orgmode.org/worg/org-contrib/babel/languages.html) documents all of the languages that you can use with `org-babel`.
 
 ```emacs-lisp
+(org-babel-do-load-languages
+  'org-babel-load-languages
+  '((emacs-lisp . t)
+    (python . t)))
 
-  (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((emacs-lisp . t)
-      (python . t)))
-
-  (push '("conf-unix" . conf-unix) org-src-lang-modes)
-
+(push '("conf-unix" . conf-unix) org-src-lang-modes)
 ```
 
 ### visual-fill-column.el
@@ -999,22 +1087,19 @@ To execute or export code in `org-mode` code blocks, you'll need to set up `org-
 `visual-fill-column` will create a document looking display with the extra padding on the left and on the right.
 
 ```emacs-lisp
+(defun jw/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
 
-  (defun jw/org-mode-visual-fill ()
-    (setq visual-fill-column-width 100
-          visual-fill-column-center-text t)
-    (visual-fill-column-mode 1))
-
-  (use-package visual-fill-column
-    :hook (org-mode . jw/org-mode-visual-fill)
-    (markdown-mode . jw/org-mode-visual-fill))
-
+(use-package visual-fill-column
+  :hook (org-mode . jw/org-mode-visual-fill)
+  (markdown-mode . jw/org-mode-visual-fill))
 ```
 
 ### org-latex
 
 ```emacs-lisp
-
 (with-eval-after-load 'ox-latex
   (add-to-list 'org-latex-classes
                '("org-plain-latex"
@@ -1039,44 +1124,43 @@ To execute or export code in `org-mode` code blocks, you'll need to set up `org-
                  ("\\subsubsection*{%s}" . "\\subsubsection*{%s}")
                  ("\\paragraph*{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph*{%s}" . "\\subparagraph*{%s}"))))
-
 ```
 
 ### The `jw-emacs-org.el` call to provide
 
 ```emacs-lisp
-
-  (provide 'jw-emacs-org)
-
+(provide 'jw-emacs-org)
 ```
 
 ## The `jw-emacs-git.el` module
 ### magit.el
 
 ```emacs-lisp
+;;; jw-emacs-git.el --- Git and version control -*- lexical-binding: t; -*-
+```
 
-  (require 'package)
-  (add-to-list 'package-archives
-               '("melpa" . "https://melpa.org/packages/") t)
+```emacs-lisp
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
 
-  (setq forge-add-default-bindings nil)
+(setq forge-add-default-bindings nil)
 
-  (use-package magit
-    :custom
-    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+(use-package magit
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
-  ;; NOTE: Make sure to configure a GitHub token before using this package!
-  ;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
-  ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
-  (use-package forge
-    :after magit
-    )
-  (use-package evil-collection
-    :after (evil forge)
-    :config
-    (evil-collection-init)
-    (evil-collection-forge-setup))
-
+;; NOTE: Make sure to configure a GitHub token before using this package!
+;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
+;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
+(use-package forge
+  :after magit
+  )
+(use-package evil-collection
+  :after (evil forge)
+  :config
+  (evil-collection-init)
+  (evil-collection-forge-setup))
 ```
 
 #### gpg signing
@@ -1086,18 +1170,18 @@ When on the commit buffer, the argument for `gpg-signing` or `-S` may not be dis
 ### The `jw-emacs-git.el` call to provide
 
 ```emacs-lisp
-
-  (provide 'jw-emacs-git)
-
+(provide 'jw-emacs-git)
 ```
 
 ## The `jw-emacs-dired.el` module
 ### dired display
 
 ```emacs-lisp
+;;; jw-emacs-dired.el --- Dired configuration -*- lexical-binding: t; -*-
+```
 
-  (setq dired-listing-switches "-alD")
-
+```emacs-lisp
+(setq dired-listing-switches "-alD")
 ```
 
 ### gnu gls
@@ -1105,173 +1189,608 @@ When on the commit buffer, the argument for `gpg-signing` or `-S` may not be dis
 For macos, make sure to have `coreutils` installed. To install run, `brew install coreutils`
 
 ```emacs-lisp
-
-  (setq insert-directory-program "gls" 
-       dired-use-ls-dired t)
-
+(setq insert-directory-program "gls" 
+     dired-use-ls-dired t)
 ```
 
 ### The `jw-emacs-dired.el` call to provide
 
 ```emacs-lisp
-
-  (provide 'jw-emacs-dired)
-
+(provide 'jw-emacs-dired)
 ```
 
 ## The `jw-emacs-information-management.el` module
 ### denote.el
 
 ```emacs-lisp
-
-  (use-package denote
-                   :straight t)
-
-  (setq denote-directory (expand-file-name "~/Otzar/Gnosis/"))
-  (setq denote-save-buffer-after-creation nil)
-
+;;; jw-emacs-information-management.el --- Notes and information management -*- lexical-binding: t; -*-
 ```
 
+```emacs-lisp
+(use-package denote
+                 :straight t)
+
+(setq denote-directory (expand-file-name "~/Core/Otzar/Gnosis/"))
+;; Create the notes directory if it does not exist yet (e.g. fresh machine).
+(unless (file-directory-p denote-directory)
+  (make-directory denote-directory t))
+(setq denote-save-buffer-after-creation nil)
+```
 
 Enable the denote dired mode for all files so that the components can easily be seen.
 
 ```emacs-lisp
+(add-hook 'dired-mode-hook #'denote-dired-mode)
+```
 
-  (add-hook 'dired-mode-hook #'denote-dired-mode)
+Keywords are the same vocabulary used for tags in the Obsidian vault --- see
+Tags for what each one covers and why the list is short. One vocabulary across
+both tools means one thing to remember; two would guarantee drift.
 
+`journal` is not in the list: denote notes that are a dated log are better served
+by the vault's `daily-notes/`, and a keyword that duplicates a location earns
+nothing.
+
+```emacs-lisp
+(setq denote-known-keywords
+      '("math" "markets" "hf" "code" "infra"
+        "philosophy" "ministry" "health" "people" "writing"))
+;; Offer keywords already present in the notes, not only the list above, so
+;; the vocabulary can drift without editing this file.
+(setq denote-infer-keywords t)
+(setq denote-sort-keywords t)
 ```
 
 ```emacs-lisp
+(setq denote-file-type nil) ; Org is the default, set others here
+(setq denote-prompts '(subdirectory title keywords))
+(setq denote-excluded-directories-regexp nil)
+(setq denote-excluded-keywords-regexp nil)
+(setq denote-rename-no-confirm nil) ; Set to t if you are familiar with `denote-rename-file'
 
-  (setq denote-known-keywords '("theology" "philosophy" "politics" "journal" "analysis" "linguistics"))
-  (setq denote-infer-keywords t)
-  (setq denote-sort-keywords t)
+;; Pick dates, where relevant, with Org's advanced interface:
+(setq denote-date-prompt-use-org-read-date t)
+;; Read this manual for how to specify `denote-templates'.  We do not
+;; include an example here to avoid potential confusion.
+(setq denote-date-format nil) ; read doc string
 
+;; By default, we do not show the context of links.  We just display
+;; file names.  This provides a more informative view.
+(setq denote-backlinks-show-context t)
+
+;; Also see `denote-link-backlinks-display-buffer-action' which is a bit
+;; advanced.
+
+;; If you use Markdown or plain text files (Org renders links as buttons
+;; right away)
+(add-hook 'find-file-hook #'denote-fontify-links-mode-maybe)
+
+(with-eval-after-load 'org-capture
+(setq denote-org-capture-specifiers "%l\n%i\n%?")
+(add-to-list 'org-capture-templates
+             '("n" "New note (with denote.el)" plain
+               (file denote-last-path)
+               #'denote-org-capture
+               :no-save t
+               :immediate-finish nil
+               :kill-buffer t
+               :jump-to-captured t)))
+
+;; Also check the commands `denote-link-after-creating',
+;; `denote-link-or-create'.  You may want to bind them to keys as well.
+
+;; If you want to have Denote commands available via a right click
+;; context menu, use the following and then enable
+;; `context-menu-mode'.
+(add-hook 'context-menu-functions #'denote-context-menu)
 ```
 
+The capture template for the `jw-emacs-org.el` section for `org-agenda`.
+`SCHEDULED: %t` stamps it with today, so a captured item appears in the day
+agenda without any further filing.
+
+This replaces an earlier `jw-denote-weekly-tasks-filename` that minted a new
+Denote-named file with frontmatter every week. Weekly files are a filing system
+for things that live one day, and the rotation was pure overhead.
+
+Note the use of `add-to-list` rather than `setq`: the denote note template
+below registers itself the same way, and a bare `setq` here silently clobbers
+it depending on load order.
+
 ```emacs-lisp
+;; Ensure denote.el is loaded
+(require 'denote)
 
-  (setq denote-file-type nil) ; Org is the default, set others here
-  (setq denote-prompts '(subdirectory title keywords))
-  (setq denote-excluded-directories-regexp nil)
-  (setq denote-excluded-keywords-regexp nil)
-  (setq denote-rename-no-confirm nil) ; Set to t if you are familiar with `denote-rename-file'
-
-  ;; Pick dates, where relevant, with Org's advanced interface:
-  (setq denote-date-prompt-use-org-read-date t)
-  ;; Read this manual for how to specify `denote-templates'.  We do not
-  ;; include an example here to avoid potential confusion.
-  (setq denote-date-format nil) ; read doc string
-
-  ;; By default, we do not show the context of links.  We just display
-  ;; file names.  This provides a more informative view.
-  (setq denote-backlinks-show-context t)
-
-  ;; Also see `denote-link-backlinks-display-buffer-action' which is a bit
-  ;; advanced.
-
-  ;; If you use Markdown or plain text files (Org renders links as buttons
-  ;; right away)
-  (add-hook 'find-file-hook #'denote-fontify-links-mode-maybe)
-
-  (with-eval-after-load 'org-capture
-  (setq denote-org-capture-specifiers "%l\n%i\n%?")
+(with-eval-after-load 'org-capture
   (add-to-list 'org-capture-templates
-               '("n" "New note (with denote.el)" plain
-                 (file denote-last-path)
-                 #'denote-org-capture
-                 :no-save t
-                 :immediate-finish nil
-                 :kill-buffer t
-                 :jump-to-captured t)))
-
-  ;; Also check the commands `denote-link-after-creating',
-  ;; `denote-link-or-create'.  You may want to bind them to keys as well.
-
-
-  ;; If you want to have Denote commands available via a right click
-  ;; context menu, use the following and then enable
-  ;; `context-menu-mode'.
-  (add-hook 'context-menu-functions #'denote-context-menu)
-
+               `("t" "Todo (today)" entry
+                 (file ,jw-org-todo-file)
+                 "* TODO %?\nSCHEDULED: %t"
+                 :empty-lines 1)))
 ```
 
-Create [the `jw-emacs-org.el` section for `org-agenda` --native](id:43652950-B9D2-4FAF-8F0C-75D1496E85FE) org capture template leveraging the denote format.
+### obsidian.el
+
+[obsidian.el](https://github.com/licht1stein/obsidian.el) treats a directory of Markdown files as a knowledge base:
+`[[wiki-links]]`, `#tags`, jumping, search, and a backlinks panel. This vault is
+the **knowledge bank** --- things worth referencing later. Tasks live in
+org-agenda; denote.el holds Org-format notes.
+
+The vault directories are created before the path is assigned because
+`obsidian-directory` has a `:set` handler that refuses a missing directory.
+`setopt` (not `setq`) is what runs that handler, which also records the path
+length used to compute vault-relative names.
 
 ```emacs-lisp
-
-  ;; Ensure denote.el is loaded
-  (require 'denote)
-
-  (defun jw-denote-weekly-tasks-filename ()
-  "Generate a Denote filename for a weekly tasks Org file in a custom directory and ensure the file exists.
-  The title is in the format 'YYYY: MONTH DD to DD', where DD to DD represents
-  the start and end days of the current week. The filename follows the Denote
-  convention with the '__tasks' tag."
-  (let* ((custom-directory "~/Otzar/Docs/agenda/")  ; Specify your custom directory here
-          (today (current-time))
-          ;; Calculate the start of the week (assuming Monday as the first day)
-          (start-of-week (time-subtract today (days-to-time (mod (nth 6 (decode-time today)) 7))))
-          ;; Calculate the end of the week (Sunday)
-          (end-of-week (time-add start-of-week (days-to-time 6)))
-          ;; Format the year and month from the start of the week
-          (year (format-time-string "%Y" start-of-week))
-          (month (format-time-string "%B" start-of-week))
-          (day-start (format-time-string "%d" start-of-week))
-          (day-end (format-time-string "%d" end-of-week))
-          ;; Create the title in the format "YYYY MONTH DD to DD"
-          (title (format "%s: %s %s to %s" year month day-start day-end))
-          ;; Generate the slug for the title
-          (slug (denote-sluggify-title title))
-          ;; Generate the timestamp for the Denote filename
-          (timestamp (format-time-string "%Y%m%dT%H%M%S" start-of-week))
-          ;; Construct the full filename with Denote convention
-          (filename (format "%s--%s__tasks.org" timestamp slug)))
-      ;; Ensure the custom directory exists
-      (make-directory custom-directory t)
-      ;; Generate the full file path
-      (let ((full-path (expand-file-name filename custom-directory)))
-      ;; Create an empty file with Denote metadata if it doesn't exist
-      (unless (file-exists-p full-path)
-          (with-temp-buffer
-            (insert (format "#+title:      %s\n#+date:       %s\n#+filetags:   :tasks:\n#+identifier: %s\n\n"
-                          title
-                          (format-time-string "[%Y-%m-%d %a %H:%M]" today)
-                          timestamp))
-          (write-file full-path)))
-      full-path)))
-
-  ;; Define the Org capture template
-  (setq org-capture-templates
-      '(("w" "Weekly Tasks" entry
-          (file jw-denote-weekly-tasks-filename)
-          ""
-          :empty-lines 1
-          )))
-
-
+(use-package obsidian
+  :straight t
+  :demand t
+  :config
+  (let ((vault (expand-file-name "~/Core/Otzar/Obsidian/")))
+    (dolist (dir (list vault
+                       (expand-file-name "notes" vault)
+                       (expand-file-name "daily-notes" vault)
+                       (expand-file-name "templates" vault)))
+      (unless (file-directory-p dir)
+        (make-directory dir t)))
+    ;; Seed the templates.  `obsidian-daily-note' inserts its one without
+    ;; checking that it exists; both are left alone once present, so they can
+    ;; be edited in the vault without this reverting them.
+    (pcase-dolist (`(,name . ,body)
+                   '(("Daily Note Template.md" . "# {{title}}\n\n")
+                     ("Note.md" . "---\ncreated: {{date}}\ntags: []\n---\n\n# {{title}}\n\n<!-- the claim, in one sentence -->\n\n## Why\n\n## Sources\n")))
+      (let ((file (expand-file-name (concat "templates/" name) vault)))
+        (unless (file-exists-p file)
+          (with-temp-file file (insert body)))))
+    (setopt obsidian-directory vault))
+  ;; Track vault files everywhere so links and tags resolve globally.
+  (global-obsidian-mode t))
 ```
 
+Backlinks are a **toggle**, not a default. `obsidian-backlinks-mode` is a global
+minor mode that opens its side window the instant it is enabled and hooks
+`buffer-list-update-hook`, so enabling it at load time puts a panel in every
+session --- including ones that never touch the vault. `C-c n b` when it is
+actually wanted.
+
+Vault-relative directories; `nil` disables a feature.
+
+```emacs-lisp
+(setq obsidian-inbox-directory "notes")             ; destination for `obsidian-capture'
+(setq obsidian-daily-notes-directory "daily-notes") ; daily note file is YYYY-MM-DD.md
+(setq obsidian-templates-directory "templates")     ; note templates live here
+(setq obsidian-daily-note-template "Daily Note Template.md")
+;; Following a wiki-link to a note that does not exist yet creates it in
+;; `obsidian-inbox-directory' rather than beside the current file.
+(setq obsidian-create-unfound-files-in-inbox t)
+```
+
+The capture folder is `notes/` rather than the usual `inbox/` because an inbox
+is an implicit promise to process it later; nothing here needs to graduate
+anywhere.
+
+Notes are read in the Obsidian GUI, which renders math with MathJax, but they
+are **written** here --- and `markdown-enable-math` defaults to `nil`, so `$...$`
+would otherwise get no syntax highlighting at all. It is buffer-local, hence
+`setq-default`.
+
+```emacs-lisp
+(setq-default markdown-enable-math t)
+```
+
+Note that LaTeX cannot produce phantom tags: `obsidian--tag-regex` requires the
+`#` to follow whitespace or start-of-line **and** be followed by at least two
+letter-like characters, so neither a `\newcommand` parameter (`#1`, digit) nor an
+escaped `\#` (preceded by a backslash) is picked up.
+
+In Obsidian, `\begin{...}` only renders inside `$$ ... $$` --- MathJax sees only
+what is between math delimiters, unlike real LaTeX where `align` is its own
+display environment. A blank line inside the block also terminates it, so
+multi-line derivations must use `\\` throughout with no empty lines.
+
+#### Keys
+
+Entry points are global so the vault is reachable from anywhere; link and
+backlink commands are scoped to vault buffers, where they are the natural
+`C-c C-*` verbs.
+
+| Key       | Command                        | Does                                  |
+|-----------+--------------------------------+---------------------------------------|
+| `C-c n n` | `obsidian-daily-note`          | today's daily note, from the template |
+| `C-c n c` | `jw-obsidian-capture`          | new named note in `notes/`, templated |
+| `C-c n j` | `obsidian-jump`                | fuzzy-jump to any note                |
+| `C-c n s` | `obsidian-search`              | full-text search the vault            |
+| `C-c n g` | `xeft`                         | search-as-you-type with context       |
+| `C-c n t` | `jw-obsidian-add-tag`          | add a tag, completing on existing     |
+| `C-c n f` | `obsidian-find-tag`            | list notes carrying a tag             |
+| `C-c n i` | `jw-obsidian-insert-template`  | insert a template into this buffer    |
+| `C-c n b` | `obsidian-backlinks-mode`      | toggle the backlinks panel            |
+| `C-c n u` | `obsidian-update`              | re-scan after edits made outside Emacs |
+| `C-c C-o` | `obsidian-follow-link-at-point` | follow the link under point          |
+| `C-c C-b` | `obsidian-backlink-jump`       | jump to a note linking here           |
+| `C-c C-l` | `obsidian-insert-wikilink`     | insert a `[[wiki]]` link              |
+
+```emacs-lisp
+;; Entry points: reachable from anywhere, not only from inside the vault.
+(global-set-key (kbd "C-c n n") #'obsidian-daily-note)
+(global-set-key (kbd "C-c n c") #'jw-obsidian-capture)
+(global-set-key (kbd "C-c n j") #'obsidian-jump)
+(global-set-key (kbd "C-c n s") #'obsidian-search)
+(global-set-key (kbd "C-c n t") #'jw-obsidian-add-tag)
+(global-set-key (kbd "C-c n f") #'obsidian-find-tag)
+(global-set-key (kbd "C-c n i") #'jw-obsidian-insert-template)
+(global-set-key (kbd "C-c n b") #'obsidian-backlinks-mode)
+(global-set-key (kbd "C-c n u") #'obsidian-update)
+
+(with-eval-after-load 'obsidian
+  (define-key obsidian-mode-map (kbd "C-c C-o") #'obsidian-follow-link-at-point)
+  (define-key obsidian-mode-map (kbd "C-c C-b") #'obsidian-backlink-jump)
+  (define-key obsidian-mode-map (kbd "C-c C-l") #'obsidian-insert-wikilink))
+```
+
+#### Search: xeft
+
+`obsidian-search` is a one-shot grep: type a phrase, get a hit list. [xeft](https://sr.ht/~casouri/xeft/) is
+search-as-you-type across the whole vault, showing each match with its
+surrounding context, and `RET` on a phrase with no match creates a note by that
+name. For a knowledge bank whose main failure mode is *not remembering what a
+note was called*, that live-filtering loop is the more useful retrieval path ---
+so both are kept, on adjacent keys.
+
+obsidian.el supplies the two functions that make xeft vault-aware:
+`obsidian-file-p` excludes anything that is not a vault Markdown file, and
+`obsidian-file-title-function` reads a `title:` from front matter, falling back
+to the first line and then the file name. Deriving `xeft-directory` from
+`obsidian-directory` keeps one source of truth for the vault path; =:after
+obsidian= is what guarantees that variable is already set.
+
+Upstream binds this to `C-c C-g` in `obsidian-mode-map`. It is bound globally
+here instead --- searching is how you **get into** the vault, so a binding that
+only works once you are already in it is backwards. (`C-c C-g` also means
+"refresh" inside xeft's own buffer, so reusing it for entry reads oddly.)
+
+```emacs-lisp
+(use-package xeft
+  :straight t
+  :after obsidian
+  :bind ("C-c n g" . xeft)
+  :custom
+  (xeft-directory obsidian-directory)
+  (xeft-recursive t)                            ; notes/, daily-notes/, ...
+  (xeft-file-filter #'obsidian-file-p)
+  (xeft-title-function #'obsidian-file-title-function))
+```
+
+##### Prerequisites
+
+xeft searches through a Xapian index, which means a **dynamic module** --- this is
+the one piece of the config with a dependency outside Emacs:
+
+```sh
+brew install xapian
+```
+
+Emacs must also have been built with module support, and a C++ compiler and
+`make` must be present. The first `M-x xeft` calls `xeft--require-xapian-lite`,
+which finds no module and offers three choices: compile locally, download a
+prebuilt binary, or quit. Compiling is the honest option once `xapian` is
+installed; it runs `make` in xeft's own directory and is a one-time cost.
+
+If it cannot proceed it says =Cannot start xeft because required dynamic module
+is missing= --- that message means the module, not the package, so the fix is
+`brew install xapian` and re-running the compile prompt rather than reinstalling
+xeft.
+
+Note that `templates/` is indexed along with everything else, so template files
+surface in results. With one or two templates that is not worth filtering; if it
+becomes noise, wrap `obsidian-file-p` in a predicate that rejects that
+subdirectory.
+
+#### Templates
+
+obsidian.el applies a template in exactly one place. `obsidian-capture` and
+`obsidian-daily-note` are otherwise the same function --- prompt or date for a
+name, `find-file`, `save-buffer` --- but only the daily note goes on to check
+`obsidian-daily-note-template` and apply it. A captured note therefore starts
+completely empty, with no front matter, which would put the `created` date and
+`tags` on the wrong side of a manual step.
+
+The wrapper below adds the missing branch, reusing the daily note's own guard:
+apply the template only when the buffer is empty, so an existing note is never
+overwritten.
+
+```emacs-lisp
+(defvar jw-obsidian-note-template "Note.md"
+  "Template in `obsidian-templates-directory' applied by `jw-obsidian-capture'.")
+
+(defun jw-obsidian-capture ()
+  "Capture a note like `obsidian-capture', then apply `jw-obsidian-note-template'.
+`obsidian-capture' applies no template -- only `obsidian-daily-note' does --
+so a captured note would otherwise start with no front matter at all."
+  (interactive)
+  (call-interactively #'obsidian-capture)
+  (when (and obsidian-templates-directory
+             jw-obsidian-note-template
+             (eq (buffer-size) 0))
+    (obsidian-apply-template
+     (expand-file-name jw-obsidian-note-template
+                       (expand-file-name obsidian-templates-directory
+                                         obsidian-directory)))
+    (save-buffer)))
+```
+
+`obsidian-apply-template` is also not an interactive command, so there is no
+built-in way to reach a template from an existing buffer --- for a note that
+started life without one, or to pull in a second template. This adds that:
+
+```emacs-lisp
+(defun jw-obsidian-insert-template ()
+  "Insert a template from `obsidian-templates-directory' into this buffer.
+Substitutes {{title}}, {{date}} and {{time}} the same way `obsidian-daily-note'
+does, since it reuses `obsidian-apply-template'."
+  (interactive)
+  (let* ((dir (expand-file-name obsidian-templates-directory obsidian-directory))
+         (templates (directory-files dir nil "\\.md\\'")))
+    (unless templates
+      (user-error "No templates in %s" dir))
+    (obsidian-apply-template
+     (expand-file-name (completing-read "Template: " templates) dir))))
+```
+
+The substitutions available are `\{\{title\}\}` (the file name), `\{\{date\}\}`
+and `\{\{time\}\}`. There is no prompting and no cursor placement --- these are
+skeletons, not Org capture templates.
+
+Keep them few and nearly empty. A template's cost is not writing it, it is that
+**every section in it becomes an obligation**: headings that get left blank
+accumulate across hundreds of notes and make the vault look like work in
+progress rather than a reference. The daily note template seeded above is just
+`# {{title}}` for exactly this reason --- a daily note's value is having no
+structure to satisfy.
+
+A second template is worth it only for a shape that is genuinely repeated, and
+the one that pays here is the durable note --- it encodes the handoff rules
+below (claim first, sources kept) and carries the small amount of front matter
+that is worth having. Both templates are seeded on first load, next to the vault
+directories.
+
+##### What metadata is worth recording
+
+Front matter is first-class in obsidian.el --- `obsidian--process-front-matter-tags`
+reads `tags:` from it, and `obsidian-insert-tag` notices when point is inside
+front matter and omits the `#`. But only two fields earn their place:
+
+- `tags` --- the domain, per Tags. Front matter keeps them in one place instead
+  of scattered through the prose. The template ships `tags: []`, which is the
+  correct empty value: obsidian.el parses it to an empty vector and returns no
+  tags silently, whereas a bare `tags:` parses to `:null` and warns "The key
+  'tags' cannot have an empty value in front matter".
+- `created` --- the filesystem does record a birth time, but copying, syncing and
+  `git checkout` all destroy it, and it cannot be reconstructed afterwards.
+
+Two fields deliberately left out:
+
+- `title` --- `obsidian-file-title-function` reads `title:`, then falls back to
+  the first line, then the file name. Since the template's first line is
+  `# {{title}}`, a `title:` field only repeats the file name.
+- `updated` / `last edited` --- keeping it accurate means a hook rewriting the
+  file on every save, which turns each trivial edit into a diff and goes stale
+  silently as soon as a file is edited outside Emacs. Git already records this
+  exactly: `git log -1 --format`%cI -- <file>`. `created= is the one date git
+  cannot recover after a move or an import, which is why it is the one kept.
+
+##### Why filenames stay human
+
+Denote-style `YYYYMMDDTHHMMSS--name` filenames are deliberately **not** used in
+the vault. Wiki-links resolve by exact file name --- `obsidian--match-files`
+compares the link text against relative paths --- so `[[Basis Trade]]` finds
+`Basis Trade.md` and would not find `20260726T143022--basis-trade.md`.
+
+Aliases do not rescue it: `obsidian-jump` consults `obsidian--aliases-map`, but
+`obsidian-follow-wiki-link-at-point` goes through `obsidian--match-files`, which
+only sees file names. The result would be jumping that works while every
+`[[link]]` quietly creates a new empty note instead of finding the existing one.
+
+The difference is structural. Denote's timestamp **is** its identifier, so it has
+to be in the file name --- there is no other index. This vault's index is the
+link graph and its identifier is the human name. denote.el is already configured
+for when ID-stable, rename-safe notes are wanted; the vault should not become a
+second, weaker copy of it.
+
+#### Tags
+
+The rule that keeps tags from turning into chaos: *tags carry the domain, links
+carry the topic.*
+
+Links are unbounded and cost nothing --- every `[[wiki-link]]` is one more
+retrieval path, and a wrong one is harmless. Tags are the opposite: a tag is
+only useful if many notes share it, so every new tag slightly devalues the
+existing ones. `#trading`, `#trades` and `#markets` as three separate tags means
+none of them reliably returns everything.
+
+So topics are never tags. What a note is **about** belongs in its title and its
+links. Tags answer only "which pile do I want to walk through?", which in
+practice means a handful of life domains. The same list is set as
+`denote-known-keywords` above, so both tools share one vocabulary.
+
+Three habits are enough to hold the line:
+
+1. **Add tags with `C-c n t`, never by typing them.** Completion over tags already
+   in the vault makes reuse the path of least resistance; typing `#` by hand is
+   how a second spelling gets in.
+2. **Keep the vocabulary memorable.** Roughly ten tags, few enough to recall
+   without looking. Adding one should feel like a decision; if a new tag
+   overlaps an old one, pick one and rename rather than keeping both.
+3. **One tag is usually right, three is a lot.** If a note needs many tags to be
+   findable, it is really several notes, or it wants a link instead.
+
+`obsidian-insert-tag` only inserts at point --- its sole piece of intelligence
+is checking `obsidian-point-in-front-matter-p` to decide whether to prefix a
+`#`. It does not find the `tags:` list, so using the front matter with it means
+parking the cursor between the brackets and typing the commas by hand. Since the
+note template ships `tags: []`, that friction would land on every note; this
+merges into the list instead, and falls back to an inline `#tag` when there is
+no front matter to merge into:
+
+```emacs-lisp
+(defun jw-obsidian-add-tag (tag)
+  "Add TAG to the front-matter `tags:' list, completing on tags in the vault.
+Merges into the bracketed list rather than inserting at point, so the list
+stays comma-separated and free of duplicates.  Falls back to inserting an
+inline #TAG at point when the buffer has no front-matter `tags:' list.
+Vault tags carry no leading `#', per the `obsidian-tags' docstring."
+  (interactive
+   (list (completing-read "Tag: " (sort (obsidian-tags) #'string<))))
+  (let ((merged
+         (save-excursion
+           (goto-char (point-min))
+           (when (looking-at-p "^---[ \t]*$")
+             (forward-line 1)
+             (when-let* ((end (save-excursion
+                               (re-search-forward "^---[ \t]*$" nil t))))
+               (when (re-search-forward "^tags:[ \t]*\\[\\([^]]*\\)\\]" end t)
+                 (let* ((current (split-string (match-string 1) "[,[:space:]]+" t))
+                        (all (delete-dups (append current (list tag)))))
+                   (replace-match
+                    (concat "tags: [" (mapconcat #'identity all ", ") "]")
+                    t t)
+                   t)))))))
+    (unless merged
+      (insert (format "#%s" tag)))))
+```
+
+Front matter and body tags have opposite spelling rules, which is the other
+reason to go through a command rather than typing. In front matter a tag is bare
+(`tags: [hf, markets]`); `obsidian--process-front-matter-tags` silently drops any
+entry that starts with `#` or contains a space, warning "Found invalid tags in
+front matter". In the body it is the reverse --- `#hf`, hash required.
+
+The starting vocabulary:
+
+| Tag          | Covers                                                     |
+|--------------+------------------------------------------------------------|
+| `math`       | math, statistics, probability, optimization                |
+| `markets`    | instruments, microstructure, macro, execution mechanics    |
+| `hf`         | the fund itself --- strategy, thesis, ops, building it     |
+| `code`       | programming, languages, libraries, tooling                 |
+| `infra`      | homelab, servers, backups, self-hosting                    |
+| `philosophy` | analytic reasoning, ethics, metaphysics                    |
+| `ministry`   | faith, practice, teaching                                  |
+| `health`     | training, sleep, food                                      |
+| `people`     | thinkers, contacts, who believes what                      |
+| `writing`    | drafts and arguments in progress                           |
+
+The test for whether two candidates should be one tag: *can you name a case
+where seeing the other pile would be noise?* Statistics is folded into `math`
+because the answer is no --- both are wanted on essentially every search, and
+splitting them puts a filing decision on exactly the boundary cases (stochastic
+calculus, measure-theoretic probability) where it is hardest to make.
+
+`hf` and `markets` are the closest call in the other direction. They stay apart
+because merging them would put one tag on most of the vault, and a tag matching
+60% of notes filters nothing --- the same failure as a tag matching one note.
+The line is **learned versus built**: how a limit order book works is `markets`;
+how this fund's strategy works is `hf`. That is also where the separate-vault
+split would fall if the firm bank ever becomes real.
+
+Deliberately absent is `journal`: daily notes already live in `daily-notes/`, and
+tagging what the location already says is pure noise. The last two rows are the
+least certain --- domains are discovered from use rather than designed up front,
+so treat any row that stays unused after a few months as a slot to reclaim.
+
+This list is documentation, not configuration. Keep the living copy as a note in
+the vault so it is visible while writing; a vocabulary meant to drift slowly
+should not need a re-tangle to change.
+
+Retrieval is `C-c n f` (`obsidian-find-tag`) for a domain, then
+`obsidian-backlink-jump` (`C-c C-b`) to walk outward through links. The tag
+narrows to a pile; the links do the actual navigating.
+
+#### Working practice
+
+##### Which bucket does this go in?
+
+**If you can name it, it is a note. If you cannot, it goes in today's daily note.**
+
+Naming is the only filing decision in the system, and it can be made instantly
+or not at all. The commands mirror it: `obsidian-capture` (`C-c n c`) asks for a
+title, `obsidian-daily-note` (`C-c n n`) asks nothing.
+
+The asymmetry that matters: **an inbox carries debt and a daily note does not.**
+An unprocessed daily note is still a perfectly good log --- it was never going
+to become anything else.
+
+##### Promotion happens through links, not filing
+
+There is no review step and no "process the inbox" ritual. When a line in a
+daily note keeps recurring, write it as a `[[wiki-link]]` and follow it with
+`C-c C-o`; the note gets created in `notes/`. Writing the link **is** the
+promotion, and it is correct by construction, because writing the link means it
+has already been named.
+
+##### Editing: mechanics get overwritten, judgments get logged
+
+Notes are **edited in place**, not superseded by later iterations. Keeping "Basis
+Trade", "Basis Trade v2" and "Basis Trade (revised)" side by side means
+reconstructing the truth by reading three documents and diffing them.
+
+- **Mechanics** --- how something works, a definition, a procedure. Overwrite it.
+  There should be one note and it should be currently correct.
+- **Judgments** --- a view, a thesis, a call. Here the evolution **is** the content,
+  so keep a dated log inside the single note.
+
+Append-only feels like discipline, but its real motivation is fear of losing
+provenance, and that is already solved: **keep the vault under git**. A knowledge
+bank is measured by the cost of retrieving a correct answer, and versioned notes
+trade that away for a problem `git log` already handles.
+
+##### Writing for a future handoff
+
+This vault is for **ideation**. The real quant knowledge base is a later, separate
+thing with a designated team and a technical librarian compiling it, so what
+transfers out of here is **content and provenance --- not structure**. Nothing
+should be arranged now for eventual compatibility with a system nobody has
+designed yet.
+
+A writer can turn a rough correct idea into good prose but **cannot** reconstruct
+why something was believed. So: **lead with the claim** (first line states the
+assertion, not the background), **do not polish** (prose is the part being
+outsourced), and **keep the sources** (links and citations cannot be recovered
+later). A bare pasted URL counts --- capture beats formatting.
+
+Footnotes are deliberately unused, though both halves support them (Obsidian
+renders `[^1]` markers, and `markdown-insert-footnote` is on `C-c C-a f`). They
+are a presentation device for a reader who is not you, and the template's
+`## Sources` heading already holds provenance without anchors to maintain. A
+librarian can convert a source list into footnotes mechanically; nobody can
+recover a source that was never written down.
+
+The distinction worth keeping straight is footnote versus link, since only one
+of them is lossy. A wiki-link means "this deserves its own note and may be
+reached from elsewhere"; a footnote means "this supports this sentence and
+nowhere else". Footnoting something that deserved a link buries it where
+`obsidian-find-tag`, backlinks and xeft's title matching cannot see it --- the
+reverse mistake costs nothing.
+
+One decision that is cheap now and near-impossible later: when that firm bank
+becomes real, make it a **separate vault** --- not for tidiness, but for the
+moment other people get access.
 
 ### clean directories
 
 Move the `#<FILE>#` to a temporary directory instead of root directory.
 
 ```emacs-lisp
+(setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
 
-  (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
-
-  (setq lock-file-name-transforms
-      '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
-
+(setq lock-file-name-transforms
+    '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
 ```
 
 ### The `jw-emacs-information-management.el` call to provide
 
 ```emacs-lisp
-
-  (provide 'jw-emacs-information-management)
-
+(provide 'jw-emacs-information-management)
 ```
 
 ## The `jw-emacs-productivity.el` module
@@ -1281,141 +1800,134 @@ Move the `#<FILE>#` to a temporary directory instead of root directory.
 Make sure to run `M-x pdf-tools-install` after installation.
 
 ```emacs-lisp
+;;; jw-emacs-productivity.el --- Productivity tools -*- lexical-binding: t; -*-
+```
 
-  (use-package pdf-tools
-    :straight t
-    :config
-    (pdf-tools-install)
-    :hook (pdf-view-mode . (lambda () 
-                         (display-line-numbers-mode -1)
-                         (message "PDF Tools activated for this buffer"))))
-
-
+```emacs-lisp
+(use-package pdf-tools
+  :straight t
+  :config
+  (pdf-tools-install)
+  :hook (pdf-view-mode . (lambda () 
+                       (display-line-numbers-mode -1)
+                       (message "PDF Tools activated for this buffer"))))
 ```
 
 #### issues
 
 ##### 2025-01-15: works
 
-The issue with the ***2025-01-14*** is that if the installation works within the command line, when opening up a pdf file on Emacs would lead to the epdfserver crashing. This issue I found had to do with confict with `macports` being installed. If you uninstall macports, then the issue is resolved. 
+The issue with the **2025-01-14** is that if the installation works within the command line, when opening up a pdf file on Emacs would lead to the epdfserver crashing. This issue I found had to do with confict with `macports` being installed. If you uninstall macports, then the issue is resolved. 
 
 ##### 2025-01-14: !working
 
 If you receive the option to rebuild the `epdfserver` and you agree to building on Emacs, there are instances where the build fails. When running `M-x pdf-tools-install` you will rebuild within Emacs and will obtain more information. If the error consists of not being able to find poppler, copy and paste the command used to run the installation and run it in the command line outside of emacs.
 
-
 ### org-noter.el and org-pdftools.el
 
 ```emacs-lisp
+;; Ensure org-noter is installed
+(use-package org-noter
+  :straight t
+  :after (org pdf-tools)
+  :config
+  (setq org-noter-always-create-frame nil))
 
+;; Ensure org-pdftools is set up to work with org-mode
+(use-package org-pdftools
+  :straight t
+  :hook (org-mode . org-pdftools-setup-link))
 
-  ;; Ensure org-noter is installed
-  (use-package org-noter
-    :straight t
-    :after (org pdf-tools)
-    :config
-    (setq org-noter-always-create-frame nil))
+;; Configure org-noter-pdftools
+(use-package org-noter-pdftools
+  :after (org-noter pdf-tools)
+  :config
+  ;; Add a function to ensure precise note is inserted
+  (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+                                                   (not org-noter-insert-note-no-questions)
+                                                 org-noter-insert-note-no-questions))
+           (org-pdftools-use-isearch-link t)
+           (org-pdftools-use-freepointer-annot t))
+       (org-noter-insert-note (org-noter--get-precise-info)))))
 
-  ;; Ensure org-pdftools is set up to work with org-mode
-  (use-package org-pdftools
-    :straight t
-    :hook (org-mode . org-pdftools-setup-link))
+  ;; Fix for the specific issue
+  (defun org-noter-set-start-location (&optional arg)
+    "When opening a session with this document, go to the current location.
+  With a prefix ARG, remove start location."
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((inhibit-read-only t)
+           (ast (org-noter--parse-root))
+           (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+       (with-current-buffer (org-noter--session-notes-buffer session)
+         (org-with-wide-buffer
+          (goto-char (org-element-property :begin ast))
+          (if arg
+              (org-entry-delete nil org-noter-property-note-location)
+            (org-entry-put nil org-noter-property-note-location
+                           (org-noter--pretty-print-location location))))))))
 
-  ;; Configure org-noter-pdftools
-  (use-package org-noter-pdftools
-    :after (org-noter pdf-tools)
-    :config
-    ;; Add a function to ensure precise note is inserted
-    (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
-      (interactive "P")
-      (org-noter--with-valid-session
-       (let ((org-noter-insert-note-no-questions (if toggle-no-questions
-                                                     (not org-noter-insert-note-no-questions)
-                                                   org-noter-insert-note-no-questions))
-             (org-pdftools-use-isearch-link t)
-             (org-pdftools-use-freepointer-annot t))
-         (org-noter-insert-note (org-noter--get-precise-info)))))
+  ;; Add a hook for pdf-annot
+  (with-eval-after-load 'pdf-annot
+    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note))
 
-    ;; Fix for the specific issue
-    (defun org-noter-set-start-location (&optional arg)
-      "When opening a session with this document, go to the current location.
-    With a prefix ARG, remove start location."
-      (interactive "P")
-      (org-noter--with-valid-session
-       (let ((inhibit-read-only t)
-             (ast (org-noter--parse-root))
-             (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
-         (with-current-buffer (org-noter--session-notes-buffer session)
-           (org-with-wide-buffer
-            (goto-char (org-element-property :begin ast))
-            (if arg
-                (org-entry-delete nil org-noter-property-note-location)
-              (org-entry-put nil org-noter-property-note-location
-                             (org-noter--pretty-print-location location))))))))
+  ;; If you are working with EPUB files
+  (use-package nov
+    :straight t)
 
-    ;; Add a hook for pdf-annot
-    (with-eval-after-load 'pdf-annot
-      (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note))
-
-    ;; If you are working with EPUB files
-    (use-package nov
-      :straight t)
-
-    ;; If you are working with DJVU files
-    (use-package djvu
-      :straight t))
-
+  ;; If you are working with DJVU files
+  (use-package djvu
+    :straight t))
 ```
-
 
 ### The `jw-emacs-productivity.el` call to provide
 
 ```emacs-lisp
-
-  (provide 'jw-emacs-productivity)
-
+(provide 'jw-emacs-productivity)
 ```
 
-
 ## The `jw-emacs-development.el` module
+
 ### tramp.el --native
 
 ```emacs-lisp
-
-  (use-package tramp
-    :straight t)
-  (setq tramp-default-method "ssh")
-  ;; for debugging
-  (setq tramp-verbose 3)
-  ;; some basic performance enhancements
-  (setq remote-file-name-inhibit-locks t
-      tramp-use-scp-direct-remote-copying t
-      remote-file-name-inhibit-auto-save-visited t)
-  ;; disable backup files for tramp
-  (add-to-list 'backup-directory-alist
-              (cons tramp-file-name-regexp nil))
-
-  (setq tramp-connection-timeout 10) ;; 10 sec timeout
+;;; jw-emacs-development.el --- General development tooling -*- lexical-binding: t; -*-
 ```
 
+```emacs-lisp
+(use-package tramp
+  :straight t)
+(setq tramp-default-method "ssh")
+;; for debugging
+(setq tramp-verbose 3)
+;; some basic performance enhancements
+(setq remote-file-name-inhibit-locks t
+    tramp-use-scp-direct-remote-copying t
+    remote-file-name-inhibit-auto-save-visited t)
+;; disable backup files for tramp
+(add-to-list 'backup-directory-alist
+            (cons tramp-file-name-regexp nil))
+
+(setq tramp-connection-timeout 10) ;; 10 sec timeout
+```
 
 #### direct async
 
-Guide by [this blog post](https:/*coredumped.dev*2025*06*18*making-tramp-go-brrrr.*). 
+Guide by [this blog post](https://coredumped.dev/2025/06/18/making-tramp-go-brrrr./). 
 
 ```emacs-lisp
+(connection-local-set-profile-variables
+'remote-direct-async-process
+'((tramp-direct-async-process . t)))
 
-  (connection-local-set-profile-variables
-  'remote-direct-async-process
-  '((tramp-direct-async-process . t)))
+(connection-local-set-profiles
+'(:application tramp :protocol "scp")
+'remote-direct-async-process)
 
-  (connection-local-set-profiles
-  '(:application tramp :protocol "scp")
-  'remote-direct-async-process)
-
-  (setq magit-tramp-pipe-stty-settings 'pty)
-
-
+(setq magit-tramp-pipe-stty-settings 'pty)
 ```
 
 #### fixing remote compile
@@ -1423,11 +1935,9 @@ Guide by [this blog post](https:/*coredumped.dev*2025*06*18*making-tramp-go-brrr
 `compile` command disables remote ssh connection sharing, which will require you to reenter your password each time you connect. Want to enable this for convienence.
 
 ```emacs-lisp
-
-  (with-eval-after-load 'tramp
-  (with-eval-after-load 'compile
-      (remove-hook 'compilation-mode-hook #'tramp-compile-disable-ssh-controlmaster-options)))
-
+(with-eval-after-load 'tramp
+(with-eval-after-load 'compile
+    (remove-hook 'compilation-mode-hook #'tramp-compile-disable-ssh-controlmaster-options)))
 ```
 
 #### caching
@@ -1435,113 +1945,102 @@ Guide by [this blog post](https:/*coredumped.dev*2025*06*18*making-tramp-go-brrr
 Cache passwords until the end of the emacs session, which is default.
 
 ```emacs-lisp
-
-  (setq password-cache-expiry nil)
-
+(setq password-cache-expiry nil)
 ```
 
 ```emacs-lisp
+;; Configure TRAMP to use ~/.emacs.d/tmp/ for caching
+(let ((tramp-tmp-dir (expand-file-name "tmp/" user-emacs-directory)))
+;; Ensure the directory exists
+(unless (file-directory-p tramp-tmp-dir)
+    (make-directory tramp-tmp-dir t))
 
-    ;; Configure TRAMP to use ~/.emacs.d/tmp/ for caching
-    (let ((tramp-tmp-dir (expand-file-name "tmp/" user-emacs-directory)))
-    ;; Ensure the directory exists
-    (unless (file-directory-p tramp-tmp-dir)
-        (make-directory tramp-tmp-dir t))
+;; Set TRAMP cache directory
+(setq tramp-persistency-file-name (expand-file-name "tramp-cache" tramp-tmp-dir))
 
-    ;; Set TRAMP cache directory
-    (setq tramp-persistency-file-name (expand-file-name "tramp-cache" tramp-tmp-dir))
+;; Set auto-save directory for remote files
+(setq tramp-auto-save-directory tramp-tmp-dir)
 
-    ;; Set auto-save directory for remote files
-    (setq tramp-auto-save-directory tramp-tmp-dir)
+;; Optional: Set backup directory for remote files to tmp as well
+(setq tramp-backup-directory-alist `(("." . ,tramp-tmp-dir))))
 
-    ;; Optional: Set backup directory for remote files to tmp as well
-    (setq tramp-backup-directory-alist `(("." . ,tramp-tmp-dir))))
+;; Enable persistent caching
+(setq tramp-cache-read-persistent-data t)
+(setq tramp-cache-compress t)
+(setq remote-file-name-inhibit-cache nil)
 
-    ;; Enable persistent caching
-    (setq tramp-cache-read-persistent-data t)
-    (setq tramp-cache-compress t)
-    (setq remote-file-name-inhibit-cache nil)
-
-    (defun memoize-remote (key cache orig-fn &rest args)
-    "Memoize a value if the key is a remote path."
-    (if (and key
-            (file-remote-p key))
-        (if-let ((current (assoc key (symbol-value cache))))
-            (cdr current)
-            (let ((current (apply orig-fn args)))
-            (set cache (cons (cons key current) (symbol-value cache)))
-            current))
-        (apply orig-fn args)))
-
+(defun memoize-remote (key cache orig-fn &rest args)
+"Memoize a value if the key is a remote path."
+(if (and key
+        (file-remote-p key))
+    (if-let* ((current (assoc key (symbol-value cache))))
+        (cdr current)
+        (let ((current (apply orig-fn args)))
+        (set cache (cons (cons key current) (symbol-value cache)))
+        current))
+    (apply orig-fn args)))
 ```
 
-
 ```emacs-lisp
+;; Memoize current project
+(defvar project-current-cache nil)
+(defun memoize-project-current (orig &optional prompt directory)
+(memoize-remote (or directory
+                    project-current-directory-override
+                    default-directory)
+                'project-current-cache orig prompt directory))
+(advice-add 'project-current :around #'memoize-project-current)
 
-    ;; Memoize current project
-    (defvar project-current-cache nil)
-    (defun memoize-project-current (orig &optional prompt directory)
-    (memoize-remote (or directory
-                        project-current-directory-override
-                        default-directory)
-                    'project-current-cache orig prompt directory))
-    (advice-add 'project-current :around #'memoize-project-current)
+;; Memoize magit top level
+(defvar magit-toplevel-cache nil)
+(defun memoize-magit-toplevel (orig &optional directory)
+(memoize-remote (or directory default-directory)
+                'magit-toplevel-cache orig directory))
+(advice-add 'magit-toplevel :around #'memoize-magit-toplevel)
 
-    ;; Memoize magit top level
-    (defvar magit-toplevel-cache nil)
-    (defun memoize-magit-toplevel (orig &optional directory)
-    (memoize-remote (or directory default-directory)
-                    'magit-toplevel-cache orig directory))
-    (advice-add 'magit-toplevel :around #'memoize-magit-toplevel)
+;; memoize vc-git-root
+(defvar vc-git-root-cache nil)
+(defun memoize-vc-git-root (orig file)
+(let ((value (memoize-remote (file-name-directory file) 'vc-git-root-cache orig file)))
+    ;; sometimes vc-git-root returns nil even when there is a root there
+    (when (null (cdr (car vc-git-root-cache)))
+    (setq vc-git-root-cache (cdr vc-git-root-cache)))
+    value))
+(advice-add 'vc-git-root :around #'memoize-vc-git-root)
 
-    ;; memoize vc-git-root
-    (defvar vc-git-root-cache nil)
-    (defun memoize-vc-git-root (orig file)
-    (let ((value (memoize-remote (file-name-directory file) 'vc-git-root-cache orig file)))
-        ;; sometimes vc-git-root returns nil even when there is a root there
-        (when (null (cdr (car vc-git-root-cache)))
-        (setq vc-git-root-cache (cdr vc-git-root-cache)))
-        value))
-    (advice-add 'vc-git-root :around #'memoize-vc-git-root)
+;; memoize all git candidates in the current project
+(defvar $counsel-git-cands-cache nil)
+(defun $memoize-counsel-git-cands (orig dir)
+($memoize-remote (magit-toplevel dir) '$counsel-git-cands-cache orig dir))
+(advice-add 'counsel-git-cands :around #'$memoize-counsel-git-cands)
 
-    ;; memoize all git candidates in the current project
-    (defvar $counsel-git-cands-cache nil)
-    (defun $memoize-counsel-git-cands (orig dir)
-    ($memoize-remote (magit-toplevel dir) '$counsel-git-cands-cache orig dir))
-    (advice-add 'counsel-git-cands :around #'$memoize-counsel-git-cands)
-
-    ;; Optional: Function to clear cache when needed
-    (defun jw/clear-tramp-cache ()
-    "Clear TRAMP cache files in ~/.emacs.d/tmp/"
-    (interactive)
-    (let ((cache-file tramp-persistency-file-name))
-        (when (file-exists-p cache-file)
-        (delete-file cache-file)
-        (message "TRAMP cache cleared"))))
-
+;; Optional: Function to clear cache when needed
+(defun jw/clear-tramp-cache ()
+"Clear TRAMP cache files in ~/.emacs.d/tmp/"
+(interactive)
+(let ((cache-file tramp-persistency-file-name))
+    (when (file-exists-p cache-file)
+    (delete-file cache-file)
+    (message "TRAMP cache cleared"))))
 ```
 
 ### project.el  --native
 
 ```emacs-lisp
-
-  (require 'project)
-
+(require 'project)
 ```
-
 
 Set the project paths, but currently the code below only works for `emacs 30+`.
 
 ```emacs-lisp
-   (defun jw/project-prompter ()
-        (read-file-name "Select a project folder:"
-                        "~/Otzar/Projects/Code/"
-                        nil
-                        nil
-                        nil
-                        #'file-directory-p))
-   (setq project-prompter #'jw/project-prompter)
-
+(defun jw/project-prompter ()
+     (read-file-name "Select a project folder:"
+                     "~/Core/Otzar/projects/projects__code/"
+                     nil
+                     nil
+                     nil
+                     #'file-directory-p))
+(setq project-prompter #'jw/project-prompter)
 ```
 
 ### visualizing delimiters
@@ -1549,20 +2048,16 @@ Set the project paths, but currently the code below only works for `emacs 30+`.
 `show-paren-mode` allows one to see matching pairs of parentheses and other characters. When point is on the opening character of one of the paired characters, the other is highlighted. When the point is after the closing character of one of the paired characters, the other is highlighted. 
 
 ```emacs-lisp
-
-  (show-paren-mode 1)
-
+(show-paren-mode 1)
 ```
 
 To visualize all delimiters,
 
-[rainbow-delimiters](https:/*github.com*Fanael/rainbow-delimiters) is useful in programming modes because it colorizes nested parentheses and brackets according to their nesting depth.  This makes it a lot easier to visually match parentheses in Emacs Lisp code without having to count them yourself.
+[rainbow-delimiters](https://github.com/Fanael/rainbow-delimiters) is useful in programming modes because it colorizes nested parentheses and brackets according to their nesting depth.  This makes it a lot easier to visually match parentheses in Emacs Lisp code without having to count them yourself.
 
 ```emacs-lisp
-
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
-
 ```
 
 ### electric-pair-mode.el --native
@@ -1570,40 +2065,33 @@ To visualize all delimiters,
 `electric-pair-mode` will auto pair delimiters for you. One issue with the auto pairing is the `<` character in `org-mode`. The following hook to the enabling of `electric-pair-mode` aims to solve the issue when in `org-mode`.
 
 ```emacs-lisp
+(electric-pair-mode t)
 
-  (electric-pair-mode t)
-
-  (add-hook 'org-mode-hook (lambda ()
-           (setq-local electric-pair-inhibit-predicate
-                   `(lambda (c)
-                  (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
-
+(add-hook 'org-mode-hook (lambda ()
+         (setq-local electric-pair-inhibit-predicate
+                 `(lambda (c)
+                (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
 ```
 
 ### evil-surround.el
 
-`evil-surround` emulates [surround.vim](https:/*github.com*tpope*vim-surround). For usage instructions visit [evil-surround](https:**github.com*emacs-evil/evil-surround)
+`evil-surround` emulates [surround.vim](https://github.com/tpope/vim-surround). For usage instructions visit [evil-surround](https://github.com/emacs-evil/evil-surround)
 
 ```emacs-lisp
-
-  (use-package evil-surround
-    :straight t
-    :config
-    (global-evil-surround-mode 1))
-
+(use-package evil-surround
+  :straight t
+  :config
+  (global-evil-surround-mode 1))
 ```
 
 ### command-log-mode.el
 
 For logging keys,
 
-[command-log-mode](https:/*github.com*lewang/command-log-mode) is useful for displaying a panel showing each key binding you use in a panel on the right side of the frame. Great for live streams and screencasts!
-
+[command-log-mode](https://github.com/lewang/command-log-mode) is useful for displaying a panel showing each key binding you use in a panel on the right side of the frame. Great for live streams and screencasts!
 
 ```emacs-lisp
-
-  (use-package command-log-mode)
-
+(use-package command-log-mode)
 ```
 
 To activate `command-log-mode` you must first run `M-x global-command-log-mode` to have `command-log-mode` in every buffer and then run `M-x clm/toggle-command-log-buffer` to have the buffer be displayed.
@@ -1611,356 +2099,228 @@ To activate `command-log-mode` you must first run `M-x global-command-log-mode` 
 ### The `jw-emacs-development.el` call to provide
 
 ```emacs-lisp
-
-  (provide 'jw-emacs-development)
-
+(provide 'jw-emacs-development)
 ```
 
 ## The `jw-emacs-which-key.el` module
 
-There is a user option in my setup to load this module ([The init.el option to enable which-key](https:/*protesilaos.com*emacs/dotemacs#h:24324854-1f8c-4d8b-aa7c-291de968cbf4)).
+There is a user option in my setup to load this module ([The init.el option to enable which-key](https://protesilaos.com/emacs/dotemacs#h:24324854-1f8c-4d8b-aa7c-291de968cbf4)).
 
 When the `which-key-mode` is enabled, any incomplete key sequence will produce a popup at the lower part of the Emacs frame showing keys that complete the current sequence together with the name of the command they are invoking.
 
 ```emacs-lisp
-
-  (use-package which-key
-    :straight t
-    :hook (after-init . which-key-mode)
-    :config
-    (setq which-key-separator "  ")
-    (setq which-key-prefix-prefix "... ")
-    (setq which-key-max-display-columns 3)
-    (setq which-key-idle-delay 1.5)
-    (setq which-key-idle-secondary-delay 0.25)
-    (setq which-key-add-column-padding 1)
-    (setq which-key-max-description-length 40))
-
-  (provide 'jw-emacs-which-key)
-
-```
-
-## The `jw-emacs-ai.el` module
-
-The purpose of this module is to have my integrations with llms or other ai models.
-
-
-### gptel.el
-
-Incorporates the use of llms in the emacs client. For a great summary of the features please see [Ben Simon's video](https:/*www.blogbyben.com*2024*08*gptel-mindblowing-integration-between.html). For accessing the source code please see [karthink's repo](https:/*github.com*karthink/gptel).
-
-```emacs-lisp
-
-  (use-package gptel
-    :straight t
-    :after auth-source
-    :init
-    ;; Ensure auth-source is configured to find ~/.authinfo or ~/.authinfo.gpg
-    (setq auth-sources '("~/.authinfo.gpg" "~/.authinfo" "~/.netrc"))
-    :config
-    ;; Helper function to read file contents
-    (defun gptel-read-file (file-path)
-        "Read the contents of FILE-PATH into a string, trimming whitespace."
-        (if (and (file-exists-p file-path) (file-readable-p file-path))
-            (with-temp-buffer
-            (insert-file-contents file-path)
-            (string-trim (buffer-string)))
-        (progn
-            (message "Warning: File %s is not readable or does not exist" file-path)
-            "You are a polymath who is a helpful assistant. Respond concisely and accurately.")))
-
-    ;; Define directives with file paths
-    (setq gptel-directives
-            (list
-            (cons 'default "You are a polymath who is a helpful assistant. Respond concisely and accurately.")
-            (cons 'coding (gptel-read-file "~/.dotfiles/.assets/gpt-prompts/coding.txt"))
-            (cons 'writing (gptel-read-file "~/.dotfiles/.assets/gpt-prompts/writing.txt"))
-            (cons 'research (gptel-read-file "~/.dotfiles/.assets/gpt-prompts/research.txt"))))
-
-    ;; Set default directive
-    (setq gptel-default-directive 'coding)
-
-    
-    ;; Refresh directives dynamically
-    (defun gptel-refresh-directives ()
-        "Refresh gptel-directives by re-reading files."
-        (interactive)
-        (setq gptel-directives
-            (list
-            (cons 'default "You are a polymath who is a helpful assistant. Respond concisely and accurately.")
-            (cons 'coding (gptel-read-file "~/.dotfiles/.assets/gpt-prompts/coding.txt"))
-            (cons 'writing (gptel-read-file "~/.dotfiles/.assets/gpt-prompts/writing.txt"))
-            (cons 'research (gptel-read-file "~/.dotfiles/.assets/gpt-prompts/research.txt"))))
-        (message "Refreshed gptel-directives from files."))
-
-    ;; Set OpenAI API key using gptel-api-key-from-auth-source
-    (setq gptel-api-key (lambda ()
-                          (auth-source-forget-all-cached)
-                          (gptel-api-key-from-auth-source)))
-    ;; Configure Google (Gemini) backend
-    (gptel-make-gemini "Gemini" :stream t
-                        :key (lambda ()
-             (auth-source-forget-all-cached)
-             (gptel-api-key-from-auth-source "generativelanguage.googleapis.com")))
-    ;; Configure Anthropic (Claude) backend
-    (gptel-make-anthropic "Claude"
-      :stream t
-      :key (lambda ()
-             (auth-source-forget-all-cached)
-             (gptel-api-key-from-auth-source "console.anthropic.com")))
-    ;; Optional: Enable debugging for auth-source issues
-    ;; (setq auth-source-debug t)
-  )
-
-(setq gptel-display-buffer-action
-      '(display-buffer-in-side-window
-        (side . right)
-        (window-width . 0.4)))
-
+;;; jw-emacs-which-key.el --- which-key configuration -*- lexical-binding: t; -*-
 ```
 
 ```emacs-lisp
+(use-package which-key
+  :straight t
+  :hook (after-init . which-key-mode)
+  :config
+  (setq which-key-separator "  ")
+  (setq which-key-prefix-prefix "... ")
+  (setq which-key-max-display-columns 3)
+  (setq which-key-idle-delay 1.5)
+  (setq which-key-idle-secondary-delay 0.25)
+  (setq which-key-add-column-padding 1)
+  (setq which-key-max-description-length 40))
 
-    (defun gptel-save-response ()
-    "Save the entire gptel buffer to a file with a user-provided name."
-    (interactive)
-    (unless (bound-and-true-p gptel-mode)
-        (user-error "This command must be run in a gptel-mode buffer"))
-    (let* ((response (buffer-string))
-            (user-input (read-string "Enter a concise (2-5 words) filename description: ")))
-        (if (string-empty-p response)
-            (message "Error: Buffer is empty, cannot save file")
-        (let* ((clean-name (if (and user-input (stringp user-input) (not (string-empty-p user-input)))
-                                (string-trim (replace-regexp-in-string "[^a-zA-Z0-9-]" "" (replace-regexp-in-string "\\s+" "-" user-input)))
-                            "fallback-name"))
-                (timestamp (format-time-string "%Y%m%dT%H%M%S"))
-                (base-dir "~/Otzar/llm-outputs/")
-                (filename (concat (file-name-as-directory (expand-file-name base-dir)) timestamp "--" clean-name ".md")))
-            (condition-case err
-                (progn
-                (make-directory base-dir t)
-                (write-region (point-min) (point-max) filename nil 'silent)
-                (message "Saved buffer to %s" filename))
-            (error
-            (message "Error saving file: %s" err)))))))
-
-
-```
-
-
-### The `jw-emacs-ai.el` call to provide
-
-```emacs-lisp
-
-  (provide 'jw-emacs-ai)
-
+(provide 'jw-emacs-which-key)
 ```
 
 ## The `jw-emacs-langs.el` module
 
 ### treesitter
 
-Set language sources for treesit
+Set language sources for treesit.
 
 ```emacs-lisp
-
-  (setq treesit-language-source-alist
-        '((typescript .        ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
-          (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
-          (python . ("https://github.com/tree-sitter/tree-sitter-python"))
-          (json "https://github.com/tree-sitter/tree-sitter-json")
-          (css "https://github.com/tree-sitter/tree-sitter-css")
-          (html "https://github.com/tree-sitter/tree-sitter-html")
-          (yaml "https://github.com/ikatyang/tree-sitter-yaml")
-          (toml "https://github.com/tree-sitter/tree-sitter-toml")
-          (make "https://github.com/alemuller/tree-sitter-make")
-          (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-          (elisp "https://github.com/Wilfred/tree-sitter-elisp")
-          (cmake "https://github.com/uyha/tree-sitter-cmake")
-          (c "https://github.com/tree-sitter/tree-sitter-c")
-          (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
-          (r "https://github.com/r-lib/tree-sitter-r")
-          (bash "https://github.com/tree-sitter/tree-sitter-bash")
-          ))
-
-  (dolist (source treesit-language-source-alist)
-    (unless (treesit-ready-p (car source))
-      (treesit-install-language-grammar (car source))))
-
-  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.cpp\\'" . c++-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.c\\'" . c-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.mdx\\'" . markdown-mode))
-  (add-to-list 'major-mode-remap-alist '(
-                                         (python-mode . python-ts-mode)
-                                         (json-mode . json-ts-mode)
-                                         (css-mode . css-ts-mode)
-                                         (bash-mode . bash-ts-mode)
-                                         (yaml-mode . yaml-ts-mode)
-                                         (c++-mode . c++-ts-mode)
-                                         (c-mode . c-ts-mode)
-                                         ))
+;;; jw-emacs-langs.el --- Language and tree-sitter configuration -*- lexical-binding: t; -*-
 ```
 
+```emacs-lisp
+(setq treesit-language-source-alist
+      '((typescript .        ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+        (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+        (python . ("https://github.com/tree-sitter/tree-sitter-python"))
+        (json "https://github.com/tree-sitter/tree-sitter-json")
+        (css "https://github.com/tree-sitter/tree-sitter-css")
+        (html "https://github.com/tree-sitter/tree-sitter-html")
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml")
+        (toml "https://github.com/tree-sitter/tree-sitter-toml")
+        (make "https://github.com/alemuller/tree-sitter-make")
+        (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+        (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+        (cmake "https://github.com/uyha/tree-sitter-cmake")
+        (c "https://github.com/tree-sitter/tree-sitter-c")
+        (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+        (r "https://github.com/r-lib/tree-sitter-r")
+        (bash "https://github.com/tree-sitter/tree-sitter-bash")
+        ))
+
+;; Install any missing grammars.  Guard each one individually:
+;; `treesit-install-language-grammar' signals an error when a grammar cannot
+;; be fetched or compiled, which would abort the whole loop and leave later
+;; grammars (e.g. `bash', the last entry) uninstalled.  Wrapping each call so
+;; one bad grammar cannot block the rest.
+(dolist (source treesit-language-source-alist)
+  (let ((lang (car source)))
+    (unless (treesit-language-available-p lang)
+      (condition-case err
+          (treesit-install-language-grammar lang)
+        (error
+         (message "Could not install tree-sitter grammar for `%s': %s"
+                  lang (error-message-string err)))))))
+
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.cpp\\'" . c++-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.c\\'" . c-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.mdx\\'" . markdown-mode))
+(add-to-list 'major-mode-remap-alist '(
+                                       (python-mode . python-ts-mode)
+                                       (json-mode . json-ts-mode)
+                                       (css-mode . css-ts-mode)
+                                       (bash-mode . bash-ts-mode)
+                                       (yaml-mode . yaml-ts-mode)
+                                       (c++-mode . c++-ts-mode)
+                                       (c-mode . c-ts-mode)
+                                       ))
+```
 
 The issue with the built in `treesit.el` is that it does not auto default to which language server. In addition if you need to install you will have to input the url yourself. This package is here to automate the process.
 
 ```emacs-lisp
-
-  (use-package treesit-auto
-    :straight t
-    :custom
-    (treesit-auto-install 'prompt)
-    :config
-    (treesit-auto-add-to-auto-mode-alist 'all)
-    (global-treesit-auto-mode))
-
+(use-package treesit-auto
+  :straight t
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 ```
 
 Auto install grammars when missing
 
 ```emacs-lisp
-
-  (setq treesit-auto-install 'prompt)
-
+(setq treesit-auto-install 'prompt)
 ```
-
 
 ### latex
 
 ```emacs-lisp
+(use-package auctex
+  :straight t
+  :defer t
+  :init
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq TeX-PDF-mode t)
+  :config
+  (setq TeX-engine 'default)
+  (setq TeX-output-dir "tmp/")
+  (setq LaTeX-output-directory "tmp/")
 
-  (use-package auctex
-    :straight t
-    :defer t
-    :init
-    (setq TeX-auto-save t)
-    (setq TeX-parse-self t)
-    (setq TeX-PDF-mode t) ; Enable PDF output by default
-    :config
-    ;; Set the default engine
-    (setq TeX-engine 'default)
-    
-    ;; Put auxiliary files in a tmp subdirectory
-    (setq TeX-output-dir "tmp/")
-    (setq LaTeX-output-directory "tmp/")
-    
-    ;; Simplified PDF viewer configuration for macOS
-    (when (eq system-type 'darwin) ; macOS only
-      (setq TeX-view-program-list '(("Preview.app" "open -a Preview.app %o")
-        ("Skim" "open -a Skim.app %o")
-        ("displayline" "displayline -g -b %n %o %b")
-        ("open" "open %o")))
-      (setq TeX-view-program-selection '((output-pdf "Skim"))))
-    
-    ;; For non-macOS systems, use default viewer
-    (unless (eq system-type 'darwin)
-      (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
-    
-    ;; Ensure we have a default command
-    (setq TeX-command-default "LaTeX")
-    
-    ;; Auto-revert PDF files when they change
-    (add-hook 'TeX-after-compilation-finished-functions
-              #'TeX-revert-document-buffer)
-    
-    ;; LaTeX mode hooks
-    (add-hook 'LaTeX-mode-hook 'visual-line-mode) ; Enable word wrap
-    (add-hook 'LaTeX-mode-hook 'flyspell-mode)    ; Enable spell checking
-    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)  ; Enable math mode
-    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; Enable RefTeX
-    
-    ;; Ensure TeX-command-run-all works properly
-    (add-hook 'LaTeX-mode-hook 
-              (lambda ()
-                ;; Make sure the master file is set
-                (when (and (buffer-file-name)
-                           (not TeX-master))
-                  (setq-local TeX-master (file-name-sans-extension
-                                         (file-name-nondirectory (buffer-file-name)))))))
-      ;; Auto-compile on save
-    (add-hook 'LaTeX-mode-hook
-              (lambda ()
-                  (add-hook 'after-save-hook 
-                          (lambda () (TeX-command-run-all nil)) 
-                          nil 'make-it-local)))
-    ;; RefTeX configuration
-    (setq reftex-plug-into-AUCTeX t))
+  (when (eq system-type 'darwin)
+    (setq TeX-view-program-list
+          '(("Preview.app" "open -a Preview.app %o")
+            ("Skim" "open -a Skim.app %o")
+            ("displayline" "displayline -g -b %n %o %b")
+            ("open" "open %o")))
+    (setq TeX-view-program-selection '((output-pdf "Skim"))))
 
+  (unless (eq system-type 'darwin)
+    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))))
 
+  (setq TeX-command-default "LaTeX")
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer)
+
+  (add-hook 'LaTeX-mode-hook #'visual-line-mode)
+  (add-hook 'LaTeX-mode-hook #'flyspell-mode)
+  (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
+  (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
+
+  (setq reftex-plug-into-AUCTeX t))
 ```
-
 
 #### commands
 
-`C-c C-a` (`TeX-command-run-all`): compiles tex document and auto opens in the pdf viewer
+Saving a `.tex` file does not compile it; project Makefiles own the build.
 
+`C-c C-a` (`TeX-command-run-all`) remains available when an ad-hoc AUCTeX
+compile is useful.  On macOS, that manual command opens the result in Skim.
 
 ### python
 
 Configuring pythone envs with `conda`.
 
 ```emacs-lisp
-
 (use-package conda
   :straight t
   :config
   (setq conda-anaconda-home (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/"))
   (setq conda-env-home-directory (expand-file-name "/opt/homebrew/Caskroom/miniconda/base/envs/"))
   (conda-env-autoactivate-mode t))
-
-
 ```
-
 
 Python formatter configuration.
 
 ```emacs-lisp
-
-  (use-package python-black
-    :demand t
-    :after python
-    :hook (python-ts-mode . python-black-on-save-mode))
-
+(use-package python-black
+  :demand t
+  :after python
+  :hook (python-ts-mode . python-black-on-save-mode))
 ```
 
+### r
+
+R syntax and REPL integration through `ESS`.
+
+```emacs-lisp
+(use-package ess
+  :straight t
+  :mode (("\\.R\\'" . ess-r-mode)
+         ("\\.r\\'" . ess-r-mode)))
+```
 
 ### astro.js
 
-I used the [following guide](https:/*medium.com*@jrmjrm/configuring-emacs-and-eglot-to-work-with-astro-language-server-9408eb709ab0) from medium for this configuration.
+I used the [following guide](https://medium.com/@jrmjrm/configuring-emacs-and-eglot-to-work-with-astro-language-server-9408eb709ab0) from medium for this configuration.
 
 ```emacs-lisp
+;; WEB MODE
+(use-package web-mode
+:straight t)
 
-    ;; WEB MODE
-    (use-package web-mode
-    :straight t)
-
-    ;; astro
-    ;; ASTRO
-    (define-derived-mode astro-mode web-mode "astro")
-    (setq auto-mode-alist
-        (append '((".*\\.astro\\'" . astro-mode))
-                auto-mode-alist))
-  
-
+;; astro
+;; ASTRO
+(define-derived-mode astro-mode web-mode "astro")
+(setq auto-mode-alist
+    (append '((".*\\.astro\\'" . astro-mode))
+            auto-mode-alist))
 ```
 
-Now set the config in [eglot](id:F9D087EE-895F-4DBC-BBCF-3056A2A5266E).  
+Now set the config in eglot.  
 
+### pandoc
+
+```emacs-lisp
+(use-package pandoc-mode
+  :straight t
+  :hook (markdown-mode . pandoc-mode))
+```
 
 ### rust
 
 Download `rust-mode`.
 
 ```emacs-lisp
-
-    (use-package rust-mode
-    :straight t
-    :mode "\\.rs\\'"
-    :config
-    (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode)))
-
+(use-package rust-mode
+:straight t
+:mode "\\.rs\\'"
+:config
+(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode)))
 ```
 
 Setting up `rust-mode`.
@@ -1968,13 +2328,10 @@ Setting up `rust-mode`.
 Custom function to find rust analyzer.
 
 ```emacs-lisp
-
-  (defun jw/find-rust-analyzer ()
-    (or (executable-find "rust-analyzer")
-        (expand-file-name "~/.cargo/bin/rust-analyzer")))
-
+(defun jw/find-rust-analyzer ()
+  (or (executable-find "rust-analyzer")
+      (expand-file-name "~/.cargo/bin/rust-analyzer")))
 ```
-
 
 ### typescript
 
@@ -1983,238 +2340,231 @@ Typescript support is done through `treesit.el`, which is now native to emacs as
 Therefore all of the typescript will be using the tree-sitter equivalent.
 
 ```emacs-lisp
-
-  ;; (use-package typescript-mode
-  ;; :ensure t
-  ;; :mode "\\.ts\\'")
-
+;; (use-package typescript-mode
+;; :ensure t
+;; :mode "\\.ts\\'")
 ```
 
 Install `json-mode`
 
 ```emacs-lisp
-
-  ;; (use-package json-mode
-  ;; :ensure t
-  ;; :mode "\\.json\\'")
-
+;; (use-package json-mode
+;; :ensure t
+;; :mode "\\.json\\'")
 ```
-
 
 ### apheleia.el
 
 Make sure you have the necessary packages installed.
 
 ```emacs-lisp
-
-  (use-package apheleia
-    :straight t
-    :config
-    (setf (alist-get 'prettier-json apheleia-formatters)
-        '("prettier" "--stdin-filepath" filepath))
-    ;; Map json-ts-mode to the prettier-json formatter
-    (setf (alist-get 'json-ts-mode apheleia-mode-alist)
-        '(prettier-json))
-    (add-to-list 'apheleia-mode-alist '(tsx-ts-mode . prettier))
-    (add-to-list 'apheleia-mode-alist '(typescript-ts-mode . prettier))
-    (add-to-list 'apheleia-mode-alist '(c++-ts-mode . clang-format))
-    (add-to-list 'apheleia-mode-alist '(c-ts-mode . clang-format))
-    (apheleia-global-mode +1))
-
+(use-package apheleia
+  :straight t
+  :config
+  (setf (alist-get 'prettier-json apheleia-formatters)
+      '("prettier" "--stdin-filepath" filepath))
+  ;; R formatter via styler (requires `install.packages("styler")` in R)
+  (setf (alist-get 'r-styler apheleia-formatters)
+        '("Rscript" "--vanilla" "-e"
+          "con<-file('stdin');txt<-readLines(con,warn=FALSE);close(con);cat(styler::style_text(txt),sep='\\n')"))
+  ;; Map json-ts-mode to the prettier-json formatter
+  (setf (alist-get 'json-ts-mode apheleia-mode-alist)
+      '(prettier-json))
+  (setf (alist-get 'ess-r-mode apheleia-mode-alist)
+        '(r-styler))
+  (add-to-list 'apheleia-mode-alist '(tsx-ts-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(typescript-ts-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(c++-ts-mode . clang-format))
+  (add-to-list 'apheleia-mode-alist '(c-ts-mode . clang-format))
+  (apheleia-global-mode +1))
 ```
 
-
 ### eglot.el --native
-:PROPERTIES:
-:ID:       F9D087EE-895F-4DBC-BBCF-3056A2A5266E
-:END:
 
 ```emacs-lisp
+;; Dynamic server program functions
+(defun jw/python-lsp-program (&optional _interactive)
+"Get Python LSP program."
+(if (file-remote-p default-directory)
+    '("/home/jozhw/bin/pylsp-wrapper")
+    '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
 
-  ;; Dynamic server program functions
-  (defun jw/python-lsp-program (&optional interactive)
-  "Get Python LSP program."
-  (if (file-remote-p default-directory)
-      '("/home/jozhw/bin/pylsp-wrapper")
-      '("/opt/homebrew/Caskroom/miniconda/base/bin/pyright-langserver" "--stdio")))
+    (defun jw/rust-lsp-program (&optional _interactive)
+    "Get Rust LSP program."
+    (list (jw/find-rust-analyzer)))
 
-      (defun jw/rust-lsp-program (&optional interactive)
-      "Get Rust LSP program."
-      (list (jw/find-rust-analyzer)))
+    (defun jw/clangd-lsp-program (&optional _interactive)
+    "Get clangd LSP program."
+    '("clangd"))
 
-      (defun jw/clangd-lsp-program (&optional interactive)
-      "Get clangd LSP program."
-      '("clangd"))
+    (defun jw/typescript-lsp-program (&optional _interactive)
+    "Get TypeScript LSP program."
+    '("typescript-language-server" "--stdio"))
 
-      (defun jw/typescript-lsp-program (&optional interactive)
-      "Get TypeScript LSP program."
-      '("typescript-language-server" "--stdio"))
+    (defun jw/marksman-lsp-program (&optional _interactive)
+    "Get Marksman LSP program."
+    '("marksman"))
 
-      (defun jw/marksman-lsp-program (&optional interactive)
-      "Get Marksman LSP program."
-      '("marksman"))
+    (defun jw/astro-lsp-program (&optional _interactive)
+    "Get Astro LSP program."
+    '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
 
-      (defun jw/astro-lsp-program (&optional interactive)
-      "Get Astro LSP program."
-      '("astro-ls" "--stdio" :initializationOptions (:typescript (:tsdk "./node_modules/typescript/lib"))))
+    (defun jw/tex-lsp-program (&optional _interactive)
+     "Get latex lsp program"
+     '("texlab")
+     )
 
-      (defun jw/tex-lsp-program (&optional interactive)
-       "Get latex lsp program"
-       '("texlab")
-       )
-
-
+    (defun jw/r-lsp-program (&optional _interactive)
+    "Get R LSP program."
+    '("R" "--slave" "-e" "languageserver::run()"))
 ```
 
 Add to `eglot` server list and setup hook after eglot is loaded.
 
 ```emacs-lisp
+;; Enhanced eglot configuration
+(with-eval-after-load 'eglot
+(setq eglot-prefer-local-server t)
+;; undo elgot modifications of completion-category-defaults
+(setq completion-category-defaults nil)
+(setq eglot-connect-timeout 120)
 
-    ;; Enhanced eglot configuration
-    (with-eval-after-load 'eglot
-    (setq eglot-prefer-local-server t)
-    ;; undo elgot modifications of completion-category-defaults
-    (setq completion-category-defaults nil)
-    (setq eglot-connect-timeout 120)
-
-    ;; Use function symbols - eglot will call these functions to get the command
-    (add-to-list 'eglot-server-programs
-                '(python-ts-mode . jw/python-lsp-program))
-    (add-to-list 'eglot-server-programs
-                '(rust-mode . jw/rust-lsp-program))
-    (add-to-list 'eglot-server-programs 
-                '((c++-ts-mode c-ts-mode) . jw/clangd-lsp-program))
-    (add-to-list 'eglot-server-programs
-                '(typescript-ts-mode . jw/typescript-lsp-program))
-    (add-to-list 'eglot-server-programs
-                '(tsx-ts-mode . jw/typescript-lsp-program))
-    (add-to-list 'eglot-server-programs 
-                '(markdown-mode . jw/marksman-lsp-program))
-    (add-to-list 'eglot-server-programs 
-                '((latex-mode tex-mode LaTex-mode) . jw/tex-lsp-program))
-    (add-to-list 'eglot-server-programs 
-                '(astro-mode . jw/astro-lsp-program)))
-
+;; Use function symbols - eglot will call these functions to get the command
+(add-to-list 'eglot-server-programs
+            '(python-ts-mode . jw/python-lsp-program))
+(add-to-list 'eglot-server-programs
+            '(rust-mode . jw/rust-lsp-program))
+(add-to-list 'eglot-server-programs 
+            '((c++-ts-mode c-ts-mode) . jw/clangd-lsp-program))
+(add-to-list 'eglot-server-programs
+            '(typescript-ts-mode . jw/typescript-lsp-program))
+(add-to-list 'eglot-server-programs
+            '(tsx-ts-mode . jw/typescript-lsp-program))
+(add-to-list 'eglot-server-programs 
+            '(markdown-mode . jw/marksman-lsp-program))
+(add-to-list 'eglot-server-programs 
+            '((latex-mode tex-mode LaTeX-mode) . jw/tex-lsp-program))
+(add-to-list 'eglot-server-programs
+            '(ess-r-mode . jw/r-lsp-program))
+(add-to-list 'eglot-server-programs 
+            '(astro-mode . jw/astro-lsp-program)))
 ```
 
 Function to start eglot.
 
 ```emacs-lisp
-
-  ;; Function to start eglot
-    (defun jw/maybe-start-eglot ()
-    "Start eglot if current mode is supported and file is not remote."
-    (when (and (not (file-remote-p default-directory))
-                (or (derived-mode-p 'python-mode)
-                    (derived-mode-p 'python-ts-mode)
-                    (derived-mode-p 'rust-mode)
-                    (derived-mode-p 'tex-mode)
-                    (derived-mode-p 'c-ts-mode)
-                    (derived-mode-p 'c++-ts-mode)
-                    (derived-mode-p 'typescript-ts-mode)
-                    (derived-mode-p 'tsx-ts-mode)
-                    (derived-mode-p 'markdown-mode)
-                    (derived-mode-p 'astro-mode)))
-        (eglot-ensure)))
-
-  ;; Helper function to restart eglot in current buffer
-  (defun jw/restart-eglot ()
-    "Restart eglot in current buffer."
-    (interactive)
-    (when (eglot-current-server)
-      (eglot-shutdown (eglot-current-server))
+;; Function to start eglot
+  (defun jw/maybe-start-eglot ()
+  "Start eglot if current mode is supported and file is not remote."
+  (when (and (not (file-remote-p default-directory))
+              (or (derived-mode-p 'python-mode)
+                  (derived-mode-p 'python-ts-mode)
+                  (derived-mode-p 'rust-mode)
+                  (derived-mode-p 'tex-mode)
+                  (derived-mode-p 'c-ts-mode)
+                  (derived-mode-p 'c++-ts-mode)
+                  (derived-mode-p 'typescript-ts-mode)
+                  (derived-mode-p 'tsx-ts-mode)
+                  (derived-mode-p 'markdown-mode)
+                  (derived-mode-p 'astro-mode)
+                  (derived-mode-p 'ess-r-mode)))
       (eglot-ensure)))
 
+;; Helper function to restart eglot in current buffer
+(defun jw/restart-eglot ()
+  "Restart eglot in current buffer."
+  (interactive)
+  (when (eglot-current-server)
+    (eglot-shutdown (eglot-current-server))
+    (eglot-ensure)))
 ```
 
 Add the hook to auto start `eglot` depending on configured language.
 
 ```emacs-lisp
-
-  (add-hook 'python-ts-mode-hook #'jw/maybe-start-eglot)
-  (add-hook 'rust-mode-hook #'jw/maybe-start-eglot)
-  (add-hook 'c-ts-mode-hook #'jw/maybe-start-eglot)
-  (add-hook 'c++-ts-mode-hook #'jw/maybe-start-eglot)
-  (add-hook 'typescript-ts-mode-hook #'jw/maybe-start-eglot)
-  (add-hook 'tsx-ts-mode-hook #'jw/maybe-start-eglot)
-  (add-hook 'markdown-mode-hook #'jw/maybe-start-eglot)
-  (add-hook 'astro-mode-hook #'jw/maybe-start-eglot)
-  (add-hook 'tex-mode-hook #'jw/maybe-start-eglot)
-
+(add-hook 'python-ts-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'rust-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'c-ts-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'c++-ts-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'typescript-ts-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'tsx-ts-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'markdown-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'astro-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'tex-mode-hook #'jw/maybe-start-eglot)
+(add-hook 'ess-r-mode-hook #'jw/maybe-start-eglot)
 ```
-
 
 ### dape.el
 
 For debuggin,
 
+`dape` depends on `jsonrpc`. Pin it to Emacs' built-in copy instead of
+letting straight clone GNU ELPA's older one, which shadows the
+built-in `jsonrpc.el` that `eglot.el` needs and breaks completion.
+
 ```emacs-lisp
-
-  (use-package dape
-    :straight t
-    ;; :preface
-    ;; By default dape shares the same keybinding prefix as `gud'
-    ;; If you do not want to use any prefix, set it to nil.
-    ;; (setq dape-key-prefix "\C-x\C-a")
-
-    :hook
-    ;; Save breakpoints on quit
-    (kill-emacs . dape-breakpoint-save)
-    ;; Load breakpoints on startup
-    ;; (after-init . dape-breakpoint-load)
-
-    :config
-    ;; Turn on global bindings for setting breakpoints with mouse
-    ;; (dape-breakpoint-global-mode)
-
-    ;; Info buffers to the right
-    (setq dape-buffer-window-arrangement 'right)
-
-    ;; Info buffers like gud (gdb-mi)
-    (setq dape-buffer-window-arrangement 'gud)
-    (setq dape-info-hide-mode-line nil)
-
-    ;; Pulse source line (performance hit)
-    (add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
-
-    ;; Showing inlay hints
-    (setq dape-inlay-hints t)
-
-    ;; Save buffers on startup, useful for interpreted languages
-    (add-hook 'dape-start-hook (lambda () (save-some-buffers t t)))
-
-    ;; Kill compile buffer on build success
-    (add-hook 'dape-compile-hook 'kill-buffer)
-
-    ;; Projectile users
-    ;; (setq dape-cwd-function 'projectile-project-root)
-    )
-
-  ;; Enable repeat mode for more ergonomic `dape' use
-  (use-package repeat
-    :config
-    (repeat-mode))
-
+(straight-use-package '(jsonrpc :type built-in))
 ```
 
+```emacs-lisp
+(use-package dape
+  :straight t
+  ;; :preface
+  ;; By default dape shares the same keybinding prefix as `gud'
+  ;; If you do not want to use any prefix, set it to nil.
+  ;; (setq dape-key-prefix "\C-x\C-a")
+
+  :hook
+  ;; Save breakpoints on quit
+  (kill-emacs . dape-breakpoint-save)
+  ;; Load breakpoints on startup
+  ;; (after-init . dape-breakpoint-load)
+
+  :config
+  ;; Turn on global bindings for setting breakpoints with mouse
+  ;; (dape-breakpoint-global-mode)
+
+  ;; Info buffers to the right
+  (setq dape-buffer-window-arrangement 'right)
+
+  ;; Info buffers like gud (gdb-mi)
+  (setq dape-buffer-window-arrangement 'gud)
+  (setq dape-info-hide-mode-line nil)
+
+  ;; Pulse source line (performance hit)
+  (add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
+
+  ;; Showing inlay hints
+  (setq dape-inlay-hints t)
+
+  ;; Save buffers on startup, useful for interpreted languages
+  (add-hook 'dape-start-hook (lambda () (save-some-buffers t t)))
+
+  ;; Kill compile buffer on build success
+  (add-hook 'dape-compile-hook 'kill-buffer)
+
+  ;; Projectile users
+  ;; (setq dape-cwd-function 'projectile-project-root)
+  )
+
+;; Enable repeat mode for more ergonomic `dape' use
+(use-package repeat
+  :config
+  (repeat-mode))
+```
 
 ### tramp-sh.el
 
 ```emacs-lisp
-
-  ;; for remote configs
-  (with-eval-after-load 'tramp
-    (require 'tramp-sh)
-    (setq tramp-own-remote-path '("/bin" "/usr/bin" "/usr/local/bin"))
-    (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
-
+;; for remote configs
+(with-eval-after-load 'tramp
+  (require 'tramp-sh)
+  (setq tramp-own-remote-path '("/bin" "/usr/bin" "/usr/local/bin"))
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 ```
-
 
 ### The `jw-emacs-langs.el` call to provide
 
 ```emacs-lisp
-
-  (provide 'jw-emacs-langs)
-
+(provide 'jw-emacs-langs)
 ```

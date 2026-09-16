@@ -1,3 +1,5 @@
+;;; jw-emacs-git.el --- Git and version control -*- lexical-binding: t; -*-
+
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
@@ -20,4 +22,7 @@
   (evil-collection-init)
   (evil-collection-forge-setup))
 
+
+
 (provide 'jw-emacs-git)
+

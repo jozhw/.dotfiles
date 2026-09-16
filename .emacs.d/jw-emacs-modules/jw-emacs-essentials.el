@@ -1,3 +1,5 @@
+;;; jw-emacs-essentials.el --- Essential editor defaults -*- lexical-binding: t; -*-
+
 ;; Enable column numbers
 (column-number-mode)
 
@@ -11,6 +13,11 @@
                 eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+
+
 (setq-default fill-column 80)
 
+
+
 (provide 'jw-emacs-essentials)
+

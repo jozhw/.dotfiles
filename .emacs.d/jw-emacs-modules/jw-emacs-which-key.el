@@ -1,3 +1,5 @@
+;;; jw-emacs-which-key.el --- which-key configuration -*- lexical-binding: t; -*-
+
 (use-package which-key
   :straight t
   :hook (after-init . which-key-mode)
@@ -11,3 +13,4 @@
   (setq which-key-max-description-length 40))
 
 (provide 'jw-emacs-which-key)
+

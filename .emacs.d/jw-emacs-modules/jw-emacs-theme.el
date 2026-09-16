@@ -1,4 +1,4 @@
-;;; Theme setup and related
+;;; jw-emacs-theme.el --- Theme setup and related -*- lexical-binding: t; -*-
 
 ;;;; Load the desired theme module
 ;; These all reference my packages: `modus-themes', `ef-themes',
@@ -9,6 +9,8 @@
      ('ef 'jw-emacs-ef-themes)
      ('modus 'jw-emacs-modus-themes)
      ('standard 'jw-emacs-standard-themes))))
+
+
 
 ;;;; Pulsar
 ;; Read the pulsar manual: <https://protesilaos.com/emacs/pulsar>.
@@ -35,6 +37,7 @@
   (("C-x l" . pulsar-pulse-line) ; override `count-lines-page'
    ("C-x L" . pulsar-highlight-dwim))) ; or use `pulsar-highlight-line'
 
+
 ;;;; Lin
 ;; Read the lin manual: <https://protesilaos.com/emacs/lin>.
 (use-package lin
@@ -49,6 +52,8 @@
   ;;
   ;; I still prefer `setq' for consistency.
   (setq lin-face 'lin-magenta))
+
+
 
 ;;;; Increase padding of windows/frames
 ;; Yet another one of my packages:
@@ -78,6 +83,8 @@
                                   'default
                                 'help-key-binding)
            :mode-line-inactive window-divider)))
+
+
 
 ;;; Cursor appearance (cursory)
 ;; Read the manual: <https://protesilaos.com/emacs/cursory>.
@@ -135,7 +142,8 @@
   ;; suggested binding for `org-capture' and is the one I use as well.
   ("C-c p" . cursory-set-preset))
 
-;;;; Theme buffet
+
+ ;;;; Theme buffet
 (use-package theme-buffet
   :straight t
   :after (:any modus-themes ef-themes)
@@ -162,8 +170,11 @@
                :afternoon (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)
                :evening   (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)))))
 
-    (when (or modus-themes-p ef-themes-p)
-      (theme-buffet-timer-hours 1))))
+    ;; Theme selection stays fixed after startup.  Use the theme commands
+    ;; explicitly when a change is wanted.
+    ))
+
+
 
 ;;;; Fontaine (font configurations)
 ;; Read the manual: <https://protesilaos.com/emacs/fontaine>
@@ -284,7 +295,10 @@
   (with-eval-after-load 'pulsar
     (add-hook 'fontaine-set-preset-hook #'pulsar-pulse-line)))
 
-;;;;; `variable-pitch-mode' setup
+
+
+
+  ;;;;; `variable-pitch-mode' setup
 (use-package face-remap
   :straight nil
   :functions jw/enable-variable-pitch
@@ -307,4 +321,7 @@
    ("C-x C-+" . global-text-scale-adjust)
    ("C-x C-0" . global-text-scale-adjust)))
 
+
+
 (provide 'jw-emacs-theme)
+

@@ -1,3 +1,5 @@
+;;; jw-emacs-development.el --- General development tooling -*- lexical-binding: t; -*-
+
 (use-package tramp
   :straight t)
 (setq tramp-default-method "ssh")
@@ -13,6 +15,7 @@
 
 (setq tramp-connection-timeout 10) ;; 10 sec timeout
 
+
 (connection-local-set-profile-variables
 'remote-direct-async-process
 '((tramp-direct-async-process . t)))
@@ -23,11 +26,18 @@
 
 (setq magit-tramp-pipe-stty-settings 'pty)
 
+
+
+
 (with-eval-after-load 'tramp
 (with-eval-after-load 'compile
     (remove-hook 'compilation-mode-hook #'tramp-compile-disable-ssh-controlmaster-options)))
 
+
+
 (setq password-cache-expiry nil)
+
+
 
 ;; Configure TRAMP to use ~/.emacs.d/tmp/ for caching
 (let ((tramp-tmp-dir (expand-file-name "tmp/" user-emacs-directory)))
@@ -53,12 +63,14 @@
 "Memoize a value if the key is a remote path."
 (if (and key
         (file-remote-p key))
-    (if-let ((current (assoc key (symbol-value cache))))
+    (if-let* ((current (assoc key (symbol-value cache))))
         (cdr current)
         (let ((current (apply orig-fn args)))
         (set cache (cons (cons key current) (symbol-value cache)))
         current))
     (apply orig-fn args)))
+
+
 
 ;; Memoize current project
 (defvar project-current-cache nil)
@@ -101,21 +113,30 @@
     (delete-file cache-file)
     (message "TRAMP cache cleared"))))
 
+
+
 (require 'project)
+
 
 (defun jw/project-prompter ()
      (read-file-name "Select a project folder:"
-                     "~/Otzar/Projects/Code/"
+                     "~/Core/Otzar/projects/projects__code/"
                      nil
                      nil
                      nil
                      #'file-directory-p))
 (setq project-prompter #'jw/project-prompter)
 
+
+
 (show-paren-mode 1)
+
+
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
+
+
 
 (electric-pair-mode t)
 
@@ -124,11 +145,18 @@
                  `(lambda (c)
                 (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
 
+
+
 (use-package evil-surround
   :straight t
   :config
   (global-evil-surround-mode 1))
 
+
+
 (use-package command-log-mode)
 
+
+
 (provide 'jw-emacs-development)
+
