@@ -170,8 +170,9 @@
                :afternoon (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)
                :evening   (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)))))
 
-    (when (or modus-themes-p ef-themes-p)
-      (theme-buffet-timer-hours 1))))
+    ;; Theme selection stays fixed after startup.  Use the theme commands
+    ;; explicitly when a change is wanted.
+    ))
 
 
 

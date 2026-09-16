@@ -146,9 +146,9 @@ stops the buffer from popping up, it does not silence the warning.
     ;; are helpful.
     (menu-bar-mode -1)
     (when (fboundp 'scroll-bar-mode)
-    (scroll-bar-mode -1))
+      (scroll-bar-mode -1))
     (when (fboundp 'tool-bar-mode)
-    (tool-bar-mode -1))
+      (tool-bar-mode -1))
 
 #+end_src
 ** The =early-init.el= hook to improve Startup Performance
@@ -843,8 +843,9 @@ library only needs a =require= added here.
                  :afternoon (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)
                  :evening   (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)))))
 
-      (when (or modus-themes-p ef-themes-p)
-        (theme-buffet-timer-hours 1))))
+      ;; Theme selection stays fixed after startup.  Use the theme commands
+      ;; explicitly when a change is wanted.
+      ))
 
 #+end_src
 
@@ -2996,14 +2997,6 @@ Auto install grammars when missing
   (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
   (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
 
-  (add-hook 'LaTeX-mode-hook
-            (lambda ()
-              (add-hook 'after-save-hook
-                        (lambda ()
-                          (when (TeX-master-file)
-                            (TeX-command-run-all nil)))
-                        nil t)))
-
   (setq reftex-plug-into-AUCTeX t))
 
 #+end_src
@@ -3011,7 +3004,10 @@ Auto install grammars when missing
 
 **** commands
 
-=C-c C-a= (=TeX-command-run-all=): compiles tex document and auto opens in the pdf viewer
+Saving a =.tex= file does not compile it; project Makefiles own the build.
+
+=C-c C-a= (=TeX-command-run-all=) remains available when an ad-hoc AUCTeX
+compile is useful.  On macOS, that manual command opens the result in Skim.
 
 
 *** python
@@ -3300,6 +3296,16 @@ Add the hook to auto start =eglot= depending on configured language.
 *** dape.el
 
 For debuggin,
+
+=dape= depends on =jsonrpc=. Pin it to Emacs' built-in copy instead of
+letting straight clone GNU ELPA's older one, which shadows the
+built-in =jsonrpc.el= that =eglot.el= needs and breaks completion.
+
+#+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
+
+  (straight-use-package '(jsonrpc :type built-in))
+
+#+end_src
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-langs.el" :mkdirp yes
 

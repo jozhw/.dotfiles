@@ -95,14 +95,6 @@
   (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
   (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
 
-  (add-hook 'LaTeX-mode-hook
-            (lambda ()
-              (add-hook 'after-save-hook
-                        (lambda ()
-                          (when (TeX-master-file)
-                            (TeX-command-run-all nil)))
-                        nil t)))
-
   (setq reftex-plug-into-AUCTeX t))
 
 
@@ -304,6 +296,10 @@
 (add-hook 'astro-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'tex-mode-hook #'jw/maybe-start-eglot)
 (add-hook 'ess-r-mode-hook #'jw/maybe-start-eglot)
+
+
+
+(straight-use-package '(jsonrpc :type built-in))
 
 
 
