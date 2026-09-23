@@ -237,6 +237,9 @@
 (setq completion-category-defaults nil)
 (setq eglot-connect-timeout 120)
 
+(setq eglot-watch-files-outside-project-root nil)
+(setq eglot-max-file-watches 400)
+
 ;; Use function symbols - eglot will call these functions to get the command
 (add-to-list 'eglot-server-programs
             '(python-ts-mode . jw/python-lsp-program))
