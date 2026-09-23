@@ -61,6 +61,9 @@ which pyright
 brew install black   # Python code formatter (conda's build misbehaves, so use brew's)
 # See also black-macchiato for partial-region Python formatting.
 
+# uv python package manager
+brew install uv
+
 ######################################################################################
 ### misc frameworks
 
