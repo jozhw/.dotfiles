@@ -21,7 +21,7 @@
 
 
 (defvar jw-org-todo-file
-  (expand-file-name "~/Core/Otzar/Docs/agenda/todo.org")
+  (expand-file-name "~/Core/Otzar/Agenda/todo.org")
   "The one and only agenda file.
 Referenced by the capture template in `jw-emacs-information-management'.")
 
