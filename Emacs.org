@@ -1409,7 +1409,7 @@ from the agenda.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
   (defvar jw-org-todo-file
-    (expand-file-name "~/Core/Otzar/Agenda/todo.org")
+    (expand-file-name "~/Core/otzar/agenda/todo.org")
     "The one and only agenda file.
   Referenced by the capture template in `jw-emacs-information-management'.")
 
@@ -1479,7 +1479,7 @@ Org file, including denote notes, into the agenda archive. Everything outside
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-org.el" :mkdirp yes
 
   (defvar jw-org-archive-directory
-    (expand-file-name "~/Core/Otzar/Docs/agenda/archive/")
+    (expand-file-name "~/Core/otzar/agenda/archive/")
     "Directory holding one Org archive file per year.")
 
   (defun jw-org-archive-location-for-entry ()
@@ -1880,14 +1880,22 @@ For macos, make sure to have =coreutils= installed. To install run, =brew instal
 #+end_src
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
-  (use-package denote
-                   :straight t)
+  (defvar jw-otzar-directory (expand-file-name "~/Core/otzar/")
+    "Root of the knowledge base.")
 
-  (setq denote-directory (expand-file-name "~/Core/Otzar/Gnosis/"))
-  ;; Create the notes directory if it does not exist yet (e.g. fresh machine).
-  (unless (file-directory-p denote-directory)
-    (make-directory denote-directory t))
-  (setq denote-save-buffer-after-creation nil)
+  (use-package denote
+    :straight t
+    :demand t)
+
+  (setq denote-directory (expand-file-name "synthesis/" jw-otzar-directory)
+        denote-save-buffers nil)
+  (dolist (dir '("synthesis" "synthesis/transcripts" "assets/recordings"))
+    (make-directory (expand-file-name dir jw-otzar-directory) t))
+
+  (use-package denote-markdown
+    :straight (denote-markdown :type git :host github :repo "protesilaos/denote-markdown")
+    :commands (denote-markdown-convert-links-to-file-paths
+               denote-markdown-convert-links-to-denote-type))
 
 #+end_src
 
@@ -1904,9 +1912,7 @@ Keywords are the same vocabulary used for tags in the Obsidian vault --- see
 [[*Tags][Tags]] for what each one covers and why the list is short. One vocabulary across
 both tools means one thing to remember; two would guarantee drift.
 
-=journal= is not in the list: denote notes that are a dated log are better served
-by the vault's =daily-notes/=, and a keyword that duplicates a location earns
-nothing.
+=journal= is unnecessary: daily notes use timestamp-only filenames in =synthesis/=.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
@@ -1922,67 +1928,45 @@ nothing.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
-  (setq denote-file-type nil) ; Org is the default, set others here
-  (setq denote-prompts '(subdirectory title keywords))
-  (setq denote-excluded-directories-regexp nil)
-  (setq denote-excluded-keywords-regexp nil)
-  (setq denote-rename-no-confirm nil) ; Set to t if you are familiar with `denote-rename-file'
+  (setq denote-file-type 'markdown-yaml
+        denote-prompts '(title keywords)
+        denote-excluded-directories-regexp nil
+        denote-excluded-keywords-regexp nil
+        denote-date-prompt-use-org-read-date t
+        denote-date-format nil
+        denote-backlinks-show-context t)
 
-  ;; Pick dates, where relevant, with Org's advanced interface:
-  (setq denote-date-prompt-use-org-read-date t)
-  ;; Read this manual for how to specify `denote-templates'.  We do not
-  ;; include an example here to avoid potential confusion.
-  (setq denote-date-format nil) ; read doc string
-
-  ;; By default, we do not show the context of links.  We just display
-  ;; file names.  This provides a more informative view.
-  (setq denote-backlinks-show-context t)
-
-  ;; Also see `denote-link-backlinks-display-buffer-action' which is a bit
-  ;; advanced.
-
-  ;; If you use Markdown or plain text files (Org renders links as buttons
-  ;; right away)
   (add-hook 'find-file-hook #'denote-fontify-links-mode-maybe)
-
-  (with-eval-after-load 'org-capture
-  (setq denote-org-capture-specifiers "%l\n%i\n%?")
-  (add-to-list 'org-capture-templates
-               '("n" "New note (with denote.el)" plain
-                 (file denote-last-path)
-                 #'denote-org-capture
-                 :no-save t
-                 :immediate-finish nil
-                 :kill-buffer t
-                 :jump-to-captured t)))
-
-  ;; Also check the commands `denote-link-after-creating',
-  ;; `denote-link-or-create'.  You may want to bind them to keys as well.
-
-
-  ;; If you want to have Denote commands available via a right click
-  ;; context menu, use the following and then enable
-  ;; `context-menu-mode'.
   (add-hook 'context-menu-functions #'denote-context-menu)
+
+  (defun jw-denote-daily-note ()
+    "Open today's note, creating a timestamp-only Markdown file if needed."
+    (interactive)
+    (let* ((now (current-time))
+           (day (format-time-string "%Y%m%d" now))
+           (directory (file-name-as-directory denote-directory))
+           (regexp (concat "\\`" day "T[0-9]\\{6\\}\\.md\\'")))
+      (make-directory directory t)
+      (if-let* ((file (car (directory-files directory t regexp))))
+          (find-file file)
+        (let ((denote-file-name-components-order '(identifier))
+              (denote-save-buffers nil)
+              (denote-kill-buffers nil))
+          (find-file (denote "" nil 'markdown-yaml directory
+                             (format-time-string "%Y-%m-%d %H:%M:%S" now)))
+          (goto-char (point-max))
+          (insert "# " (format-time-string "%Y-%m-%d" now) "\n\n")
+          (save-buffer)))))
 
 #+end_src
 
-The capture template for [[id:43652950-B9D2-4FAF-8F0C-75D1496E85FE][the =jw-emacs-org.el= section for =org-agenda=]].
-=SCHEDULED: %t= stamps it with today, so a captured item appears in the day
-agenda without any further filing.
+Daily capture asks nothing; =C-c n N= creates a named synthesis note.
+Use =denote-markdown-convert-links-to-file-paths= when links must work in
+Obsidian. File-path links need updating after a move or rename.
 
-This replaces an earlier =jw-denote-weekly-tasks-filename= that minted a new
-Denote-named file with frontmatter every week. Weekly files are a filing system
-for things that live one day, and the rotation was pure overhead.
-
-Note the use of =add-to-list= rather than =setq=: the denote note template
-below registers itself the same way, and a bare =setq= here silently clobbers
-it depending on load order.
+Tasks remain in =agenda/todo.org=; =SCHEDULED: %t= puts captures on today's agenda.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
-
-  ;; Ensure denote.el is loaded
-  (require 'denote)
 
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
@@ -1996,15 +1980,13 @@ it depending on load order.
 
 *** obsidian.el
 
-[[https://github.com/licht1stein/obsidian.el][obsidian.el]] treats a directory of Markdown files as a knowledge base:
-=[[wiki-links]]=, =#tags=, jumping, search, and a backlinks panel. This vault is
-the *knowledge bank* --- things worth referencing later. Tasks live in
-[[id:43652950-B9D2-4FAF-8F0C-75D1496E85FE][org-agenda]]; [[*denote.el][denote.el]] holds Org-format notes.
+Otzar is one vault: =synthesis/= holds exploratory Markdown, =gnosis/= holds
+developed notes, and =agenda/= holds Org tasks. Recordings live in
+=assets/recordings/YYYY/=, outside Git; reviewed transcripts belong in
+=synthesis/transcripts/= with the source filename and, after archiving, its
+archive location.
 
-The vault directories are created before the path is assigned because
-=obsidian-directory= has a =:set= handler that refuses a missing directory.
-=setopt= (not =setq=) is what runs that handler, which also records the path
-length used to compute vault-relative names.
+Create the vault before =setopt= runs the directory's setter.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
@@ -2012,19 +1994,14 @@ length used to compute vault-relative names.
     :straight t
     :demand t
     :config
-    (let ((vault (expand-file-name "~/Core/Otzar/Obsidian/")))
+    (let ((vault jw-otzar-directory))
       (dolist (dir (list vault
-                         (expand-file-name "notes" vault)
-                         (expand-file-name "daily-notes" vault)
+                         (expand-file-name "gnosis" vault)
                          (expand-file-name "templates" vault)))
         (unless (file-directory-p dir)
           (make-directory dir t)))
-      ;; Seed the templates.  `obsidian-daily-note' inserts its one without
-      ;; checking that it exists; both are left alone once present, so they can
-      ;; be edited in the vault without this reverting them.
       (pcase-dolist (`(,name . ,body)
-                     '(("Daily Note Template.md" . "# {{title}}\n\n")
-                       ("Note.md" . "---\ncreated: {{date}}\ntags: []\n---\n\n# {{title}}\n\n<!-- the claim, in one sentence -->\n\n## Why\n\n## Sources\n")))
+                     '(("Note.md" . "---\ncreated: {{date}}\ntags: []\n---\n\n# {{title}}\n\n<!-- the claim, in one sentence -->\n\n## Why\n\n## Sources\n")))
         (let ((file (expand-file-name (concat "templates/" name) vault)))
           (unless (file-exists-p file)
             (with-temp-file file (insert body)))))
@@ -2044,19 +2021,13 @@ Vault-relative directories; =nil= disables a feature.
 
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
-  (setq obsidian-inbox-directory "notes")             ; destination for `obsidian-capture'
-  (setq obsidian-daily-notes-directory "daily-notes") ; daily note file is YYYY-MM-DD.md
-  (setq obsidian-templates-directory "templates")     ; note templates live here
-  (setq obsidian-daily-note-template "Daily Note Template.md")
-  ;; Following a wiki-link to a note that does not exist yet creates it in
-  ;; `obsidian-inbox-directory' rather than beside the current file.
-  (setq obsidian-create-unfound-files-in-inbox t)
+  (setq obsidian-inbox-directory "gnosis"
+        obsidian-daily-notes-directory nil
+        obsidian-templates-directory "templates"
+        obsidian-daily-note-template nil
+        obsidian-create-unfound-files-in-inbox t)
 
 #+end_src
-
-The capture folder is =notes/= rather than the usual =inbox/= because an inbox
-is an implicit promise to process it later; nothing here needs to graduate
-anywhere.
 
 Notes are read in the Obsidian GUI, which renders math with MathJax, but they
 are *written* here --- and =markdown-enable-math= defaults to =nil=, so =$...$=
@@ -2087,8 +2058,9 @@ backlink commands are scoped to vault buffers, where they are the natural
 
 | Key       | Command                        | Does                                  |
 |-----------+--------------------------------+---------------------------------------|
-| =C-c n n= | =obsidian-daily-note=          | today's daily note, from the template |
-| =C-c n c= | =jw-obsidian-capture=          | new named note in =notes/=, templated |
+| =C-c n n= | =jw-denote-daily-note=        | today's synthesis, no prompts         |
+| =C-c n N= | =denote=                      | new named synthesis note             |
+| =C-c n c= | =jw-obsidian-capture=          | new developed note in =gnosis/=, templated |
 | =C-c n j= | =obsidian-jump=                | fuzzy-jump to any note                |
 | =C-c n s= | =obsidian-search=              | full-text search the vault            |
 | =C-c n g= | =xeft=                         | search-as-you-type with context       |
@@ -2104,7 +2076,8 @@ backlink commands are scoped to vault buffers, where they are the natural
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-information-management.el" :mkdirp yes
 
   ;; Entry points: reachable from anywhere, not only from inside the vault.
-  (global-set-key (kbd "C-c n n") #'obsidian-daily-note)
+  (global-set-key (kbd "C-c n n") #'jw-denote-daily-note)
+  (global-set-key (kbd "C-c n N") #'denote)
   (global-set-key (kbd "C-c n c") #'jw-obsidian-capture)
   (global-set-key (kbd "C-c n j") #'obsidian-jump)
   (global-set-key (kbd "C-c n s") #'obsidian-search)
@@ -2150,7 +2123,7 @@ only works once you are already in it is backwards. (=C-c C-g= also means
     :bind ("C-c n g" . xeft)
     :custom
     (xeft-directory obsidian-directory)
-    (xeft-recursive t)                            ; notes/, daily-notes/, ...
+    (xeft-recursive t)
     (xeft-file-filter #'obsidian-file-p)
     (xeft-title-function #'obsidian-file-title-function))
 
@@ -2240,18 +2213,8 @@ The substitutions available are =\{\{title\}\}= (the file name), =\{\{date\}\}=
 and =\{\{time\}\}=. There is no prompting and no cursor placement --- these are
 skeletons, not Org capture templates.
 
-Keep them few and nearly empty. A template's cost is not writing it, it is that
-*every section in it becomes an obligation*: headings that get left blank
-accumulate across hundreds of notes and make the vault look like work in
-progress rather than a reference. The daily note template seeded above is just
-=# {{title}}= for exactly this reason --- a daily note's value is having no
-structure to satisfy.
-
-A second template is worth it only for a shape that is genuinely repeated, and
-the one that pays here is the durable note --- it encodes the handoff rules
-below (claim first, sources kept) and carries the small amount of front matter
-that is worth having. Both templates are seeded on first load, next to the vault
-directories.
+The Gnosis template records a claim, reasoning, and sources. Daily synthesis
+needs only a date heading, inserted by =jw-denote-daily-note=.
 
 ***** What metadata is worth recording
 
@@ -2280,8 +2243,8 @@ Two fields deliberately left out:
 
 ***** Why filenames stay human
 
-Denote-style =YYYYMMDDTHHMMSS--name= filenames are deliberately *not* used in
-the vault. Wiki-links resolve by exact file name --- =obsidian--match-files=
+Gnosis keeps human filenames; Synthesis uses Denote identifiers. Wiki-links
+resolve by exact file name --- =obsidian--match-files=
 compares the link text against relative paths --- so =[[Basis Trade]]= finds
 =Basis Trade.md= and would not find =20260726T143022--basis-trade.md=.
 
@@ -2290,11 +2253,8 @@ Aliases do not rescue it: =obsidian-jump= consults =obsidian--aliases-map=, but
 only sees file names. The result would be jumping that works while every
 =[[link]]= quietly creates a new empty note instead of finding the existing one.
 
-The difference is structural. Denote's timestamp *is* its identifier, so it has
-to be in the file name --- there is no other index. This vault's index is the
-link graph and its identifier is the human name. [[*denote.el][denote.el]] is already configured
-for when ID-stable, rename-safe notes are wanted; the vault should not become a
-second, weaker copy of it.
+Links into Synthesis must include the actual Denote filename. Use link
+completion instead of typing a title-only wiki-link.
 
 **** Tags
 
@@ -2394,7 +2354,7 @@ The line is *learned versus built*: how a limit order book works is =markets=;
 how this fund's strategy works is =hf=. That is also where the separate-vault
 split would fall if the firm bank ever becomes real.
 
-Deliberately absent is =journal=: daily notes already live in =daily-notes/=, and
+Deliberately absent is =journal=: daily notes already have timestamp-only filenames, and
 tagging what the location already says is pure noise. The last two rows are the
 least certain --- domains are discovered from use rather than designed up front,
 so treat any row that stays unused after a few months as a slot to reclaim.
@@ -2411,23 +2371,10 @@ narrows to a pile; the links do the actual navigating.
 
 ***** Which bucket does this go in?
 
-*If you can name it, it is a note. If you cannot, it goes in today's daily note.*
-
-Naming is the only filing decision in the system, and it can be made instantly
-or not at all. The commands mirror it: =obsidian-capture= (=C-c n c=) asks for a
-title, =obsidian-daily-note= (=C-c n n=) asks nothing.
-
-The asymmetry that matters: *an inbox carries debt and a daily note does not.*
-An unprocessed daily note is still a perfectly good log --- it was never going
-to become anything else.
-
-***** Promotion happens through links, not filing
-
-There is no review step and no "process the inbox" ritual. When a line in a
-daily note keeps recurring, write it as a =[[wiki-link]]= and follow it with
-=C-c C-o=; the note gets created in =notes/=. Writing the link *is* the
-promotion, and it is correct by construction, because writing the link means it
-has already been named.
+=C-c n n= opens today's synthesis without a prompt. =C-c n N= starts a named
+synthesis when an idea needs space. =C-c n c= creates a developed Gnosis note.
+Rough thoughts can stay rough; write a Gnosis note when there is something
+worth returning to, and link back to the synthesis that informed it.
 
 ***** Editing: mechanics get overwritten, judgments get logged
 
@@ -2447,8 +2394,8 @@ trade that away for a problem =git log= already handles.
 
 ***** Writing for a future handoff
 
-This vault is for *ideation*. The real quant knowledge base is a later, separate
-thing with a designated team and a technical librarian compiling it, so what
+Synthesis is for *ideation*; Gnosis holds developed understanding. The real
+quant knowledge base is a later, separate thing with a designated team and a technical librarian compiling it, so what
 transfers out of here is *content and provenance --- not structure*. Nothing
 should be arranged now for eventual compatibility with a system nobody has
 designed yet.
@@ -2767,7 +2714,7 @@ Set the project paths, but currently the code below only works for =emacs 30+=.
 #+begin_src emacs-lisp :tangle ".emacs.d/jw-emacs-modules/jw-emacs-development.el" :mkdirp yes
    (defun jw/project-prompter ()
         (read-file-name "Select a project folder:"
-                        "~/Core/Otzar/projects/projects__code/"
+                        "~/Core/otzar/projects/projects__code/"
                         nil
                         nil
                         nil

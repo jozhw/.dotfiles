@@ -17,11 +17,8 @@
 
   )
 
-
-
-
 (defvar jw-org-todo-file
-  (expand-file-name "~/Core/Otzar/Agenda/todo.org")
+  (expand-file-name "~/Core/otzar/agenda/todo.org")
   "The one and only agenda file.
 Referenced by the capture template in `jw-emacs-information-management'.")
 
@@ -47,10 +44,8 @@ Referenced by the capture template in `jw-emacs-information-management'.")
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
 
-
-
 (defvar jw-org-archive-directory
-  (expand-file-name "~/Core/Otzar/Docs/agenda/archive/")
+  (expand-file-name "~/Core/otzar/agenda/archive/")
   "Directory holding one Org archive file per year.")
 
 (defun jw-org-archive-location-for-entry ()
@@ -91,8 +86,6 @@ and CANCEL qualify -- they sit after the `|' in `org-todo-keywords'."
 
 (global-set-key (kbd "C-c A") #'jw-org-archive-done)
 
-
-
 ;; on macos, fix "This Emacs binary lacks sound support" 
 ;; - https://github.com/leoliu/play-sound-osx/blob/master/play-sound.el
 ;; - update according to https://github.com/leoliu/play-sound-osx/issues/2#issuecomment-1088360638
@@ -114,21 +107,12 @@ and CANCEL qualify -- they sit after the `|' in `org-todo-keywords'."
                "afplay" (append (and volume (list "-v" volume))
                                 (list (expand-file-name file data-directory))))))))
 
-
-
-
 (setq org-clock-sound "~/.dotfiles/.assets/sounds/mixkit-alert-quick-chime-766.wav")
-
-
 
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c C-l") 'org-insert-link)
 
-
-
 (setq org-id-link-to-org-use-id 'create-if-interactive)
-
-
 
 (use-package org-bullets
   :after org
@@ -136,13 +120,9 @@ and CANCEL qualify -- they sit after the `|' in `org-todo-keywords'."
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
-
-
 (setq org-image-actual-width nil)
 (setq org-startup-with-inline-images t)
 (add-hook 'org-mode-hook 'org-display-inline-images)
-
-
 
 ;; This is needed as of Org 9.2
 (require 'org-tempo)
@@ -152,8 +132,6 @@ and CANCEL qualify -- they sit after the `|' in `org-todo-keywords'."
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 (add-to-list 'org-structure-template-alist '("clang" . "src c"))
 (add-to-list 'org-structure-template-alist '("cpp" . "src cpp"))
-
-
 
 ;; Automatically tangle our Emacs.org config file when we save it
 (defun jw/org-babel-tangle-config ()
@@ -165,16 +143,12 @@ and CANCEL qualify -- they sit after the `|' in `org-todo-keywords'."
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'jw/org-babel-tangle-config)))
 
-
-
 (org-babel-do-load-languages
   'org-babel-load-languages
   '((emacs-lisp . t)
     (python . t)))
 
 (push '("conf-unix" . conf-unix) org-src-lang-modes)
-
-
 
 (defun jw/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
@@ -184,8 +158,6 @@ and CANCEL qualify -- they sit after the `|' in `org-todo-keywords'."
 (use-package visual-fill-column
   :hook (org-mode . jw/org-mode-visual-fill)
   (markdown-mode . jw/org-mode-visual-fill))
-
-
 
 (with-eval-after-load 'ox-latex
   (add-to-list 'org-latex-classes
@@ -212,7 +184,4 @@ and CANCEL qualify -- they sit after the `|' in `org-todo-keywords'."
                  ("\\paragraph*{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph*{%s}" . "\\subparagraph*{%s}"))))
 
-
-
 (provide 'jw-emacs-org)
-
