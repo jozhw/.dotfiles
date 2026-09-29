@@ -44,16 +44,49 @@ Before releasing:
 2. Regenerate the Emacs documentation with `./src/scripts/org_to_md.sh`.
 3. Build the site with `yarn --cwd docs build`.
 4. Confirm `git diff --check` passes and `git status --short` contains only intended release files.
-5. Commit and push the release branch, then merge it into `main`.
-6. Tag the release commit and push the tag:
+
+Run the final checks from the repository root:
+
+```shell
+./src/scripts/org_to_md.sh
+yarn --cwd docs build
+git diff --check
+git status --short
+```
+
+Stage only the files intended for the release. Avoid using `git add .` without reviewing the untracked files first, because this repository may contain machine-local application state.
+
+```shell
+git add <intended-release-files>
+git diff --cached --stat
+git status
+git commit -m "release: prepare v1.1.0"
+git push origin v1.1.0
+```
+
+Open a pull request from `v1.1.0` to `main` on GitHub and merge it. The release workflow requires the tagged commit to be on `main`, so do not tag the release branch before it has been merged. After the merge, update the local `main` branch and confirm that it contains the matching changelog entry:
 
 ```shell
 git switch main
 git pull --ff-only origin main
+grep -nF '## [1.1.0]' CHANGELOG.md
+```
+
+Create an annotated tag on that `main` commit, inspect it, and push it explicitly as a tag:
+
+```shell
 git tag -a v1.1.0 -m "v1.1.0"
+git show --no-patch v1.1.0
 git push origin refs/tags/v1.1.0
 ```
 
-Pushing the tag is the event that starts the release workflow. A branch named after a version does not trigger it, and `1.1.0v` is not a supported version tag. Using the fully qualified `refs/tags/...` form also avoids ambiguity if a branch and tag ever share a name.
+Pushing the tag is the event that starts the release workflow. A branch named after a version does not trigger it, and `1.1.0v` is not a supported version tag. A branch and tag may both be named `v1.1.0`; using the fully qualified `refs/tags/...` form avoids ambiguity.
 
-After pushing, verify the `release` workflow in GitHub Actions and check that the generated GitHub Release contains the 1.1.0 changelog text. Do not move or reuse a published version tag; make a new patch version if another release is needed.
+After pushing, verify the `release` workflow in GitHub Actions and check that the generated GitHub Release contains the 1.1.0 changelog text. If the GitHub CLI is installed, the same checks can be made from the terminal:
+
+```shell
+gh run list --workflow release.yml
+gh release view v1.1.0
+```
+
+Do not move or reuse a published version tag; make a new patch version if another release is needed.

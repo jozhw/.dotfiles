@@ -1,19 +1,23 @@
 ;;; jw-emacs-information-management.el --- Notes and information management -*- lexical-binding: t; -*-
 
+(defvar jw-otzar-directory (expand-file-name "~/Core/otzar/")
+  "Root of the knowledge base.")
+
 (use-package denote
-                 :straight t)
+  :straight t
+  :demand t)
 
-(setq denote-directory (expand-file-name "~/Core/Otzar/Gnosis/"))
-;; Create the notes directory if it does not exist yet (e.g. fresh machine).
-(unless (file-directory-p denote-directory)
-  (make-directory denote-directory t))
-(setq denote-save-buffer-after-creation nil)
+(setq denote-directory (expand-file-name "synthesis/" jw-otzar-directory)
+      denote-save-buffers nil)
+(dolist (dir '("synthesis" "synthesis/transcripts" "assets/recordings"))
+  (make-directory (expand-file-name dir jw-otzar-directory) t))
 
-
+(use-package denote-markdown
+  :straight (denote-markdown :type git :host github :repo "protesilaos/denote-markdown")
+  :commands (denote-markdown-convert-links-to-file-paths
+             denote-markdown-convert-links-to-denote-type))
 
 (add-hook 'dired-mode-hook #'denote-dired-mode)
-
-
 
 (setq denote-known-keywords
       '("math" "markets" "hf" "code" "infra"
@@ -23,55 +27,35 @@
 (setq denote-infer-keywords t)
 (setq denote-sort-keywords t)
 
+(setq denote-file-type 'markdown-yaml
+      denote-prompts '(title keywords)
+      denote-excluded-directories-regexp nil
+      denote-excluded-keywords-regexp nil
+      denote-date-prompt-use-org-read-date t
+      denote-date-format nil
+      denote-backlinks-show-context t)
 
-
-(setq denote-file-type nil) ; Org is the default, set others here
-(setq denote-prompts '(subdirectory title keywords))
-(setq denote-excluded-directories-regexp nil)
-(setq denote-excluded-keywords-regexp nil)
-(setq denote-rename-no-confirm nil) ; Set to t if you are familiar with `denote-rename-file'
-
-;; Pick dates, where relevant, with Org's advanced interface:
-(setq denote-date-prompt-use-org-read-date t)
-;; Read this manual for how to specify `denote-templates'.  We do not
-;; include an example here to avoid potential confusion.
-(setq denote-date-format nil) ; read doc string
-
-;; By default, we do not show the context of links.  We just display
-;; file names.  This provides a more informative view.
-(setq denote-backlinks-show-context t)
-
-;; Also see `denote-link-backlinks-display-buffer-action' which is a bit
-;; advanced.
-
-;; If you use Markdown or plain text files (Org renders links as buttons
-;; right away)
 (add-hook 'find-file-hook #'denote-fontify-links-mode-maybe)
-
-(with-eval-after-load 'org-capture
-(setq denote-org-capture-specifiers "%l\n%i\n%?")
-(add-to-list 'org-capture-templates
-             '("n" "New note (with denote.el)" plain
-               (file denote-last-path)
-               #'denote-org-capture
-               :no-save t
-               :immediate-finish nil
-               :kill-buffer t
-               :jump-to-captured t)))
-
-;; Also check the commands `denote-link-after-creating',
-;; `denote-link-or-create'.  You may want to bind them to keys as well.
-
-
-;; If you want to have Denote commands available via a right click
-;; context menu, use the following and then enable
-;; `context-menu-mode'.
 (add-hook 'context-menu-functions #'denote-context-menu)
 
-
-
-;; Ensure denote.el is loaded
-(require 'denote)
+(defun jw-denote-daily-note ()
+  "Open today's note, creating a timestamp-only Markdown file if needed."
+  (interactive)
+  (let* ((now (current-time))
+         (day (format-time-string "%Y%m%d" now))
+         (directory (file-name-as-directory denote-directory))
+         (regexp (concat "\\`" day "T[0-9]\\{6\\}\\.md\\'")))
+    (make-directory directory t)
+    (if-let* ((file (car (directory-files directory t regexp))))
+        (find-file file)
+      (let ((denote-file-name-components-order '(identifier))
+            (denote-save-buffers nil)
+            (denote-kill-buffers nil))
+        (find-file (denote "" nil 'markdown-yaml directory
+                           (format-time-string "%Y-%m-%d %H:%M:%S" now)))
+        (goto-char (point-max))
+        (insert "# " (format-time-string "%Y-%m-%d" now) "\n\n")
+        (save-buffer)))))
 
 (with-eval-after-load 'org-capture
   (add-to-list 'org-capture-templates
@@ -80,25 +64,18 @@
                  "* TODO %?\nSCHEDULED: %t"
                  :empty-lines 1)))
 
-
-
 (use-package obsidian
   :straight t
   :demand t
   :config
-  (let ((vault (expand-file-name "~/Core/Otzar/Obsidian/")))
+  (let ((vault jw-otzar-directory))
     (dolist (dir (list vault
-                       (expand-file-name "notes" vault)
-                       (expand-file-name "daily-notes" vault)
+                       (expand-file-name "gnosis" vault)
                        (expand-file-name "templates" vault)))
       (unless (file-directory-p dir)
         (make-directory dir t)))
-    ;; Seed the templates.  `obsidian-daily-note' inserts its one without
-    ;; checking that it exists; both are left alone once present, so they can
-    ;; be edited in the vault without this reverting them.
     (pcase-dolist (`(,name . ,body)
-                   '(("Daily Note Template.md" . "# {{title}}\n\n")
-                     ("Note.md" . "---\ncreated: {{date}}\ntags: []\n---\n\n# {{title}}\n\n<!-- the claim, in one sentence -->\n\n## Why\n\n## Sources\n")))
+                   '(("Note.md" . "---\ncreated: {{date}}\ntags: []\n---\n\n# {{title}}\n\n<!-- the claim, in one sentence -->\n\n## Why\n\n## Sources\n")))
       (let ((file (expand-file-name (concat "templates/" name) vault)))
         (unless (file-exists-p file)
           (with-temp-file file (insert body)))))
@@ -106,24 +83,17 @@
   ;; Track vault files everywhere so links and tags resolve globally.
   (global-obsidian-mode t))
 
-
-
-(setq obsidian-inbox-directory "notes")             ; destination for `obsidian-capture'
-(setq obsidian-daily-notes-directory "daily-notes") ; daily note file is YYYY-MM-DD.md
-(setq obsidian-templates-directory "templates")     ; note templates live here
-(setq obsidian-daily-note-template "Daily Note Template.md")
-;; Following a wiki-link to a note that does not exist yet creates it in
-;; `obsidian-inbox-directory' rather than beside the current file.
-(setq obsidian-create-unfound-files-in-inbox t)
-
-
+(setq obsidian-inbox-directory "gnosis"
+      obsidian-daily-notes-directory nil
+      obsidian-templates-directory "templates"
+      obsidian-daily-note-template nil
+      obsidian-create-unfound-files-in-inbox t)
 
 (setq-default markdown-enable-math t)
 
-
-
 ;; Entry points: reachable from anywhere, not only from inside the vault.
-(global-set-key (kbd "C-c n n") #'obsidian-daily-note)
+(global-set-key (kbd "C-c n n") #'jw-denote-daily-note)
+(global-set-key (kbd "C-c n N") #'denote)
 (global-set-key (kbd "C-c n c") #'jw-obsidian-capture)
 (global-set-key (kbd "C-c n j") #'obsidian-jump)
 (global-set-key (kbd "C-c n s") #'obsidian-search)
@@ -138,19 +108,15 @@
   (define-key obsidian-mode-map (kbd "C-c C-b") #'obsidian-backlink-jump)
   (define-key obsidian-mode-map (kbd "C-c C-l") #'obsidian-insert-wikilink))
 
-
-
 (use-package xeft
   :straight t
   :after obsidian
   :bind ("C-c n g" . xeft)
   :custom
   (xeft-directory obsidian-directory)
-  (xeft-recursive t)                            ; notes/, daily-notes/, ...
+  (xeft-recursive t)
   (xeft-file-filter #'obsidian-file-p)
   (xeft-title-function #'obsidian-file-title-function))
-
-
 
 (defvar jw-obsidian-note-template "Note.md"
   "Template in `obsidian-templates-directory' applied by `jw-obsidian-capture'.")
@@ -170,8 +136,6 @@ so a captured note would otherwise start with no front matter at all."
                                          obsidian-directory)))
     (save-buffer)))
 
-
-
 (defun jw-obsidian-insert-template ()
   "Insert a template from `obsidian-templates-directory' into this buffer.
 Substitutes {{title}}, {{date}} and {{time}} the same way `obsidian-daily-note'
@@ -183,8 +147,6 @@ does, since it reuses `obsidian-apply-template'."
       (user-error "No templates in %s" dir))
     (obsidian-apply-template
      (expand-file-name (completing-read "Template: " templates) dir))))
-
-
 
 (defun jw-obsidian-add-tag (tag)
   "Add TAG to the front-matter `tags:' list, completing on tags in the vault.
@@ -211,14 +173,9 @@ Vault tags carry no leading `#', per the `obsidian-tags' docstring."
     (unless merged
       (insert (format "#%s" tag)))))
 
-
-
 (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
 
 (setq lock-file-name-transforms
     '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
 
-
-
 (provide 'jw-emacs-information-management)
-

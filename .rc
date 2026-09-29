@@ -1,7 +1,16 @@
 # set ~/.bin to PATH
 export PATH="$HOME/.bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 # add conda initialization to all shell types 
 eval "$(conda "shell.$(basename "${SHELL}")" hook)"
 
 export GPG_TTY=$(tty)
+
+# macOS gives launchd-spawned terminals a 256 open-file soft limit, and Emacs
+# file watching (kqueue) costs one descriptor per watch. Under 256, eglot's
+# project watches died at ~207 with "no file descriptor left", which made it
+# answer the server's client/registerCapability with an error, and pyright
+# exits 1 on that. Raising the soft limit removes the ceiling (Emacs itself
+# caps out near 1000 watches, its FD_SETSIZE).
+ulimit -n 4096
