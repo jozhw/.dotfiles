@@ -23,6 +23,7 @@
 *.signed
 
 # ignore all compiled elisp
+.emacs.d/eln-cache/
 *.elc
 *.gif
 

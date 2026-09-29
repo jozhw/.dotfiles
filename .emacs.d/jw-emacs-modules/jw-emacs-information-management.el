@@ -9,7 +9,7 @@
 
 (setq denote-directory (expand-file-name "synthesis/" jw-otzar-directory)
       denote-save-buffers nil)
-(dolist (dir '("synthesis" "synthesis/transcripts" "assets/recordings"))
+(dolist (dir '("synthesis" "transcripts" "assets/recordings"))
   (make-directory (expand-file-name dir jw-otzar-directory) t))
 
 (use-package denote-markdown

@@ -1889,7 +1889,7 @@ For macos, make sure to have =coreutils= installed. To install run, =brew instal
 
   (setq denote-directory (expand-file-name "synthesis/" jw-otzar-directory)
         denote-save-buffers nil)
-  (dolist (dir '("synthesis" "synthesis/transcripts" "assets/recordings"))
+  (dolist (dir '("synthesis" "transcripts" "assets/recordings"))
     (make-directory (expand-file-name dir jw-otzar-directory) t))
 
   (use-package denote-markdown
@@ -1983,7 +1983,7 @@ Tasks remain in =agenda/todo.org=; =SCHEDULED: %t= puts captures on today's agen
 Otzar is one vault: =synthesis/= holds exploratory Markdown, =gnosis/= holds
 developed notes, and =agenda/= holds Org tasks. Recordings live in
 =assets/recordings/YYYY/=, outside Git; reviewed transcripts belong in
-=synthesis/transcripts/= with the source filename and, after archiving, its
+=transcripts/= with the source filename and, after archiving, its
 archive location.
 
 Create the vault before =setopt= runs the directory's setter.
