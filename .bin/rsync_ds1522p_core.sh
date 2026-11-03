@@ -12,7 +12,7 @@ read -p "Would you like to run a dry-run? Enter 0 for yes and 1 for no: " input
 # --exclude='**/.DS_Store' will exclude all instances of .DS_Store
 if [ "$input" -eq 0 ]; then
     echo "Running dry run of rsync script"
-    rsync -anPv --no-times --exclude='**/.DS_Store' --delete Core/Otzar jozhw@ds1522p.wu.ventures:/volume2/johnz.wu
+    rsync -anPv --no-times --exclude='**/.DS_Store' --delete Core jozhw@ds1522p.wu.ventures:/volume2/johnz.wu
     rsync -anPv --no-times --no-perms --no-owner --no-group --exclude='**/.DS_Store' --delete Downloads/books jozhw@ds1522p.wu.ventures:/volume2/johnz.wu/Downloads
 
      # rsync -anPv --exclude='**/.DS_Store' wu/* jozhw@ds1522p.wu.ventures:/volume1/wu
@@ -24,7 +24,7 @@ if [ "$input" -eq 0 ]; then
 
 elif [ "$input" -eq 1 ]; then
     echo "Running rsync script"
-    rsync -aPv --no-times --append-verify --exclude='**/.DS_Store' --delete Core/Otzar jozhw@ds1522p.wu.ventures:/volume2/johnz.wu   
+    rsync -aPv --no-times --append-verify --exclude='**/.DS_Store' --delete Core jozhw@ds1522p.wu.ventures:/volume2/johnz.wu   
     rsync -aPv --no-times --no-perms --no-owner --no-group --append-verify --exclude='**/.DS_Store' --delete Downloads/books jozhw@ds1522p.wu.ventures:/volume2/johnz.wu/Downloads
 
     # rsync -aPv --append-verify --exclude='**/.DS_Store' Core/wu/* jozhw@ds1522p.wu.ventures:/volume1/wu
