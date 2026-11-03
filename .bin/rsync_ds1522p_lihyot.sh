@@ -5,7 +5,7 @@ set -euo pipefail
 SRC_DIR="$HOME/Library/CloudStorage/ProtonDrive-john@winterblossom.io-folder/Lihyot"
 REMOTE_USER="jozhw"
 REMOTE_HOST="ds1522p.wu.ventures"
-REMOTE_BASE="/volume1/Trove/Lihyot/"
+REMOTE_BASE="/volume1/Lihyot/Lihyot/"
 
 # ===== Date-based naming =====
 YEAR="$(date +%Y)"
