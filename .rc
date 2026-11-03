@@ -7,6 +7,9 @@ eval "$(conda "shell.$(basename "${SHELL}")" hook)"
 
 export GPG_TTY=$(tty)
 
+# set proton pass as ssh agent
+export SSH_AUTH_SOCK="$HOME/.ssh/proton-pass-ssh-agent.sock"
+
 # macOS gives launchd-spawned terminals a 256 open-file soft limit, and Emacs
 # file watching (kqueue) costs one descriptor per watch. Under 256, eglot's
 # project watches died at ~207 with "no file descriptor left", which made it
